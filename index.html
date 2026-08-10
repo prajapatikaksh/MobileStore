@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mobile Store</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Mobile Store</h1>
+        <p class="subtitle">Login to continue</p>
+
+        <!-- LOGIN -->
+        <div id="loginBox">
+
+            <input
+                type="email"
+                id="loginEmail"
+                placeholder="Enter Email"
+            >
+
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Enter Password"
+            >
+
+            <button onclick="login()">
+                Login
+            </button>
+
+            <p id="loginMessage"></p>
+
+            <p>
+                Don't have an account?
+                <span onclick="showRegister()">
+                    Register
+                </span>
+            </p>
+
+        </div>
+
+
+        <!-- REGISTER -->
+
+        <div id="registerBox" class="hidden">
+
+            <input
+                type="text"
+                id="registerName"
+                placeholder="Enter Name"
+            >
+
+            <input
+                type="email"
+                id="registerEmail"
+                placeholder="Enter Email"
+            >
+
+            <input
+                type="password"
+                id="registerPassword"
+                placeholder="Create Password"
+            >
+
+            <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm Password"
+            >
+
+            <button onclick="register()">
+                Create Account
+            </button>
+
+            <p id="registerMessage"></p>
+
+            <p>
+                Already have an account?
+                <span onclick="showLogin()">
+                    Login
+                </span>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
