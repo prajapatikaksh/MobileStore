@@ -33,30 +33,62 @@ function showLogin() {
 
 
 /* =========================
+   SHOW / HIDE PASSWORD
+========================= */
+
+function togglePassword(inputId, button) {
+
+    const input =
+        document.getElementById(inputId);
+
+
+    if (input.type === "password") {
+
+        input.type = "text";
+
+        button.textContent = "🙈";
+
+    } else {
+
+        input.type = "password";
+
+        button.textContent = "👁️";
+
+    }
+
+}
+
+
+/* =========================
    REGISTER
 ========================= */
 
 function register() {
 
     const name =
-        document.getElementById(
-            "registerName"
-        ).value.trim();
+        document
+        .getElementById("registerName")
+        .value.trim();
+
 
     const email =
-        document.getElementById(
-            "registerEmail"
-        ).value.trim().toLowerCase();
+        document
+        .getElementById("registerEmail")
+        .value.trim()
+        .toLowerCase();
+
 
     const password =
-        document.getElementById(
-            "registerPassword"
-        ).value;
+        document
+        .getElementById("registerPassword")
+        .value;
+
 
     const confirmPassword =
-        document.getElementById(
-            "confirmPassword"
-        ).value;
+        document
+        .getElementById("confirmPassword")
+        .value;
+
 
     const message =
         document.getElementById(
@@ -64,7 +96,8 @@ function register() {
         );
 
 
-    /* Check Empty */
+    message.style.color = "#dc2626";
+
 
     if (
         name === "" ||
@@ -77,21 +110,9 @@ function register() {
             "Please fill all fields.";
 
         return;
+
     }
 
-
-    /* Password Check */
-
-    if (password !== confirmPassword) {
-
-        message.textContent =
-            "Passwords do not match.";
-
-        return;
-    }
-
-
-    /* Password Length */
 
     if (password.length < 6) {
 
@@ -99,10 +120,19 @@ function register() {
             "Password must be at least 6 characters.";
 
         return;
+
     }
 
 
-    /* Create User */
+    if (password !== confirmPassword) {
+
+        message.textContent =
+            "Passwords do not match.";
+
+        return;
+
+    }
+
 
     const user = {
 
@@ -121,45 +151,21 @@ function register() {
     );
 
 
-    message.style.color = "green";
+    message.style.color = "#16a34a";
 
     message.textContent =
-        "Registration successful!";
+        "Account created successfully!";
 
 
-    /* Clear */
+    setTimeout(function() {
 
-    document.getElementById(
-        "registerName"
-    ).value = "";
+        showLogin();
 
-    document.getElementById(
-        "registerEmail"
-    ).value = "";
+        document.getElementById(
+            "loginEmail"
+        ).value = email;
 
-    document.getElementById(
-        "registerPassword"
-    ).value = "";
-
-    document.getElementById(
-        "confirmPassword"
-    ).value = "";
-
-
-    /* Go Login */
-
-    setTimeout(
-        function () {
-
-            showLogin();
-
-            document.getElementById(
-                "loginEmail"
-            ).value = email;
-
-        },
-        1000
-    );
+    }, 1000);
 
 }
 
@@ -171,14 +177,17 @@ function register() {
 function login() {
 
     const email =
-        document.getElementById(
-            "loginEmail"
-        ).value.trim().toLowerCase();
+        document
+        .getElementById("loginEmail")
+        .value.trim()
+        .toLowerCase();
+
 
     const password =
-        document.getElementById(
-            "loginPassword"
-        ).value;
+        document
+        .getElementById("loginPassword")
+        .value;
+
 
     const message =
         document.getElementById(
@@ -186,22 +195,22 @@ function login() {
         );
 
 
-    /* Get User */
-
     const savedUser =
         localStorage.getItem(
             "registeredUser"
         );
 
 
-    /* No Registration */
+    message.style.color = "#dc2626";
+
 
     if (!savedUser) {
 
         message.textContent =
-            "Please register first.";
+            "Please create an account first.";
 
         return;
+
     }
 
 
@@ -209,42 +218,30 @@ function login() {
         JSON.parse(savedUser);
 
 
-    /* Check Login */
-
     if (
         email === user.email &&
         password === user.password
     ) {
 
-        message.style.color = "green";
+        message.style.color =
+            "#16a34a";
 
         message.textContent =
             "Login successful!";
 
 
-        /*
-            IMPORTANT:
-            Login successful થયા પછી
-            mobile.html open થશે.
-        */
+        setTimeout(function() {
 
-        setTimeout(
-            function () {
+            window.location.href =
+                "mobile.html";
 
-                window.location.href =
-                    "mobile.html";
-
-            },
-            500
-        );
+        }, 500);
 
 
     } else {
 
-        message.style.color = "red";
-
         message.textContent =
-            "Wrong email or password.";
+            "Incorrect email or password.";
 
     }
 
