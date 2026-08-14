@@ -12,14 +12,14 @@ import {
 ========================= */
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
+    apiKey: "AIzaSyC_A-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
     authDomain: "mobilestore-d044c.firebaseapp.com",
     projectId: "mobilestore-d044c",
     storageBucket: "mobilestore-d044c.firebasestorage.app",
     messagingSenderId: "942752515187",
-    appId: "YOUR_APP_ID"
+    appId: "1:942752515187:web:779e0e178a4729e5b21606",
+    measurementId: "G-XXBFTKTLPH"
 };
-
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
