@@ -1,10 +1,18 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+
 import {
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     updateProfile
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 
 /* =========================
@@ -21,8 +29,16 @@ const firebaseConfig = {
     measurementId: "G-XXBFTKTLPH"
 };
 
+
+/* =========================
+   INITIALIZE FIREBASE
+========================= */
+
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
+
+const db = getFirestore(app);
 
 
 /* =========================
@@ -141,6 +157,8 @@ async function register() {
 
     try {
 
+        /* CREATE AUTH ACCOUNT */
+
         const userCredential =
             await createUserWithEmailAndPassword(
                 auth,
@@ -149,13 +167,33 @@ async function register() {
             );
 
 
+        const user = userCredential.user;
+
+
+        /* SAVE DISPLAY NAME */
+
         await updateProfile(
-            userCredential.user,
+            user,
             {
                 displayName: name
             }
         );
 
+
+        /* SAVE USER IN FIRESTORE */
+
+        await setDoc(
+            doc(db, "users", user.uid),
+            {
+                name: name,
+                email: email,
+                uid: user.uid,
+                createdAt: serverTimestamp()
+            }
+        );
+
+
+        /* SUCCESS MESSAGE */
 
         message.style.color = "#16a34a";
 
@@ -175,6 +213,8 @@ async function register() {
 
 
     } catch (error) {
+
+        console.error("Registration Error:", error);
 
         message.textContent =
             error.message;
@@ -238,6 +278,8 @@ async function login() {
 
 
     } catch (error) {
+
+        console.error("Login Error:", error);
 
         message.textContent =
             "Incorrect email or password.";
