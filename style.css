@@ -1,502 +1,1486 @@
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+/* =========================================
+   MOBILESTORE - MODERN 3D DARK LOGIN
+========================================= */
 
-
-import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    updateProfile
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
-
-import {
-    getFirestore,
-    doc,
-    setDoc,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-
-
-/* =====================================
-   FIREBASE CONFIG
-===================================== */
-
-const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyC_A-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
-
-    authDomain:
-        "mobilestore-d044c.firebaseapp.com",
-
-    projectId:
-        "mobilestore-d044c",
-
-    storageBucket:
-        "mobilestore-d044c.firebasestorage.app",
-
-    messagingSenderId:
-        "942752515187",
-
-    appId:
-        "1:942752515187:web:779e0e178a4729e5b21606",
-
-    measurementId:
-        "G-XXBFTKTLPH"
-};
-
-
-/* =====================================
-   INITIALIZE FIREBASE
-===================================== */
-
-const app =
-    initializeApp(firebaseConfig);
-
-
-const auth =
-    getAuth(app);
-
-
-const db =
-    getFirestore(app);
-
-
-/* =====================================
-   SHOW REGISTER
-===================================== */
-
-function showRegister() {
-
-    const loginBox =
-        document.getElementById("loginBox");
-
-    const registerBox =
-        document.getElementById("registerBox");
-
-
-    loginBox.classList.add("hidden");
-
-    registerBox.classList.remove("hidden");
-
-
-    document.getElementById("authTitle")
-        .textContent =
-        "Create Account";
-
-
-    document.getElementById("authSubtitle")
-        .textContent =
-        "Join MobileStore today";
-
-
-    document.getElementById("registerMessage")
-        .textContent = "";
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 
-/* =====================================
-   SHOW LOGIN
-===================================== */
+:root {
 
-function showLogin() {
+    --purple: #8b5cf6;
+    --purple-dark: #6d28d9;
 
-    const loginBox =
-        document.getElementById("loginBox");
+    --blue: #4f46e5;
 
-    const registerBox =
-        document.getElementById("registerBox");
+    --cyan: #22d3ee;
 
+    --background: #05050b;
 
-    registerBox.classList.add("hidden");
+    --card: rgba(15, 15, 28, 0.92);
 
-    loginBox.classList.remove("hidden");
+    --white: #ffffff;
 
-
-    document.getElementById("authTitle")
-        .textContent =
-        "Welcome Back";
-
-
-    document.getElementById("authSubtitle")
-        .textContent =
-        "Login to your MobileStore account";
-
-
-    document.getElementById("loginMessage")
-        .textContent = "";
+    --muted: #9998ad;
 }
 
 
-/* =====================================
-   PASSWORD SHOW / HIDE
-===================================== */
+/* =========================================
+   BODY
+========================================= */
 
-function togglePassword(
-    inputId,
-    button
-) {
+html,
+body {
 
-    const input =
-        document.getElementById(inputId);
+    width: 100%;
 
+    min-height: 100%;
 
-    if (!input) {
-        return;
-    }
-
-
-    if (input.type === "password") {
-
-        input.type = "text";
-
-        button.textContent = "🙈";
-
-    } else {
-
-        input.type = "password";
-
-        button.textContent = "👁";
-    }
 }
 
 
-/* =====================================
-   REGISTER
-===================================== */
+body {
 
-async function register() {
+    min-height: 100vh;
 
-    const name =
-        document
-            .getElementById("registerName")
-            .value
-            .trim();
+    overflow: hidden;
 
+    font-family:
+        "Inter",
+        Arial,
+        sans-serif;
 
-    const email =
-        document
-            .getElementById("registerEmail")
-            .value
-            .trim()
-            .toLowerCase();
+    color: var(--white);
 
+    background:
 
-    const password =
-        document
-            .getElementById("registerPassword")
-            .value;
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(124, 58, 237, 0.30),
+            transparent 30%
+        ),
 
+        radial-gradient(
+            circle at 85% 70%,
+            rgba(37, 99, 235, 0.25),
+            transparent 32%
+        ),
 
-    const confirmPassword =
-        document
-            .getElementById("confirmPassword")
-            .value;
+        #05050b;
+}
 
 
-    const message =
-        document.getElementById(
-            "registerMessage"
-        );
+/* =========================================
+   3D SCENE
+========================================= */
+
+.scene {
+
+    position: fixed;
+
+    inset: 0;
+
+    overflow: hidden;
+
+    perspective: 1400px;
+
+    pointer-events: none;
+}
 
 
-    message.textContent = "";
+/* =========================================
+   GLOW
+========================================= */
+
+.glow {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter: blur(100px);
+
+    opacity: 0.35;
+
+    animation:
+        glowMove
+        9s
+        ease-in-out
+        infinite;
+}
 
 
-    /* VALIDATION */
+.glow-1 {
 
-    if (
-        name === "" ||
-        email === "" ||
-        password === "" ||
-        confirmPassword === ""
-    ) {
+    width: 420px;
 
-        message.style.color =
-            "#ef4444";
+    height: 420px;
 
-        message.textContent =
-            "Please fill all fields.";
+    left: -130px;
 
-        return;
-    }
+    top: -130px;
+
+    background: #7c3aed;
+}
 
 
-    if (password.length < 6) {
+.glow-2 {
 
-        message.style.color =
-            "#ef4444";
+    width: 380px;
 
-        message.textContent =
-            "Password must be at least 6 characters.";
+    height: 380px;
 
-        return;
-    }
+    right: -120px;
 
+    top: 25%;
 
-    if (password !== confirmPassword) {
+    background: #2563eb;
 
-        message.style.color =
-            "#ef4444";
-
-        message.textContent =
-            "Passwords do not match.";
-
-        return;
-    }
+    animation-delay: 2s;
+}
 
 
-    /* CREATE ACCOUNT */
+.glow-3 {
 
-    try {
+    width: 330px;
 
-        const userCredential =
-            await createUserWithEmailAndPassword(
-                auth,
-                email,
-                password
+    height: 330px;
+
+    left: 40%;
+
+    bottom: -160px;
+
+    background: #c026d3;
+
+    animation-delay: 4s;
+}
+
+
+@keyframes glowMove {
+
+    0%,
+    100% {
+
+        transform:
+            translate(
+                0,
+                0
             );
+    }
 
+    50% {
 
-        const user =
-            userCredential.user;
-
-
-        /* UPDATE NAME */
-
-        await updateProfile(
-            user,
-            {
-                displayName: name
-            }
-        );
-
-
-        /* SAVE USER */
-
-        await setDoc(
-            doc(
-                db,
-                "users",
-                user.uid
-            ),
-            {
-
-                name: name,
-
-                email: email,
-
-                uid: user.uid,
-
-                createdAt:
-                    serverTimestamp()
-            }
-        );
-
-
-        /* SUCCESS */
-
-        message.style.color =
-            "#22c55e";
-
-
-        message.textContent =
-            "✓ Account created successfully!";
-
-
-        setTimeout(
-            function () {
-
-                showLogin();
-
-                document.getElementById(
-                    "loginEmail"
-                ).value = email;
-
-            },
-            1200
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Registration Error:",
-            error
-        );
-
-
-        message.style.color =
-            "#ef4444";
-
-
-        switch (error.code) {
-
-            case "auth/email-already-in-use":
-
-                message.textContent =
-                    "This email is already registered.";
-
-                break;
-
-
-            case "auth/invalid-email":
-
-                message.textContent =
-                    "Invalid email address.";
-
-                break;
-
-
-            case "auth/weak-password":
-
-                message.textContent =
-                    "Password is too weak.";
-
-                break;
-
-
-            default:
-
-                message.textContent =
-                    "Registration failed. Please try again.";
-        }
+        transform:
+            translate(
+                35px,
+                -30px
+            );
     }
 }
 
 
-/* =====================================
-   LOGIN
-===================================== */
+/* =========================================
+   3D FLOOR GRID
+========================================= */
 
-async function login() {
+.grid {
 
-    const email =
-        document
-            .getElementById("loginEmail")
-            .value
-            .trim()
-            .toLowerCase();
+    position: absolute;
 
+    width: 180%;
 
-    const password =
-        document
-            .getElementById("loginPassword")
-            .value;
+    height: 180%;
 
+    left: -40%;
 
-    const message =
-        document.getElementById(
-            "loginMessage"
+    top: 35%;
+
+    transform:
+        rotateX(70deg)
+        translateZ(-300px);
+
+    background-image:
+
+        linear-gradient(
+            rgba(139, 92, 246, 0.11)
+            1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(139, 92, 246, 0.11)
+            1px,
+            transparent 1px
         );
 
+    background-size:
+        60px
+        60px;
 
-    message.textContent = "";
+    mask-image:
+        linear-gradient(
+            to bottom,
+            transparent,
+            black 25%,
+            black 70%,
+            transparent
+        );
+
+    animation:
+        gridMove
+        12s
+        linear
+        infinite;
+}
 
 
-    /* VALIDATION */
+@keyframes gridMove {
 
-    if (
-        email === "" ||
-        password === ""
-    ) {
+    from {
 
-        message.style.color =
-            "#ef4444";
-
-        message.textContent =
-            "Please enter email and password.";
-
-        return;
+        transform:
+            rotateX(70deg)
+            translateY(0)
+            translateZ(-300px);
     }
 
+    to {
 
-    /* LOGIN */
-
-    try {
-
-        await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-
-
-        message.style.color =
-            "#22c55e";
-
-
-        message.textContent =
-            "✓ Login successful!";
-
-
-        setTimeout(
-            function () {
-
-                window.location.href =
-                    "mobile.html";
-
-            },
-            700
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Login Error:",
-            error
-        );
-
-
-        message.style.color =
-            "#ef4444";
-
-
-        if (
-            error.code ===
-            "auth/invalid-credential"
-        ) {
-
-            message.textContent =
-                "Incorrect email or password.";
-
-        } else {
-
-            message.textContent =
-                "Incorrect email or password.";
-        }
+        transform:
+            rotateX(70deg)
+            translateY(60px)
+            translateZ(-300px);
     }
 }
 
 
-/* =====================================
-   MAKE FUNCTIONS GLOBAL
-   IMPORTANT FOR HTML onclick
-===================================== */
+/* =========================================
+   3D PHONES
+========================================= */
 
-window.showRegister =
-    showRegister;
+.phone {
 
+    position: absolute;
 
-window.showLogin =
-    showLogin;
+    width: 230px;
 
+    height: 470px;
 
-window.togglePassword =
-    togglePassword;
+    transform-style: preserve-3d;
 
-
-window.register =
-    register;
-
-
-window.login =
-    login;
+    animation:
+        phoneFloat
+        6s
+        ease-in-out
+        infinite;
+}
 
 
-console.log(
-    "✓ MobileStore Firebase loaded successfully"
-);
+/* PHONE BODY */
+
+.phone-frame {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 100%;
+
+    padding: 8px;
+
+    border-radius: 38px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #777783,
+            #292936,
+            #090910
+        );
+
+    box-shadow:
+
+        0 50px 100px
+        rgba(0, 0, 0, 0.8),
+
+        inset 2px 2px 4px
+        rgba(255, 255, 255, 0.22),
+
+        inset -3px -3px 8px
+        rgba(0, 0, 0, 0.9);
+
+    transform:
+
+        rotateY(-25deg)
+
+        rotateX(8deg);
+}
+
+
+/* PHONE SCREEN */
+
+.screen {
+
+    width: 100%;
+
+    height: 100%;
+
+    padding: 20px;
+
+    overflow: hidden;
+
+    border-radius: 32px;
+
+    background:
+
+        linear-gradient(
+            160deg,
+            #171328,
+            #34216c,
+            #080811
+        );
+
+    box-shadow:
+
+        inset 0 0 30px
+        rgba(0, 0, 0, 0.6);
+}
+
+
+/* CAMERA */
+
+.camera {
+
+    position: absolute;
+
+    z-index: 10;
+
+    width: 65px;
+
+    height: 20px;
+
+    top: 16px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 20px;
+
+    background: #020205;
+
+    box-shadow:
+
+        inset 0 2px 4px
+        rgba(255, 255, 255, 0.08);
+}
+
+
+/* PHONE STATUS */
+
+.status {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 40px;
+
+    font-size: 9px;
+
+    opacity: 0.7;
+}
+
+
+/* PHONE LOGO */
+
+.phone-logo {
+
+    width: 70px;
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    border-radius: 20px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(139, 92, 246, 0.3),
+            rgba(34, 211, 238, 0.12)
+        );
+
+    border:
+
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+    font-size: 32px;
+
+    box-shadow:
+
+        0 0 30px
+        rgba(139, 92, 246, 0.2);
+}
+
+
+/* PHONE TEXT */
+
+.screen h3 {
+
+    margin-bottom: 7px;
+
+    font-size: 20px;
+}
+
+
+.screen p {
+
+    margin-bottom: 30px;
+
+    font-size: 10px;
+
+    opacity: 0.55;
+}
+
+
+/* PHONE PRODUCT CARD */
+
+.fake-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 13px;
+
+    border-radius: 18px;
+
+    background:
+
+        rgba(255, 255, 255, 0.08);
+
+    border:
+
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: blur(10px);
+}
+
+
+.fake-image {
+
+    width: 45px;
+
+    height: 55px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(139, 92, 246, 0.25),
+            rgba(34, 211, 238, 0.12)
+        );
+
+    font-size: 24px;
+}
+
+
+.fake-card strong {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 10px;
+}
+
+
+.fake-card small {
+
+    font-size: 8px;
+
+    opacity: 0.5;
+}
+
+
+/* =========================================
+   PHONE POSITIONS
+========================================= */
+
+.phone-1 {
+
+    left: 6%;
+
+    top: 14%;
+
+    transform:
+
+        rotateY(25deg)
+
+        rotateZ(-8deg);
+}
+
+
+.phone-2 {
+
+    right: 6%;
+
+    top: 8%;
+
+    transform:
+
+        rotateY(-30deg)
+
+        rotateZ(10deg);
+
+    animation-delay: 2s;
+}
+
+
+.phone-3 {
+
+    right: 27%;
+
+    bottom: -120px;
+
+    transform:
+
+        rotateY(30deg)
+
+        rotateZ(-10deg)
+
+        scale(0.85);
+
+    animation-delay: 4s;
+}
+
+
+/* PHONE FLOAT */
+
+@keyframes phoneFloat {
+
+    0%,
+    100% {
+
+        translate:
+            0
+            0;
+    }
+
+    50% {
+
+        translate:
+            0
+            -25px;
+    }
+}
+
+
+/* =========================================
+   MAIN PAGE
+========================================= */
+
+.page {
+
+    position: relative;
+
+    z-index: 20;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+/* =========================================
+   BRAND
+========================================= */
+
+.brand {
+
+    position: absolute;
+
+    top: 28px;
+
+    left: 35px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+
+.brand-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5
+        );
+
+    box-shadow:
+
+        0 0 30px
+        rgba(124, 58, 237, 0.5);
+}
+
+
+/* =========================================
+   LOGIN CARD
+========================================= */
+
+.card {
+
+    position: relative;
+
+    width: 430px;
+
+    padding: 38px;
+
+    overflow: hidden;
+
+    border-radius: 30px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(25, 24, 43, 0.96),
+            rgba(10, 10, 19, 0.93)
+        );
+
+    border:
+
+        1px solid
+        rgba(255, 255, 255, 0.10);
+
+    box-shadow:
+
+        0 40px 100px
+        rgba(0, 0, 0, 0.75),
+
+        0 0 80px
+        rgba(124, 58, 237, 0.18),
+
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: blur(25px);
+
+    animation:
+        cardAppear
+        0.8s
+        ease;
+}
+
+
+/* CARD LIGHT */
+
+.card::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+
+    height: 220px;
+
+    right: -100px;
+
+    top: -120px;
+
+    border-radius: 50%;
+
+    background: #7c3aed;
+
+    filter: blur(80px);
+
+    opacity: 0.18;
+
+    pointer-events: none;
+}
+
+
+.card::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+
+    height: 180px;
+
+    left: -80px;
+
+    bottom: -120px;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+
+    filter: blur(80px);
+
+    opacity: 0.12;
+
+    pointer-events: none;
+}
+
+
+/* CARD ANIMATION */
+
+@keyframes cardAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+
+            perspective(1000px)
+
+            rotateY(12deg)
+
+            translateY(30px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+
+            perspective(1000px)
+
+            rotateY(0)
+
+            translateY(0);
+    }
+}
+
+
+/* =========================================
+   CARD LOGO
+========================================= */
+
+.card-logo {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 68px;
+
+    height: 68px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: auto;
+
+    border-radius: 21px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5
+        );
+
+    border:
+
+        1px solid
+        rgba(255, 255, 255, 0.15);
+
+    box-shadow:
+
+        0 15px 40px
+        rgba(124, 58, 237, 0.45);
+
+    font-size: 32px;
+
+    transform: rotate(-5deg);
+
+    transition: 0.3s;
+}
+
+
+.card-logo:hover {
+
+    transform:
+
+        rotate(0)
+
+        scale(1.08);
+}
+
+
+/* =========================================
+   TITLE
+========================================= */
+
+.card h1 {
+
+    position: relative;
+
+    z-index: 2;
+
+    text-align: center;
+
+    margin-top: 20px;
+
+    font-size: 29px;
+
+    letter-spacing: -1px;
+}
+
+
+.subtitle {
+
+    position: relative;
+
+    z-index: 2;
+
+    margin-top: 8px;
+
+    margin-bottom: 28px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* =========================================
+   AUTH BOX
+========================================= */
+
+.auth-box {
+
+    position: relative;
+
+    z-index: 5;
+}
+
+
+.hidden {
+
+    display: none !important;
+}
+
+
+/* =========================================
+   LABEL
+========================================= */
+
+.auth-box > label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #c3c1d2;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================
+   INPUT
+========================================= */
+
+.input-box {
+
+    position: relative;
+
+    margin-bottom: 17px;
+}
+
+
+.input-box > span {
+
+    position: absolute;
+
+    z-index: 2;
+
+    left: 15px;
+
+    top: 17px;
+
+    font-size: 14px;
+
+    opacity: 0.5;
+
+    pointer-events: none;
+}
+
+
+.input-box input {
+
+    width: 100%;
+
+    height: 53px;
+
+    padding:
+
+        0 45px;
+
+    border:
+
+        1px solid
+        rgba(255, 255, 255, 0.09);
+
+    border-radius: 14px;
+
+    outline: none;
+
+    color: white;
+
+    background:
+
+        rgba(255, 255, 255, 0.045);
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    transition: 0.25s;
+}
+
+
+.input-box input::placeholder {
+
+    color: #666578;
+}
+
+
+.input-box input:hover {
+
+    border-color:
+
+        rgba(139, 92, 246, 0.35);
+}
+
+
+.input-box input:focus {
+
+    background:
+
+        rgba(139, 92, 246, 0.06);
+
+    border-color:
+
+        var(--purple);
+
+    box-shadow:
+
+        0 0 0 4px
+        rgba(139, 92, 246, 0.10);
+}
+
+
+/* =========================================
+   PASSWORD EYE BUTTON
+========================================= */
+
+.eye {
+
+    position: absolute;
+
+    z-index: 3;
+
+    right: 6px;
+
+    top: 5px;
+
+    width: 43px;
+
+    height: 43px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    color: #aaa8ba;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-size: 16px;
+}
+
+
+.eye:hover {
+
+    color: white;
+
+    background:
+
+        rgba(139, 92, 246, 0.12);
+}
+
+
+/* =========================================
+   OPTIONS
+========================================= */
+
+.options {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+
+    font-size: 11px;
+}
+
+
+.remember {
+
+    display: flex !important;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin: 0 !important;
+
+    color: #8f8da3 !important;
+
+    font-weight: 500 !important;
+
+    cursor: pointer;
+}
+
+
+.remember input {
+
+    width: 14px !important;
+
+    height: 14px !important;
+
+    padding: 0 !important;
+
+    accent-color:
+        var(--purple);
+
+    cursor: pointer;
+}
+
+
+.forgot {
+
+    color: #a78bfa;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+/* =========================================
+   MAIN BUTTON
+========================================= */
+
+.main-button {
+
+    position: relative;
+
+    z-index: 10;
+
+    width: 100%;
+
+    height: 54px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 14px;
+
+    border:
+
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+    border-radius: 14px;
+
+    color: white;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #6366f1,
+            #8b5cf6
+        );
+
+    box-shadow:
+
+        0 15px 35px
+        rgba(124, 58, 237, 0.35);
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: 0.3s;
+}
+
+
+.main-button b {
+
+    font-size: 20px;
+
+    transition: 0.3s;
+}
+
+
+.main-button:hover {
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+
+        0 20px 45px
+        rgba(124, 58, 237, 0.5);
+}
+
+
+.main-button:hover b {
+
+    transform:
+        translateX(5px);
+}
+
+
+.main-button:active {
+
+    transform:
+        scale(0.98);
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+.message {
+
+    min-height: 18px;
+
+    margin-top: 10px;
+
+    text-align: center;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================
+   DIVIDER
+========================================= */
+
+.divider {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 20px 0;
+}
+
+
+.divider::before,
+.divider::after {
+
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background:
+
+        rgba(255, 255, 255, 0.08);
+}
+
+
+.divider span {
+
+    color: #666578;
+
+    font-size: 9px;
+}
+
+
+/* =========================================
+   LOGIN / REGISTER SWITCH
+========================================= */
+
+.switch {
+
+    text-align: center;
+
+    color: #858396;
+
+    font-size: 12px;
+}
+
+
+.switch span {
+
+    color: #a78bfa;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+.switch span:hover {
+
+    color: #c4b5fd;
+
+    text-shadow:
+
+        0 0 15px
+        rgba(167, 139, 250, 0.5);
+}
+
+
+/* =========================================
+   SECURITY
+========================================= */
+
+.secure {
+
+    position: relative;
+
+    z-index: 2;
+
+    margin-top: 22px;
+
+    text-align: center;
+
+    color: #5f5d70;
+
+    font-size: 9px;
+}
+
+
+/* =========================================
+   COPYRIGHT
+========================================= */
+
+.bottom-text {
+
+    position: absolute;
+
+    bottom: 18px;
+
+    color:
+
+        rgba(255, 255, 255, 0.3);
+
+    font-size: 9px;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .phone-1 {
+
+        left: -80px;
+    }
+
+
+    .phone-2 {
+
+        right: -80px;
+    }
+
+
+    .phone-3 {
+
+        display: none;
+    }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 650px) {
+
+    body {
+
+        overflow-y: auto;
+    }
+
+
+    .page {
+
+        min-height: 100vh;
+
+        padding:
+
+            85px
+            15px
+            45px;
+    }
+
+
+    .brand {
+
+        top: 20px;
+
+        left: 20px;
+
+        font-size: 17px;
+    }
+
+
+    .brand-icon {
+
+        width: 37px;
+
+        height: 37px;
+    }
+
+
+    .card {
+
+        width: 100%;
+
+        max-width: 430px;
+
+        padding:
+
+            30px
+            22px;
+
+        border-radius: 25px;
+    }
+
+
+    .phone {
+
+        opacity: 0.12;
+
+        transform:
+            scale(0.7);
+    }
+
+
+    .phone-1 {
+
+        left: -120px;
+
+        top: 20px;
+    }
+
+
+    .phone-2 {
+
+        right: -120px;
+
+        top: 70px;
+    }
+
+
+    .card h1 {
+
+        font-size: 26px;
+    }
+
+
+    .bottom-text {
+
+        bottom: 12px;
+    }
+}
