@@ -1,3 +1,30 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    updateProfile
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
+
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "mobilestore-d044c.firebaseapp.com",
+    projectId: "mobilestore-d044c",
+    storageBucket: "mobilestore-d044c.firebasestorage.app",
+    messagingSenderId: "942752515187",
+    appId: "YOUR_APP_ID"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+
 /* =========================
    SHOW REGISTER
 ========================= */
@@ -11,7 +38,6 @@ function showRegister() {
     document
         .getElementById("registerBox")
         .classList.remove("hidden");
-
 }
 
 
@@ -28,7 +54,6 @@ function showLogin() {
     document
         .getElementById("loginBox")
         .classList.remove("hidden");
-
 }
 
 
@@ -38,24 +63,19 @@ function showLogin() {
 
 function togglePassword(inputId, button) {
 
-    const input =
-        document.getElementById(inputId);
-
+    const input = document.getElementById(inputId);
 
     if (input.type === "password") {
 
         input.type = "text";
-
         button.textContent = "🙈";
 
     } else {
 
         input.type = "password";
-
         button.textContent = "👁️";
 
     }
-
 }
 
 
@@ -63,13 +83,10 @@ function togglePassword(inputId, button) {
    REGISTER
 ========================= */
 
-function register() {
+async function register() {
 
     const name =
-        document
-        .getElementById("registerName")
-        .value.trim();
-
+        document.getElementById("registerName").value.trim();
 
     const email =
         document
@@ -77,23 +94,14 @@ function register() {
         .value.trim()
         .toLowerCase();
 
-
     const password =
-        document
-        .getElementById("registerPassword")
-        .value;
-
+        document.getElementById("registerPassword").value;
 
     const confirmPassword =
-        document
-        .getElementById("confirmPassword")
-        .value;
-
+        document.getElementById("confirmPassword").value;
 
     const message =
-        document.getElementById(
-            "registerMessage"
-        );
+        document.getElementById("registerMessage");
 
 
     message.style.color = "#dc2626";
@@ -110,7 +118,6 @@ function register() {
             "Please fill all fields.";
 
         return;
-
     }
 
 
@@ -120,7 +127,6 @@ function register() {
             "Password must be at least 6 characters.";
 
         return;
-
     }
 
 
@@ -130,43 +136,50 @@ function register() {
             "Passwords do not match.";
 
         return;
-
     }
 
 
-    const user = {
+    try {
 
-        name: name,
-
-        email: email,
-
-        password: password
-
-    };
-
-
-    localStorage.setItem(
-        "registeredUser",
-        JSON.stringify(user)
-    );
+        const userCredential =
+            await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
 
 
-    message.style.color = "#16a34a";
+        await updateProfile(
+            userCredential.user,
+            {
+                displayName: name
+            }
+        );
 
-    message.textContent =
-        "Account created successfully!";
+
+        message.style.color = "#16a34a";
+
+        message.textContent =
+            "Account created successfully!";
 
 
-    setTimeout(function() {
+        setTimeout(function () {
 
-        showLogin();
+            showLogin();
 
-        document.getElementById(
-            "loginEmail"
-        ).value = email;
+            document.getElementById(
+                "loginEmail"
+            ).value = email;
 
-    }, 1000);
+        }, 1000);
 
+
+    } catch (error) {
+
+        message.textContent =
+            error.message;
+
+    }
 }
 
 
@@ -174,7 +187,7 @@ function register() {
    LOGIN
 ========================= */
 
-function login() {
+async function login() {
 
     const email =
         document
@@ -182,55 +195,41 @@ function login() {
         .value.trim()
         .toLowerCase();
 
-
     const password =
-        document
-        .getElementById("loginPassword")
-        .value;
-
+        document.getElementById("loginPassword").value;
 
     const message =
-        document.getElementById(
-            "loginMessage"
-        );
-
-
-    const savedUser =
-        localStorage.getItem(
-            "registeredUser"
-        );
+        document.getElementById("loginMessage");
 
 
     message.style.color = "#dc2626";
 
 
-    if (!savedUser) {
+    if (email === "" || password === "") {
 
         message.textContent =
-            "Please create an account first.";
+            "Please enter email and password.";
 
         return;
-
     }
 
 
-    const user =
-        JSON.parse(savedUser);
+    try {
+
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
 
 
-    if (
-        email === user.email &&
-        password === user.password
-    ) {
-
-        message.style.color =
-            "#16a34a";
+        message.style.color = "#16a34a";
 
         message.textContent =
             "Login successful!";
 
 
-        setTimeout(function() {
+        setTimeout(function () {
 
             window.location.href =
                 "mobile.html";
@@ -238,11 +237,21 @@ function login() {
         }, 500);
 
 
-    } else {
+    } catch (error) {
 
         message.textContent =
             "Incorrect email or password.";
 
     }
-
 }
+
+
+/* =========================
+   MAKE FUNCTIONS AVAILABLE
+========================= */
+
+window.showRegister = showRegister;
+window.showLogin = showLogin;
+window.togglePassword = togglePassword;
+window.register = register;
+window.login = login;
