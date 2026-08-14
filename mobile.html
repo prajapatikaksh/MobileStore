@@ -10,7 +10,28 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>MobileStore - Mobiles</title>
+    <meta
+        name="theme-color"
+        content="#05050b"
+    >
+
+    <title>MobileStore | Smartphones</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
     <link
         rel="stylesheet"
@@ -23,40 +44,94 @@
 <body>
 
 
-<!-- =========================
+<!-- =================================
+     BACKGROUND
+================================= -->
+
+<div class="background">
+
+    <div class="bg-orb orb-one"></div>
+
+    <div class="bg-orb orb-two"></div>
+
+    <div class="bg-orb orb-three"></div>
+
+    <div class="bg-grid"></div>
+
+</div>
+
+
+
+<!-- =================================
      HEADER
-========================= -->
+================================= -->
 
 <header class="header">
 
+
     <div class="logo">
-        📱 MobileStore
+
+        <div class="logo-icon">
+            📱
+        </div>
+
+        <div>
+
+            <span class="logo-name">
+                MobileStore
+            </span>
+
+            <small>
+                Premium Smartphones
+            </small>
+
+        </div>
+
     </div>
 
 
+
+    <!-- SEARCH -->
+
     <div class="search-box">
+
+        <span class="search-icon">
+            🔍
+        </span>
 
         <input
             type="text"
             id="searchInput"
-            placeholder="Search mobile..."
+            placeholder="Search mobiles..."
+            autocomplete="off"
         >
 
-        <button onclick="searchMobiles()">
-            🔍
+        <button
+            type="button"
+            onclick="searchMobiles()"
+        >
+            Search
         </button>
 
     </div>
 
 
-    <!-- CART BUTTON -->
+
+    <!-- CART -->
 
     <button
+        type="button"
         class="cart-button"
         onclick="openCart()"
     >
 
-        🛒 Cart
+        <span class="cart-icon">
+            🛒
+        </span>
+
+        <span>
+            Cart
+        </span>
 
         <span id="cartCount">
             0
@@ -64,119 +139,299 @@
 
     </button>
 
+
 </header>
 
 
 
-<!-- =========================
+<!-- =================================
      HERO
-========================= -->
+================================= -->
 
 <section class="hero">
 
-    <h1>
-        Find Your Perfect Smartphone
-    </h1>
 
-    <p>
-        Choose your favourite mobile company
-    </p>
+    <div class="hero-content">
+
+
+        <div class="hero-badge">
+            ✨ NEW COLLECTION 2026
+        </div>
+
+
+        <h1>
+            Find Your
+            <span>Perfect Smartphone</span>
+        </h1>
+
+
+        <p>
+            Explore the latest smartphones from
+            your favourite brands.
+        </p>
+
+
+        <div class="hero-stats">
+
+            <div>
+                <strong>14+</strong>
+                <span>Mobiles</span>
+            </div>
+
+            <div>
+                <strong>8+</strong>
+                <span>Brands</span>
+            </div>
+
+            <div>
+                <strong>5G</strong>
+                <span>Ready</span>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- HERO PHONE -->
+
+    <div class="hero-phone">
+
+        <div class="hero-phone-frame">
+
+            <div class="hero-phone-notch"></div>
+
+            <div class="hero-phone-screen">
+
+                <div class="hero-phone-status">
+                    9:41
+                    <span>
+                        ● ● ●
+                    </span>
+                </div>
+
+                <div class="hero-phone-camera">
+                    📷
+                </div>
+
+                <h3>
+                    MobileStore
+                </h3>
+
+                <p>
+                    Premium Collection
+                </p>
+
+                <div class="hero-product">
+                    📱
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 
 </section>
 
 
 
-<!-- =========================
-     COMPANY BUTTONS
-========================= -->
+<!-- =================================
+     COMPANY FILTER
+================================= -->
 
-<div class="companies">
-
-    <button onclick="filterCompany('All')">
-        All
-    </button>
-
-    <button onclick="filterCompany('Apple')">
-        Apple
-    </button>
-
-    <button onclick="filterCompany('Samsung')">
-        Samsung
-    </button>
-
-    <button onclick="filterCompany('OnePlus')">
-        OnePlus
-    </button>
-
-    <button onclick="filterCompany('Vivo')">
-        Vivo
-    </button>
-
-    <button onclick="filterCompany('Oppo')">
-        Oppo
-    </button>
-
-    <button onclick="filterCompany('Realme')">
-        Realme
-    </button>
-
-    <button onclick="filterCompany('Xiaomi')">
-        Xiaomi
-    </button>
-
-    <button onclick="filterCompany('Motorola')">
-        Motorola
-    </button>
-
-    <button onclick="filterCompany('Google')">
-        Google
-    </button>
-
-    <button onclick="filterCompany('Nothing')">
-        Nothing
-    </button>
-
-</div>
+<section class="company-section">
 
 
+    <div class="filter-heading">
 
-<!-- =========================
-     TITLE
-========================= -->
+        <span>
+            Explore Brands
+        </span>
 
-<h2
-    class="section-title"
-    id="companyTitle"
->
-    All Mobiles
-</h2>
+        <small>
+            Choose your favourite
+        </small>
 
-
-
-<!-- =========================
-     MOBILE PRODUCTS
-========================= -->
-
-<div
-    class="mobile-container"
-    id="mobileContainer"
-></div>
+    </div>
 
 
+    <div class="companies">
 
-<!-- =========================
+
+        <button
+            type="button"
+            class="company-filter active"
+            onclick="filterCompany('All')"
+        >
+            <span>🔥</span>
+            All
+        </button>
+
+
+        <button
+            type="button"
+            class="company-filter"
+            onclick="filterCompany('Apple')"
+        >
+            <span></span>
+            Apple
+        </button>
+
+
+        <button
+            type="button"
+            class="company-filter"
+            onclick="filterCompany('Samsung')"
+        >
+            <span>📱</span>
+            Samsung
+        </button>
+
+
+        <button
+            type="button"
+            class="company-filter"
+            onclick="filterCompany('OnePlus')"
+        >
+            <span>⚡</span>
+            OnePlus
+        </button>
+
+
+        <button
+            type="button"
+            class="company-filter"
+            onclick="filterCompany('Vivo')"
+        >
+            <span>💙</span>
+            Vivo
+        </button>
+
+
+        <button
+            type="button"
+            class="company-filter"
+            onclick="filterCompany('Oppo')"
+        >
+            <span>🟢</span>
+            Oppo
+        </button>
+
+
+        <button
+            type="button"
+            class="company-filter"
+            onclick="filterCompany('Realme')"
+        >
+            <span>⚡</span>
+            Realme
+        </button>
+
+
+        <button
+            type="button"
+            class="company-filter"
+            onclick="filterCompany('Xiaomi')"
+        >
+            <span>🟠</span>
+            Xiaomi
+        </button>
+
+
+        <button
+            type="button"
+            class="company-filter"
+            onclick="filterCompany('Motorola')"
+        >
+            <span>🪽</span>
+            Motorola
+        </button>
+
+
+        <button
+            type="button"
+            class="company-filter"
+            onclick="filterCompany('Google')"
+        >
+            <span>🔵</span>
+            Google
+        </button>
+
+
+        <button
+            type="button"
+            class="company-filter"
+            onclick="filterCompany('Nothing')"
+        >
+            <span>⚫</span>
+            Nothing
+        </button>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =================================
+     PRODUCTS
+================================= -->
+
+<main class="products-section">
+
+
+    <div class="section-heading">
+
+        <div>
+
+            <span class="section-label">
+                SMARTPHONES
+            </span>
+
+            <h2 id="companyTitle">
+                All Mobiles
+            </h2>
+
+        </div>
+
+
+        <div class="result-badge">
+            🛍️ Latest Collection
+        </div>
+
+    </div>
+
+
+    <div
+        id="mobileContainer"
+        class="mobile-container"
+    ></div>
+
+
+</main>
+
+
+
+<!-- =================================
      PRODUCT DETAILS MODAL
-========================= -->
+================================= -->
 
 <div
-    class="modal"
     id="productModal"
+    class="modal"
 >
+
 
     <div class="modal-content">
 
 
         <button
+            type="button"
             class="close"
             onclick="closeModal()"
         >
@@ -184,55 +439,91 @@
         </button>
 
 
-        <img
-            id="modalImage"
-            src=""
-            alt="Mobile"
-        >
+        <div class="modal-image-area">
 
+            <div class="image-glow"></div>
 
-        <h2 id="modalName"></h2>
-
-
-        <p
-            id="modalCompany"
-            class="modal-company"
-        ></p>
-
-
-        <div class="details">
-
-            <p id="modalRam"></p>
-
-            <p id="modalStorage"></p>
-
-            <p id="modalCamera"></p>
-
-            <p id="modalNetwork"></p>
+            <img
+                id="modalImage"
+                src=""
+                alt="Mobile"
+            >
 
         </div>
 
 
-        <h3
+        <div class="modal-company">
+            <span id="modalCompany"></span>
+        </div>
+
+
+        <h2 id="modalName">
+            Mobile Name
+        </h2>
+
+
+        <div class="modal-details">
+
+
+            <div
+                id="modalRam"
+                class="detail-item"
+            ></div>
+
+
+            <div
+                id="modalStorage"
+                class="detail-item"
+            ></div>
+
+
+            <div
+                id="modalCamera"
+                class="detail-item"
+            ></div>
+
+
+            <div
+                id="modalNetwork"
+                class="detail-item"
+            ></div>
+
+
+        </div>
+
+
+        <div
             id="modalPrice"
             class="modal-price"
-        ></h3>
-
-
-        <button
-            class="buy-button"
-            onclick="buyMobile()"
         >
-            🛒 Buy Now
-        </button>
+            ₹0
+        </div>
 
 
-        <button
-            class="modal-cart-button"
-            onclick="addModalToCart()"
-        >
-            ➕ Add to Cart
-        </button>
+        <div class="modal-actions">
+
+
+            <button
+                type="button"
+                class="buy-button"
+                onclick="buyMobile()"
+            >
+                <span>⚡</span>
+                Buy Now
+            </button>
+
+
+            <button
+                type="button"
+                class="modal-cart-button"
+                onclick="addModalToCart()"
+            >
+                <span>🛒</span>
+                Add to Cart
+            </button>
+
+
+        </div>
 
 
     </div>
@@ -241,19 +532,21 @@
 
 
 
-<!-- =========================
+<!-- =================================
      CART MODAL
-========================= -->
+================================= -->
 
 <div
-    class="modal"
     id="cartModal"
+    class="modal"
 >
+
 
     <div class="cart-content">
 
 
         <button
+            type="button"
             class="close"
             onclick="closeCart()"
         >
@@ -261,9 +554,25 @@
         </button>
 
 
-        <h2>
-            🛒 Your Cart
-        </h2>
+        <div class="cart-title">
+
+            <div class="cart-title-icon">
+                🛒
+            </div>
+
+            <div>
+
+                <h2>
+                    Your Cart
+                </h2>
+
+                <p>
+                    Review your selected mobiles
+                </p>
+
+            </div>
+
+        </div>
 
 
         <div
@@ -274,20 +583,29 @@
 
         <div class="cart-bottom">
 
-            <h3>
-                Total:
-                <span id="cartTotal">
-                    ₹0
+
+            <div class="total-row">
+
+                <span>
+                    Total Amount
                 </span>
-            </h3>
+
+                <strong id="cartTotal">
+                    ₹0
+                </strong>
+
+            </div>
 
 
             <button
+                type="button"
                 class="checkout-button"
                 onclick="checkout()"
             >
-                🛍️ Checkout
+                Proceed to Checkout
+                <span>→</span>
             </button>
+
 
         </div>
 
@@ -298,27 +616,43 @@
 
 
 
-<!-- =========================
+<!-- =================================
      FOOTER
-========================= -->
+================================= -->
 
 <footer>
 
+
+    <div class="footer-logo">
+        📱 MobileStore
+    </div>
+
+
     <p>
-        © 2026 MobileStore | All Rights Reserved
+        Your favourite mobiles, all in one place.
     </p>
 
-    <p class="developer">
-        BY PRAJAPATI KAKSH
-    </p>
+
+    <div class="developer">
+        Made with ❤️ by Kaksh
+    </div>
+
+
+    <div class="footer-copy">
+        © 2026 MobileStore. All rights reserved.
+    </div>
+
 
 </footer>
 
 
 
-<!-- JAVASCRIPT -->
+<!-- =================================
+     JAVASCRIPT
+================================= -->
 
 <script src="mobile.js"></script>
+
 
 </body>
 
