@@ -3,12 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="theme-color" content="#6d5dfc">
-
-    <title>MobileStore | Welcome</title>
+    <title>MobileStore | Login</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,372 +15,441 @@
         rel="stylesheet"
     >
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="background">
+    <!-- =========================
+         BACKGROUND 3D SCENE
+    ========================== -->
 
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+    <div class="scene">
+
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+
+        <div class="grid"></div>
+
+        <!-- PHONE 1 -->
+        <div class="phone phone-1">
+            <div class="phone-frame">
+
+                <div class="camera"></div>
+
+                <div class="screen">
+
+                    <div class="status">
+                        <span>9:41</span>
+                        <span>● ● ●</span>
+                    </div>
+
+                    <div class="phone-logo">
+                        📱
+                    </div>
+
+                    <h3>MobileStore</h3>
+
+                    <p>Smartphones made simple.</p>
+
+                    <div class="fake-card">
+
+                        <div class="fake-image">
+                            📱
+                        </div>
+
+                        <div>
+                            <strong>Premium Phone</strong>
+                            <small>₹29,999</small>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- PHONE 2 -->
+        <div class="phone phone-2">
+            <div class="phone-frame">
+
+                <div class="camera"></div>
+
+                <div class="screen">
+
+                    <div class="status">
+                        <span>10:12</span>
+                        <span>● ● ●</span>
+                    </div>
+
+                    <div class="phone-logo">
+                        🛒
+                    </div>
+
+                    <h3>Shop Now</h3>
+
+                    <p>Find your perfect smartphone.</p>
+
+                    <div class="fake-card">
+
+                        <div class="fake-image">
+                            ⚡
+                        </div>
+
+                        <div>
+                            <strong>Best Deals</strong>
+                            <small>Up to 40% OFF</small>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- PHONE 3 -->
+        <div class="phone phone-3">
+            <div class="phone-frame">
+
+                <div class="camera"></div>
+
+                <div class="screen">
+
+                    <div class="status">
+                        <span>11:08</span>
+                        <span>● ● ●</span>
+                    </div>
+
+                    <div class="phone-logo">
+                        ⭐
+                    </div>
+
+                    <h3>Premium</h3>
+
+                    <p>Latest smartphones in one place.</p>
+
+                    <div class="fake-card">
+
+                        <div class="fake-image">
+                            🔥
+                        </div>
+
+                        <div>
+                            <strong>New Arrivals</strong>
+                            <small>Explore Now</small>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
     </div>
 
 
+    <!-- =========================
+         MAIN PAGE
+    ========================== -->
+
     <main class="page">
 
+        <!-- BRAND -->
 
-        <!-- LEFT / BRAND SECTION -->
+        <div class="brand">
 
-        <section class="hero">
-
-            <div class="hero-content">
-
-                <div class="brand-badge">
-                    <span class="brand-icon">📱</span>
-                    <span>MobileStore</span>
-                </div>
-
-
-                <h1>
-                    Find your
-                    <span>perfect phone.</span>
-                </h1>
-
-
-                <p class="hero-text">
-                    Discover the latest smartphones,
-                    amazing deals and everything you need
-                    for your mobile life.
-                </p>
-
-
-                <div class="features">
-
-                    <div class="feature">
-                        <div class="feature-icon">⚡</div>
-                        <div>
-                            <strong>Latest Devices</strong>
-                            <small>Explore the newest smartphones</small>
-                        </div>
-                    </div>
-
-
-                    <div class="feature">
-                        <div class="feature-icon">💎</div>
-                        <div>
-                            <strong>Best Prices</strong>
-                            <small>Great products, great value</small>
-                        </div>
-                    </div>
-
-
-                    <div class="feature">
-                        <div class="feature-icon">🛒</div>
-                        <div>
-                            <strong>Easy Shopping</strong>
-                            <small>Simple and secure experience</small>
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <div class="trusted">
-
-                    <div class="avatars">
-                        <span>👨</span>
-                        <span>👩</span>
-                        <span>🧑</span>
-                        <span>+</span>
-                    </div>
-
-                    <div>
-                        <strong>Join our community</strong>
-                        <small>Start your mobile journey today</small>
-                    </div>
-
-                </div>
-
+            <div class="brand-icon">
+                📱
             </div>
 
-        </section>
+            <span>MobileStore</span>
+
+        </div>
 
 
-        <!-- RIGHT / AUTH SECTION -->
+        <!-- =========================
+             LOGIN CARD
+        ========================== -->
 
-        <section class="login-area">
+        <div class="card">
 
-            <div class="card">
-
-
-                <!-- CARD HEADER -->
-
-                <div class="card-logo">
-                    📱
-                </div>
+            <div class="card-logo">
+                📱
+            </div>
 
 
-                <h2 id="authTitle">
-                    Welcome back
-                </h2>
+            <h1 id="authTitle">
+                Welcome Back
+            </h1>
 
 
-                <p class="subtitle" id="authSubtitle">
-                    Login to continue to MobileStore
-                </p>
+            <p
+                class="subtitle"
+                id="authSubtitle"
+            >
+                Login to your MobileStore account
+            </p>
 
 
-                <!-- LOGIN -->
+            <!-- =========================
+                 LOGIN BOX
+            ========================== -->
 
-                <div id="loginBox" class="auth-box">
+            <div id="loginBox" class="auth-box">
 
-                    <label for="loginEmail">
-                        Email address
-                    </label>
+                <label for="loginEmail">
+                    Email Address
+                </label>
 
-                    <div class="input-box">
+                <div class="input-box">
 
-                        <span class="input-icon">✉️</span>
+                    <span>✉</span>
 
-                        <input
-                            type="email"
-                            id="loginEmail"
-                            placeholder="you@example.com"
-                            autocomplete="email"
-                        >
-
-                    </div>
-
-
-                    <label for="loginPassword">
-                        Password
-                    </label>
-
-                    <div class="input-box">
-
-                        <span class="input-icon">🔒</span>
-
-                        <input
-                            type="password"
-                            id="loginPassword"
-                            placeholder="Enter your password"
-                            autocomplete="current-password"
-                        >
-
-                        <button
-                            type="button"
-                            class="eye"
-                            onclick="togglePassword('loginPassword', this)"
-                        >
-                            👁
-                        </button>
-
-                    </div>
-
-
-                    <div class="form-options">
-
-                        <label class="remember">
-
-                            <input type="checkbox">
-
-                            <span>Remember me</span>
-
-                        </label>
-
-
-                        <span class="forgot">
-                            Forgot password?
-                        </span>
-
-                    </div>
-
-
-                    <button
-                        class="main-button"
-                        onclick="login()"
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        placeholder="Enter your email"
+                        autocomplete="email"
                     >
 
-                        <span>Login to Account</span>
+                </div>
 
-                        <span class="arrow">→</span>
 
+                <label for="loginPassword">
+                    Password
+                </label>
+
+                <div class="input-box">
+
+                    <span>🔒</span>
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                    >
+
+                    <button
+                        type="button"
+                        class="eye"
+                        onclick="togglePassword('loginPassword', this)"
+                    >
+                        👁
                     </button>
-
-
-                    <p
-                        id="loginMessage"
-                        class="message"
-                    ></p>
-
-
-                    <div class="divider">
-                        <span>or</span>
-                    </div>
-
-
-                    <p class="switch">
-
-                        Don't have an account?
-
-                        <span onclick="showRegister()">
-                            Create one
-                        </span>
-
-                    </p>
 
                 </div>
 
 
-                <!-- REGISTER -->
+                <div class="options">
 
-                <div
-                    id="registerBox"
-                    class="auth-box hidden"
+                    <label class="remember">
+
+                        <input
+                            type="checkbox"
+                            id="rememberMe"
+                        >
+
+                        Remember me
+
+                    </label>
+
+                    <span class="forgot">
+                        Forgot password?
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="main-button"
+                    onclick="login()"
                 >
 
-                    <label for="registerName">
-                        Full name
-                    </label>
+                    <span>Login to Account</span>
 
-                    <div class="input-box">
+                    <b>→</b>
 
-                        <span class="input-icon">👤</span>
-
-                        <input
-                            type="text"
-                            id="registerName"
-                            placeholder="Enter your full name"
-                            autocomplete="name"
-                        >
-
-                    </div>
+                </button>
 
 
-                    <label for="registerEmail">
-                        Email address
-                    </label>
-
-                    <div class="input-box">
-
-                        <span class="input-icon">✉️</span>
-
-                        <input
-                            type="email"
-                            id="registerEmail"
-                            placeholder="you@example.com"
-                            autocomplete="email"
-                        >
-
-                    </div>
+                <p
+                    id="loginMessage"
+                    class="message"
+                ></p>
 
 
-                    <label for="registerPassword">
-                        Password
-                    </label>
-
-                    <div class="input-box">
-
-                        <span class="input-icon">🔒</span>
-
-                        <input
-                            type="password"
-                            id="registerPassword"
-                            placeholder="Create a password"
-                            autocomplete="new-password"
-                        >
-
-                        <button
-                            type="button"
-                            class="eye"
-                            onclick="togglePassword('registerPassword', this)"
-                        >
-                            👁
-                        </button>
-
-                    </div>
-
-
-                    <label for="confirmPassword">
-                        Confirm password
-                    </label>
-
-                    <div class="input-box">
-
-                        <span class="input-icon">🔐</span>
-
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            placeholder="Confirm your password"
-                            autocomplete="new-password"
-                        >
-
-                        <button
-                            type="button"
-                            class="eye"
-                            onclick="togglePassword('confirmPassword', this)"
-                        >
-                            👁
-                        </button>
-
-                    </div>
-
-
-                    <button
-                        class="main-button"
-                        onclick="register()"
-                    >
-
-                        <span>Create Account</span>
-
-                        <span class="arrow">→</span>
-
-                    </button>
-
-
-                    <p
-                        id="registerMessage"
-                        class="message"
-                    ></p>
-
-
-                    <div class="divider">
-                        <span>or</span>
-                    </div>
-
-
-                    <p class="switch">
-
-                        Already have an account?
-
-                        <span onclick="showLogin()">
-                            Login
-                        </span>
-
-                    </p>
-
+                <div class="divider">
+                    <span>OR</span>
                 </div>
 
 
-                <div class="security">
+                <p class="switch">
 
-                    🔐 Your information is securely protected
+                    Don't have an account?
 
-                </div>
+                    <span onclick="showRegister()">
+                        Create Account
+                    </span>
+
+                </p>
 
             </div>
 
-        </section>
+
+            <!-- =========================
+                 REGISTER BOX
+            ========================== -->
+
+            <div
+                id="registerBox"
+                class="auth-box hidden"
+            >
+
+                <label for="registerName">
+                    Full Name
+                </label>
+
+                <div class="input-box">
+
+                    <span>👤</span>
+
+                    <input
+                        type="text"
+                        id="registerName"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                    >
+
+                </div>
+
+
+                <label for="registerEmail">
+                    Email Address
+                </label>
+
+                <div class="input-box">
+
+                    <span>✉</span>
+
+                    <input
+                        type="email"
+                        id="registerEmail"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                    >
+
+                </div>
+
+
+                <label for="registerPassword">
+                    Password
+                </label>
+
+                <div class="input-box">
+
+                    <span>🔒</span>
+
+                    <input
+                        type="password"
+                        id="registerPassword"
+                        placeholder="Create a password"
+                        autocomplete="new-password"
+                    >
+
+                    <button
+                        type="button"
+                        class="eye"
+                        onclick="togglePassword('registerPassword', this)"
+                    >
+                        👁
+                    </button>
+
+                </div>
+
+
+                <label for="confirmPassword">
+                    Confirm Password
+                </label>
+
+                <div class="input-box">
+
+                    <span>🔐</span>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Confirm your password"
+                        autocomplete="new-password"
+                    >
+
+                    <button
+                        type="button"
+                        class="eye"
+                        onclick="togglePassword('confirmPassword', this)"
+                    >
+                        👁
+                    </button>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="main-button"
+                    onclick="register()"
+                >
+
+                    <span>Create My Account</span>
+
+                    <b>→</b>
+
+                </button>
+
+
+                <p
+                    id="registerMessage"
+                    class="message"
+                ></p>
+
+
+                <div class="divider">
+                    <span>ALREADY REGISTERED?</span>
+                </div>
+
+
+                <p class="switch">
+
+                    Already have an account?
+
+                    <span onclick="showLogin()">
+                        Login
+                    </span>
+
+                </p>
+
+            </div>
+
+
+            <p class="secure">
+                🔐 Your account is securely protected
+            </p>
+
+        </div>
+
+
+        <div class="bottom-text">
+            © 2026 MobileStore • All rights reserved
+        </div>
 
     </main>
 
+
+    <!-- Firebase / JavaScript -->
 
     <script
         type="module"
