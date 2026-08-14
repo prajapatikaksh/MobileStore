@@ -1,7 +1,3 @@
-/* =========================================
-   MOBILESTORE - FIREBASE AUTH
-========================================= */
-
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
@@ -24,181 +20,137 @@ import {
 
 
 
-/* =========================================
+/* =================================
    FIREBASE CONFIG
-========================================= */
+================================= */
 
 const firebaseConfig = {
 
-    apiKey:
-        "AIzaSyC_A-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
+    apiKey: "AIzaSyC_A-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
 
-    authDomain:
-        "mobilestore-d044c.firebaseapp.com",
+    authDomain: "mobilestore-d044c.firebaseapp.com",
 
-    projectId:
-        "mobilestore-d044c",
+    projectId: "mobilestore-d044c",
 
-    storageBucket:
-        "mobilestore-d044c.firebasestorage.app",
+    storageBucket: "mobilestore-d044c.firebasestorage.app",
 
-    messagingSenderId:
-        "942752515187",
+    messagingSenderId: "942752515187",
 
-    appId:
-        "1:942752515187:web:779e0e178a4729e5b21606",
+    appId: "1:942752515187:web:779e0e178a4729e5b21606",
 
-    measurementId:
-        "G-XXBFTKTLPH"
+    measurementId: "G-XXBFTKTLPH"
+
 };
 
 
 
-/* =========================================
+/* =================================
    INITIALIZE FIREBASE
-========================================= */
+================================= */
 
-const app =
-    initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
+const auth = getAuth(app);
 
-const auth =
-    getAuth(app);
-
-
-const db =
-    getFirestore(app);
+const db = getFirestore(app);
 
 
 
-/* =========================================
+/* =================================
    SHOW REGISTER
-========================================= */
+================================= */
 
 function showRegister() {
 
-    const loginBox =
-        document.getElementById("loginBox");
-
-    const registerBox =
-        document.getElementById("registerBox");
+    document
+        .getElementById("loginBox")
+        .classList.add("hidden");
 
 
-    if (!loginBox || !registerBox) {
-        return;
-    }
+    document
+        .getElementById("registerBox")
+        .classList.remove("hidden");
 
 
-    loginBox.classList.add("hidden");
-
-    registerBox.classList.remove("hidden");
-
-
-    const title =
-        document.getElementById("authTitle");
-
-    const subtitle =
-        document.getElementById("authSubtitle");
+    document
+        .getElementById("authTitle")
+        .textContent = "Create your account";
 
 
-    if (title) {
-
-        title.textContent =
-            "Create Account";
-    }
-
-
-    if (subtitle) {
-
-        subtitle.textContent =
-            "Join MobileStore today";
-    }
+    document
+        .getElementById("authSubtitle")
+        .textContent =
+        "Join MobileStore and start shopping";
 
 
-    const message =
-        document.getElementById("registerMessage");
+    clearMessages();
 
-
-    if (message) {
-
-        message.textContent = "";
-    }
 }
 
 
 
-/* =========================================
+/* =================================
    SHOW LOGIN
-========================================= */
+================================= */
 
 function showLogin() {
 
-    const loginBox =
-        document.getElementById("loginBox");
-
-    const registerBox =
-        document.getElementById("registerBox");
+    document
+        .getElementById("registerBox")
+        .classList.add("hidden");
 
 
-    if (!loginBox || !registerBox) {
-        return;
-    }
+    document
+        .getElementById("loginBox")
+        .classList.remove("hidden");
 
 
-    registerBox.classList.add("hidden");
-
-    loginBox.classList.remove("hidden");
-
-
-    const title =
-        document.getElementById("authTitle");
-
-    const subtitle =
-        document.getElementById("authSubtitle");
+    document
+        .getElementById("authTitle")
+        .textContent = "Welcome back";
 
 
-    if (title) {
-
-        title.textContent =
-            "Welcome Back";
-    }
-
-
-    if (subtitle) {
-
-        subtitle.textContent =
-            "Login to your MobileStore account";
-    }
+    document
+        .getElementById("authSubtitle")
+        .textContent =
+        "Login to continue to MobileStore";
 
 
-    const message =
-        document.getElementById("loginMessage");
+    clearMessages();
 
-
-    if (message) {
-
-        message.textContent = "";
-    }
 }
 
 
 
-/* =========================================
-   PASSWORD SHOW / HIDE
-========================================= */
+/* =================================
+   CLEAR MESSAGES
+================================= */
 
-function togglePassword(
-    inputId,
-    button
-) {
+function clearMessages() {
+
+    const loginMessage =
+        document.getElementById("loginMessage");
+
+    const registerMessage =
+        document.getElementById("registerMessage");
+
+
+    loginMessage.textContent = "";
+
+    registerMessage.textContent = "";
+
+}
+
+
+
+/* =================================
+   PASSWORD TOGGLE
+================================= */
+
+function togglePassword(inputId, button) {
 
     const input =
         document.getElementById(inputId);
-
-
-    if (!input) {
-        return;
-    }
 
 
     if (input.type === "password") {
@@ -212,74 +164,55 @@ function togglePassword(
         input.type = "password";
 
         button.textContent = "👁";
+
     }
+
 }
 
 
 
-/* =========================================
+/* =================================
    REGISTER
-========================================= */
+================================= */
 
 async function register() {
 
-    const nameInput =
-        document.getElementById(
-            "registerName"
-        );
-
-
-    const emailInput =
-        document.getElementById(
-            "registerEmail"
-        );
-
-
-    const passwordInput =
-        document.getElementById(
-            "registerPassword"
-        );
-
-
-    const confirmInput =
-        document.getElementById(
-            "confirmPassword"
-        );
-
-
-    const message =
-        document.getElementById(
-            "registerMessage"
-        );
-
-
     const name =
-        nameInput.value.trim();
+        document
+            .getElementById("registerName")
+            .value
+            .trim();
 
 
     const email =
-        emailInput.value
+        document
+            .getElementById("registerEmail")
+            .value
             .trim()
             .toLowerCase();
 
 
     const password =
-        passwordInput.value;
+        document
+            .getElementById("registerPassword")
+            .value;
 
 
     const confirmPassword =
-        confirmInput.value;
+        document
+            .getElementById("confirmPassword")
+            .value;
 
 
-    /* CLEAR MESSAGE */
-
-    message.textContent = "";
-
+    const message =
+        document.getElementById("registerMessage");
 
 
-    /* =====================================
-       VALIDATION
-    ===================================== */
+    message.style.color = "#dc2626";
+
+
+
+    /* VALIDATION */
 
     if (
         name === "" ||
@@ -288,77 +221,40 @@ async function register() {
         confirmPassword === ""
     ) {
 
-        message.style.color =
-            "#ef4444";
-
         message.textContent =
-            "Please fill all fields.";
+            "Please fill in all fields.";
 
         return;
+
     }
 
 
-    /* EMAIL CHECK */
-
-    const emailPattern =
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
-    if (!emailPattern.test(email)) {
-
-        message.style.color =
-            "#ef4444";
-
-        message.textContent =
-            "Please enter a valid email.";
-
-        return;
-    }
-
-
-    /* PASSWORD LENGTH */
 
     if (password.length < 6) {
-
-        message.style.color =
-            "#ef4444";
 
         message.textContent =
             "Password must be at least 6 characters.";
 
         return;
+
     }
 
 
-    /* CONFIRM PASSWORD */
 
-    if (
-        password !== confirmPassword
-    ) {
-
-        message.style.color =
-            "#ef4444";
+    if (password !== confirmPassword) {
 
         message.textContent =
             "Passwords do not match.";
 
         return;
+
     }
 
 
 
-    /* =====================================
-       FIREBASE REGISTER
-    ===================================== */
-
     try {
 
-        message.style.color =
-            "#a78bfa";
-
-        message.textContent =
-            "Creating your account...";
-
+        /* CREATE ACCOUNT */
 
         const userCredential =
             await createUserWithEmailAndPassword(
@@ -373,9 +269,7 @@ async function register() {
 
 
 
-        /* =================================
-           SAVE DISPLAY NAME
-        ================================= */
+        /* SAVE NAME */
 
         await updateProfile(
             user,
@@ -386,68 +280,44 @@ async function register() {
 
 
 
-        /* =================================
-           SAVE USER TO FIRESTORE
-        ================================= */
+        /* SAVE USER DATA */
 
         await setDoc(
-            doc(
-                db,
-                "users",
-                user.uid
-            ),
+            doc(db, "users", user.uid),
             {
 
-                uid:
-                    user.uid,
+                name: name,
 
-                name:
-                    name,
+                email: email,
 
-                email:
-                    email,
+                uid: user.uid,
 
-                createdAt:
-                    serverTimestamp()
+                createdAt: serverTimestamp()
+
             }
         );
 
 
 
-        /* =================================
-           SUCCESS
-        ================================= */
+        /* SUCCESS */
 
-        message.style.color =
-            "#22c55e";
+        message.style.color = "#16a34a";
 
         message.textContent =
             "✓ Account created successfully!";
 
 
-        /* CLEAR PASSWORDS */
 
-        passwordInput.value = "";
+        setTimeout(() => {
 
-        confirmInput.value = "";
+            showLogin();
 
+            document
+                .getElementById("loginEmail")
+                .value = email;
 
+        }, 1200);
 
-        /* GO TO LOGIN */
-
-        setTimeout(
-            function () {
-
-                showLogin();
-
-
-                document.getElementById(
-                    "loginEmail"
-                ).value = email;
-
-            },
-            1200
-        );
 
 
     } catch (error) {
@@ -458,130 +328,93 @@ async function register() {
         );
 
 
-        message.style.color =
-            "#ef4444";
+        message.style.color = "#dc2626";
 
 
-        /* FIREBASE ERRORS */
+        if (
+            error.code ===
+            "auth/email-already-in-use"
+        ) {
 
-        switch (error.code) {
+            message.textContent =
+                "This email is already registered.";
 
+        } else if (
+            error.code ===
+            "auth/invalid-email"
+        ) {
 
-            case "auth/email-already-in-use":
+            message.textContent =
+                "Please enter a valid email.";
 
-                message.textContent =
-                    "This email is already registered.";
+        } else if (
+            error.code ===
+            "auth/weak-password"
+        ) {
 
-                break;
+            message.textContent =
+                "Password is too weak.";
 
+        } else {
 
-            case "auth/invalid-email":
-
-                message.textContent =
-                    "Invalid email address.";
-
-                break;
-
-
-            case "auth/weak-password":
-
-                message.textContent =
-                    "Password is too weak.";
-
-                break;
-
-
-            case "auth/network-request-failed":
-
-                message.textContent =
-                    "Network error. Check your internet.";
-
-                break;
-
-
-            default:
-
-                message.textContent =
-                    "Registration failed. Please try again.";
+            message.textContent =
+                "Something went wrong. Please try again.";
 
         }
+
     }
+
 }
 
 
 
-/* =========================================
+/* =================================
    LOGIN
-========================================= */
+================================= */
 
 async function login() {
 
-    const emailInput =
-        document.getElementById(
-            "loginEmail"
-        );
-
-
-    const passwordInput =
-        document.getElementById(
-            "loginPassword"
-        );
-
-
-    const message =
-        document.getElementById(
-            "loginMessage"
-        );
-
-
     const email =
-        emailInput.value
+        document
+            .getElementById("loginEmail")
+            .value
             .trim()
             .toLowerCase();
 
 
     const password =
-        passwordInput.value;
+        document
+            .getElementById("loginPassword")
+            .value;
 
 
-    /* CLEAR MESSAGE */
-
-    message.textContent = "";
-
+    const message =
+        document.getElementById("loginMessage");
 
 
-    /* =====================================
-       VALIDATION
-    ===================================== */
+    message.style.color = "#dc2626";
+
+
+
+    /* VALIDATION */
 
     if (
         email === "" ||
         password === ""
     ) {
 
-        message.style.color =
-            "#ef4444";
-
         message.textContent =
             "Please enter email and password.";
 
         return;
+
     }
 
 
 
-    /* =====================================
-       FIREBASE LOGIN
-    ===================================== */
-
     try {
 
-        message.style.color =
-            "#a78bfa";
-
-        message.textContent =
-            "Logging in...";
-
+        /* LOGIN */
 
         await signInWithEmailAndPassword(
             auth,
@@ -591,30 +424,24 @@ async function login() {
 
 
 
-        /* =================================
-           SUCCESS
-        ================================= */
+        /* SUCCESS */
 
-        message.style.color =
-            "#22c55e";
+        message.style.color = "#16a34a";
 
         message.textContent =
             "✓ Login successful!";
 
 
-        /* =================================
-           GO TO MOBILE PAGE
-        ================================= */
 
-        setTimeout(
-            function () {
+        /* REDIRECT */
 
-                window.location.href =
-                    "mobile.html";
+        setTimeout(() => {
 
-            },
-            700
-        );
+            window.location.href =
+                "mobile.html";
+
+        }, 700);
+
 
 
     } catch (error) {
@@ -625,80 +452,57 @@ async function login() {
         );
 
 
-        message.style.color =
-            "#ef4444";
+        message.style.color = "#dc2626";
 
 
-        switch (error.code) {
+        if (
+            error.code ===
+            "auth/invalid-credential"
+        ) {
 
+            message.textContent =
+                "Incorrect email or password.";
 
-            case "auth/invalid-credential":
+        } else if (
+            error.code ===
+            "auth/user-not-found"
+        ) {
 
-                message.textContent =
-                    "Incorrect email or password.";
+            message.textContent =
+                "No account found with this email.";
 
-                break;
+        } else if (
+            error.code ===
+            "auth/wrong-password"
+        ) {
 
+            message.textContent =
+                "Incorrect password.";
 
-            case "auth/user-not-found":
+        } else if (
+            error.code ===
+            "auth/invalid-email"
+        ) {
 
-                message.textContent =
-                    "Account not found.";
+            message.textContent =
+                "Please enter a valid email.";
 
-                break;
+        } else {
 
+            message.textContent =
+                "Login failed. Please try again.";
 
-            case "auth/wrong-password":
-
-                message.textContent =
-                    "Incorrect password.";
-
-                break;
-
-
-            case "auth/invalid-email":
-
-                message.textContent =
-                    "Invalid email address.";
-
-                break;
-
-
-            case "auth/too-many-requests":
-
-                message.textContent =
-                    "Too many attempts. Try again later.";
-
-                break;
-
-
-            case "auth/network-request-failed":
-
-                message.textContent =
-                    "Network error. Check your internet.";
-
-                break;
-
-
-            default:
-
-                message.textContent =
-                    "Login failed. Please try again.";
         }
+
     }
+
 }
 
 
 
-/* =========================================
-   GLOBAL FUNCTIONS
-========================================= */
-
-/*
-   HTML માં onclick="" છે,
-   તેથી functions window પર રાખવા જરૂરી છે.
-*/
-
+/* =================================
+   MAKE FUNCTIONS GLOBAL
+================================= */
 
 window.showRegister =
     showRegister;
@@ -718,13 +522,3 @@ window.register =
 
 window.login =
     login;
-
-
-
-/* =========================================
-   READY MESSAGE
-========================================= */
-
-console.log(
-    "✅ MobileStore Firebase initialized successfully"
-);
