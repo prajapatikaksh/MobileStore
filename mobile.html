@@ -40,36 +40,21 @@
 
 </head>
 
-
 <body>
-
-
-<!-- =====================================================
-     BACKGROUND
-===================================================== -->
 
 <div class="background">
 
     <div class="bg-orb orb-one"></div>
-
     <div class="bg-orb orb-two"></div>
-
     <div class="bg-orb orb-three"></div>
-
     <div class="bg-grid"></div>
 
 </div>
 
 
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
+<!-- ================= HEADER ================= -->
 
 <header class="header">
-
-
-    <!-- LOGO -->
 
     <div class="logo">
 
@@ -91,9 +76,6 @@
 
     </div>
 
-
-
-    <!-- SEARCH -->
 
     <div class="search-box">
 
@@ -118,28 +100,26 @@
     </div>
 
 
+    <div class="header-actions">
 
-    <!-- USER AREA -->
-
-    <div class="user-area">
-
-        <div class="user-info">
+        <div
+            id="userBox"
+            class="user-box"
+        >
 
             <div class="user-avatar">
                 👤
             </div>
 
-            <div>
+            <div class="user-info">
 
-                <span class="user-greeting">
-                    Welcome
-                </span>
-
-                <strong
-                    data-user-name
-                >
-                    Customer
+                <strong id="userName">
+                    User
                 </strong>
+
+                <small id="userEmail">
+                    Loading...
+                </small>
 
             </div>
 
@@ -148,118 +128,79 @@
 
         <button
             type="button"
+            class="cart-button"
+            onclick="openCart()"
+        >
+
+            <span class="cart-icon">
+                🛒
+            </span>
+
+            <span class="cart-text">
+                Cart
+            </span>
+
+            <span id="cartCount">
+                0
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
             class="logout-button"
-            onclick="logout()"
+            onclick="logoutUser()"
         >
             Logout
         </button>
 
     </div>
 
-
-
-    <!-- CART -->
-
-    <button
-        type="button"
-        class="cart-button"
-        onclick="openCart()"
-    >
-
-        <span class="cart-icon">
-            🛒
-        </span>
-
-        <span class="cart-text">
-            Cart
-        </span>
-
-        <span id="cartCount">
-            0
-        </span>
-
-    </button>
-
-
 </header>
 
 
-
-<!-- =====================================================
-     HERO
-===================================================== -->
+<!-- ================= HERO ================= -->
 
 <section class="hero">
 
-
     <div class="hero-content">
-
 
         <div class="hero-badge">
             ✨ NEW COLLECTION 2026
         </div>
-
 
         <h1>
             Find Your
             <span>Perfect Smartphone</span>
         </h1>
 
-
         <p>
             Explore the latest smartphones from
             your favourite brands.
         </p>
 
-
         <div class="hero-stats">
 
             <div>
-
-                <strong>
-                    14+
-                </strong>
-
-                <span>
-                    Mobiles
-                </span>
-
+                <strong>14+</strong>
+                <span>Mobiles</span>
             </div>
 
-
             <div>
-
-                <strong>
-                    8+
-                </strong>
-
-                <span>
-                    Brands
-                </span>
-
+                <strong>10+</strong>
+                <span>Brands</span>
             </div>
 
-
             <div>
-
-                <strong>
-                    5G
-                </strong>
-
-                <span>
-                    Ready
-                </span>
-
+                <strong>5G</strong>
+                <span>Ready</span>
             </div>
 
         </div>
 
-
     </div>
 
-
-
-    <!-- HERO PHONE -->
 
     <div class="hero-phone">
 
@@ -270,30 +211,23 @@
             <div class="hero-phone-screen">
 
                 <div class="hero-phone-status">
-
                     9:41
-
                     <span>
                         ● ● ●
                     </span>
-
                 </div>
-
 
                 <div class="hero-phone-camera">
                     📷
                 </div>
 
-
                 <h3>
                     MobileStore
                 </h3>
 
-
                 <p>
                     Premium Collection
                 </p>
-
 
                 <div class="hero-product">
                     📱
@@ -305,17 +239,12 @@
 
     </div>
 
-
 </section>
 
 
-
-<!-- =====================================================
-     COMPANY FILTER
-===================================================== -->
+<!-- ================= COMPANIES ================= -->
 
 <section class="company-section">
-
 
     <div class="filter-heading">
 
@@ -332,7 +261,6 @@
 
     <div class="companies">
 
-
         <button
             type="button"
             class="company-filter active"
@@ -341,7 +269,6 @@
             <span>🔥</span>
             All
         </button>
-
 
         <button
             type="button"
@@ -352,7 +279,6 @@
             Apple
         </button>
 
-
         <button
             type="button"
             class="company-filter"
@@ -361,7 +287,6 @@
             <span>📱</span>
             Samsung
         </button>
-
 
         <button
             type="button"
@@ -372,7 +297,6 @@
             OnePlus
         </button>
 
-
         <button
             type="button"
             class="company-filter"
@@ -381,7 +305,6 @@
             <span>💙</span>
             Vivo
         </button>
-
 
         <button
             type="button"
@@ -392,7 +315,6 @@
             Oppo
         </button>
 
-
         <button
             type="button"
             class="company-filter"
@@ -401,7 +323,6 @@
             <span>⚡</span>
             Realme
         </button>
-
 
         <button
             type="button"
@@ -412,7 +333,6 @@
             Xiaomi
         </button>
 
-
         <button
             type="button"
             class="company-filter"
@@ -421,7 +341,6 @@
             <span>🪽</span>
             Motorola
         </button>
-
 
         <button
             type="button"
@@ -432,7 +351,6 @@
             Google
         </button>
 
-
         <button
             type="button"
             class="company-filter"
@@ -442,19 +360,14 @@
             Nothing
         </button>
 
-
     </div>
 
 </section>
 
 
-
-<!-- =====================================================
-     PRODUCTS
-===================================================== -->
+<!-- ================= PRODUCTS ================= -->
 
 <main class="products-section">
-
 
     <div class="section-heading">
 
@@ -470,7 +383,6 @@
 
         </div>
 
-
         <div class="result-badge">
             🛍️ Latest Collection
         </div>
@@ -483,23 +395,17 @@
         class="mobile-container"
     ></div>
 
-
 </main>
 
 
-
-<!-- =====================================================
-     PRODUCT DETAILS MODAL
-===================================================== -->
+<!-- ================= PRODUCT MODAL ================= -->
 
 <div
     id="productModal"
     class="modal"
 >
 
-
     <div class="modal-content">
-
 
         <button
             type="button"
@@ -523,11 +429,10 @@
         </div>
 
 
-        <div class="modal-company">
-
-            <span id="modalCompany"></span>
-
-        </div>
+        <div
+            id="modalCompany"
+            class="modal-company"
+        ></div>
 
 
         <h2 id="modalName">
@@ -537,30 +442,25 @@
 
         <div class="modal-details">
 
-
             <div
                 id="modalRam"
                 class="detail-item"
             ></div>
-
 
             <div
                 id="modalStorage"
                 class="detail-item"
             ></div>
 
-
             <div
                 id="modalCamera"
                 class="detail-item"
             ></div>
 
-
             <div
                 id="modalNetwork"
                 class="detail-item"
             ></div>
-
 
         </div>
 
@@ -575,58 +475,39 @@
 
         <div class="modal-actions">
 
-
             <button
                 type="button"
                 class="buy-button"
                 onclick="buyMobile()"
             >
-
-                <span>
-                    ⚡
-                </span>
-
+                <span>⚡</span>
                 Buy Now
-
             </button>
-
 
             <button
                 type="button"
                 class="modal-cart-button"
                 onclick="addModalToCart()"
             >
-
-                <span>
-                    🛒
-                </span>
-
+                <span>🛒</span>
                 Add to Cart
-
             </button>
 
-
         </div>
-
 
     </div>
 
 </div>
 
 
-
-<!-- =====================================================
-     CART MODAL
-===================================================== -->
+<!-- ================= CART MODAL ================= -->
 
 <div
     id="cartModal"
     class="modal"
 >
 
-
     <div class="cart-content">
-
 
         <button
             type="button"
@@ -639,11 +520,9 @@
 
         <div class="cart-title">
 
-
             <div class="cart-title-icon">
                 🛒
             </div>
-
 
             <div>
 
@@ -657,7 +536,6 @@
 
             </div>
 
-
         </div>
 
 
@@ -668,7 +546,6 @@
 
 
         <div class="cart-bottom">
-
 
             <div class="total-row">
 
@@ -688,37 +565,25 @@
                 class="checkout-button"
                 onclick="checkout()"
             >
-
                 Proceed to Checkout
-
-                <span>
-                    →
-                </span>
-
+                <span>→</span>
             </button>
 
-
         </div>
-
 
     </div>
 
 </div>
 
 
-
-<!-- =====================================================
-     CHECKOUT MODAL
-===================================================== -->
+<!-- ================= CHECKOUT MODAL ================= -->
 
 <div
     id="checkoutModal"
     class="modal"
 >
 
-
     <div class="checkout-content">
-
 
         <button
             type="button"
@@ -731,111 +596,56 @@
 
         <div class="checkout-header">
 
-
             <div class="checkout-icon">
-                🧾
+                📦
             </div>
-
 
             <div>
 
                 <h2>
-                    Checkout
+                    Delivery Details
                 </h2>
 
                 <p>
-                    Enter your delivery details
+                    Enter your details to place the order
                 </p>
 
             </div>
 
-
         </div>
 
 
-
-        <!-- CUSTOMER NAME -->
-
-        <div class="checkout-field">
-
-            <label>
-                Full Name
-            </label>
+        <div class="checkout-form">
 
             <input
                 type="text"
                 id="checkoutName"
-                placeholder="Enter your full name"
+                placeholder="Full Name"
                 autocomplete="name"
             >
-
-        </div>
-
-
-
-        <!-- PHONE -->
-
-        <div class="checkout-field">
-
-            <label>
-                Mobile Number
-            </label>
 
             <input
                 type="tel"
                 id="checkoutPhone"
-                placeholder="Enter 10 digit mobile number"
+                placeholder="Mobile Number"
                 maxlength="10"
                 autocomplete="tel"
             >
 
-        </div>
-
-
-
-        <!-- ADDRESS -->
-
-        <div class="checkout-field">
-
-            <label>
-                Delivery Address
-            </label>
-
             <textarea
                 id="checkoutAddress"
-                placeholder="Enter your complete address"
+                placeholder="Full Address"
                 rows="3"
             ></textarea>
 
-        </div>
 
-
-
-        <!-- CITY + PINCODE -->
-
-        <div class="checkout-row">
-
-
-            <div class="checkout-field">
-
-                <label>
-                    City
-                </label>
+            <div class="checkout-row">
 
                 <input
                     type="text"
                     id="checkoutCity"
                     placeholder="City"
                 >
-
-            </div>
-
-
-            <div class="checkout-field">
-
-                <label>
-                    Pincode
-                </label>
 
                 <input
                     type="text"
@@ -847,186 +657,68 @@
             </div>
 
 
+            <div
+                id="checkoutMessage"
+                class="checkout-message"
+            ></div>
+
+
+            <div class="checkout-total">
+
+                <span>
+                    Order Total
+                </span>
+
+                <strong id="checkoutTotal">
+                    ₹0
+                </strong>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="place-order-button"
+                onclick="placeOrder()"
+            >
+                Place Order on WhatsApp
+                <span>→</span>
+            </button>
+
         </div>
-
-
-
-        <!-- ORDER TOTAL -->
-
-        <div class="checkout-total">
-
-            <span>
-                Order Total
-            </span>
-
-            <strong id="checkoutTotal">
-                ₹0
-            </strong>
-
-        </div>
-
-
-
-        <!-- CHECKOUT MESSAGE -->
-
-        <div
-            id="checkoutMessage"
-            class="checkout-message"
-        ></div>
-
-
-
-        <!-- PLACE ORDER -->
-
-        <button
-            type="button"
-            class="place-order-button"
-            onclick="placeOrder()"
-        >
-
-            <span>
-                🛍️
-            </span>
-
-            Place Order
-
-            <span>
-                →
-            </span>
-
-        </button>
-
 
     </div>
 
 </div>
 
 
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+<!-- ================= FOOTER ================= -->
 
 <footer>
-
 
     <div class="footer-logo">
         📱 MobileStore
     </div>
 
-
     <p>
         Your favourite mobiles, all in one place.
     </p>
-
 
     <div class="developer">
         Made with ❤️ by Kaksh
     </div>
 
-
     <div class="footer-copy">
         © 2026 MobileStore. All rights reserved.
     </div>
 
-
 </footer>
 
 
-
-<!-- =====================================================
-     MOBILE JAVASCRIPT
-===================================================== -->
-
-<script src="mobile.js"></script>
-
-
-<!-- =====================================================
-     USER DISPLAY
-===================================================== -->
-
-<script type="module">
-
-    import {
-        getAuth,
-        onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
-    import {
-        initializeApp
-    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-
-
-    const firebaseConfig = {
-
-        apiKey: "AIzaSyC_A-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
-
-        authDomain: "mobilestore-d044c.firebaseapp.com",
-
-        projectId: "mobilestore-d044c",
-
-        storageBucket: "mobilestore-d044c.firebasestorage.app",
-
-        messagingSenderId: "942752515187",
-
-        appId: "1:942752515187:web:779e0e178a4729e5b21606",
-
-        measurementId: "G-XXBFTKTLPH"
-
-    };
-
-
-    const mobileStoreApp =
-        initializeApp(
-            firebaseConfig,
-            "MobileStorePage"
-        );
-
-
-    const mobileStoreAuth =
-        getAuth(
-            mobileStoreApp
-        );
-
-
-    onAuthStateChanged(
-        mobileStoreAuth,
-        function(user) {
-
-            if (!user) {
-
-                window.location.href =
-                    "index.html";
-
-                return;
-
-            }
-
-
-            const name =
-                user.displayName ||
-                "Customer";
-
-
-            document
-                .querySelectorAll(
-                    "[data-user-name]"
-                )
-                .forEach(
-                    function(element) {
-
-                        element.textContent =
-                            name;
-
-                    }
-                );
-
-        }
-    );
-
-</script>
-
+<script
+    type="module"
+    src="mobile.js"
+></script>
 
 </body>
-
 </html>
