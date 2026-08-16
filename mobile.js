@@ -1,111 +1,6 @@
-/* =====================================================
-   MOBILESTORE FINAL MOBILE.JS
-===================================================== */
-
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-
-import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
-
-/* =====================================================
-   FIREBASE
-===================================================== */
-
-const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyC_A-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
-
-    authDomain:
-        "mobilestore-d044c.firebaseapp.com",
-
-    projectId:
-        "mobilestore-d044c",
-
-    storageBucket:
-        "mobilestore-d044c.firebasestorage.app",
-
-    messagingSenderId:
-        "942752515187",
-
-    appId:
-        "1:942752515187:web:779e0e178a4729e5b21606",
-
-    measurementId:
-        "G-XXBFTKTLPH"
-
-};
-
-
-const firebaseApp =
-    initializeApp(
-        firebaseConfig
-    );
-
-const auth =
-    getAuth(
-        firebaseApp
-    );
-
-
-/* =====================================================
-   LOGIN PROTECTION
-===================================================== */
-
-onAuthStateChanged(
-    auth,
-    function(user) {
-
-        if (!user) {
-
-            window.location.href =
-                "index.html";
-
-            return;
-
-        }
-
-
-        const userName =
-            document.getElementById(
-                "userName"
-            );
-
-        const userEmail =
-            document.getElementById(
-                "userEmail"
-            );
-
-
-        if (userName) {
-
-            userName.innerText =
-                user.displayName ||
-                "MobileStore User";
-
-        }
-
-
-        if (userEmail) {
-
-            userEmail.innerText =
-                user.email || "";
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   MOBILE DATA
-===================================================== */
+// =====================================================
+// MOBILESTORE - COMPLETE MOBILE.JS
+// =====================================================
 
 const mobiles = [
 
@@ -266,308 +161,233 @@ const mobiles = [
 ];
 
 
-/* =====================================================
-   VARIABLES
-===================================================== */
+// =====================================================
+// VARIABLES
+// =====================================================
 
-let currentMobiles =
-    mobiles;
+let currentMobiles = [...mobiles];
 
-let selectedMobile =
-    null;
+let selectedMobile = null;
 
 
-/* =====================================================
-   CART
-===================================================== */
+// =====================================================
+// CART
+// =====================================================
 
 let cart = [];
-
 
 try {
 
     cart =
         JSON.parse(
-            localStorage.getItem(
-                "mobileStoreCart"
-            )
+            localStorage.getItem("mobileStoreCart")
         ) || [];
 
-} catch {
+} catch (error) {
 
     cart = [];
 
 }
 
 
-/* =====================================================
-   ELEMENTS
-===================================================== */
+// =====================================================
+// ELEMENTS
+// =====================================================
 
 const container =
-    document.getElementById(
-        "mobileContainer"
-    );
+    document.getElementById("mobileContainer");
 
 const title =
-    document.getElementById(
-        "companyTitle"
-    );
+    document.getElementById("companyTitle");
 
 const cartCount =
-    document.getElementById(
-        "cartCount"
-    );
+    document.getElementById("cartCount");
 
 
-/* =====================================================
-   PRICE
-===================================================== */
+// =====================================================
+// PRICE FORMAT
+// =====================================================
 
 function formatPrice(price) {
 
-    return (
-        "₹" +
-        Number(
-            price
-        ).toLocaleString(
-            "en-IN"
-        )
-    );
+    return "₹" + Number(price).toLocaleString("en-IN");
 
 }
 
 
-/* =====================================================
-   DISPLAY
-===================================================== */
+// =====================================================
+// DISPLAY MOBILES
+// =====================================================
 
 function displayMobiles(list) {
 
-    currentMobiles =
-        list;
+    currentMobiles = [...list];
 
     if (!container) {
         return;
     }
 
-
-    container.innerHTML =
-        "";
+    container.innerHTML = "";
 
 
-    if (
-        !list ||
-        list.length === 0
-    ) {
+    if (list.length === 0) {
 
         container.innerHTML = `
+            <div style="
+                grid-column:1/-1;
+                text-align:center;
+                padding:60px 20px;
+                color:#999;
+            ">
+                <div style="font-size:45px;">📱</div>
 
-            <div
-                style="
-                    grid-column:1/-1;
-                    text-align:center;
-                    padding:60px 20px;
-                "
-            >
-
-                <div
-                    style="
-                        font-size:50px;
-                        margin-bottom:15px;
-                    "
-                >
-                    📱
-                </div>
-
-                <h3>
+                <h3 style="margin-top:15px;color:white;">
                     Mobile not found
                 </h3>
 
-                <p
-                    style="
-                        color:#777486;
-                        margin-top:8px;
-                        font-size:11px;
-                    "
-                >
-                    Try another mobile or brand.
+                <p style="margin-top:8px;">
+                    Try another search.
                 </p>
-
             </div>
-
         `;
 
         return;
-
     }
 
 
-    list.forEach(
-        function(
-            mobile,
-            index
-        ) {
+    list.forEach(function(mobile, index) {
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+        const card =
+            document.createElement("div");
 
-            card.className =
-                "mobile-card";
+        card.className =
+            "mobile-card";
 
 
-            card.innerHTML = `
+        card.innerHTML = `
 
-                <img
-                    class="mobile-image"
-                    src="${mobile.image}"
-                    alt="${mobile.name}"
-                    onerror="
-                        this.onerror=null;
-                        this.src='https://via.placeholder.com/300x350?text=Mobile';
-                    "
-                >
+            <img
+                class="mobile-image"
+                src="${mobile.image}"
+                alt="${mobile.name}"
+                loading="lazy"
+                onerror="
+                    this.src='https://via.placeholder.com/300x350?text=Mobile';
+                "
+            >
 
-                <div class="mobile-info">
+            <div class="mobile-info">
 
-                    <span class="company">
-                        ${mobile.company}
-                    </span>
+                <span class="company">
+                    ${mobile.company}
+                </span>
 
-                    <h3>
-                        ${mobile.name}
-                    </h3>
+                <h3>
+                    ${mobile.name}
+                </h3>
 
-                    <div class="specs">
-
-                        ${mobile.ram}<br>
-                        ${mobile.storage}<br>
-                        ${mobile.camera}<br>
-                        ${mobile.network}
-
-                    </div>
-
-                    <div class="price">
-                        ${formatPrice(
-                            mobile.price
-                        )}
-                    </div>
-
-                    <button
-                        type="button"
-                        class="details-button"
-                        onclick="showDetails(${index})"
-                    >
-                        View Details
-                    </button>
-
+                <div class="specs">
+                    ${mobile.ram}<br>
+                    ${mobile.storage}<br>
+                    ${mobile.camera}<br>
+                    ${mobile.network}
                 </div>
 
-            `;
+                <div class="price">
+                    ${formatPrice(mobile.price)}
+                </div>
+
+                <button
+                    type="button"
+                    class="details-button"
+                    onclick="showDetails(${index})"
+                >
+                    View Details
+                </button>
+
+            </div>
+        `;
 
 
-            container.appendChild(
-                card
-            );
+        container.appendChild(card);
 
-        }
-    );
+    });
 
 }
 
 
-/* =====================================================
-   FILTER
-===================================================== */
+// =====================================================
+// COMPANY FILTER
+// =====================================================
 
-function filterCompany(
-    company
-) {
+function filterCompany(company) {
 
     document
-        .querySelectorAll(
-            ".company-filter"
-        )
-        .forEach(
-            function(button) {
+        .querySelectorAll(".company-filter")
+        .forEach(function(button) {
 
-                button.classList.remove(
-                    "active"
-                );
+            button.classList.remove("active");
+
+        });
 
 
-                if (
-                    button.textContent
-                        .trim()
-                        .includes(
-                            company
-                        )
-                ) {
+    document
+        .querySelectorAll(".company-filter")
+        .forEach(function(button) {
 
-                    button.classList.add(
-                        "active"
-                    );
+            if (
+                button.textContent
+                    .trim()
+                    .toLowerCase()
+                    .includes(company.toLowerCase())
+            ) {
 
-                }
+                button.classList.add("active");
 
             }
-        );
+
+        });
 
 
-    if (
-        company ===
-        "All"
-    ) {
+    if (company === "All") {
 
-        displayMobiles(
-            mobiles
-        );
+        displayMobiles(mobiles);
 
-        title.innerText =
-            "All Mobiles";
+        if (title) {
+            title.innerText = "All Mobiles";
+        }
 
         return;
-
     }
 
 
     const filtered =
-        mobiles.filter(
-            function(mobile) {
+        mobiles.filter(function(mobile) {
 
-                return (
-                    mobile.company ===
-                    company
-                );
+            return mobile.company === company;
 
-            }
-        );
+        });
 
 
-    displayMobiles(
-        filtered
-    );
+    displayMobiles(filtered);
 
 
-    title.innerText =
-        company +
-        " Mobiles";
+    if (title) {
+        title.innerText =
+            company + " Mobiles";
+    }
 
 }
 
 
-/* =====================================================
-   SEARCH
-===================================================== */
+// =====================================================
+// SEARCH
+// =====================================================
 
 function searchMobiles() {
 
     const input =
-        document.getElementById(
-            "searchInput"
-        );
+        document.getElementById("searchInput");
 
 
     if (!input) {
@@ -581,73 +401,63 @@ function searchMobiles() {
             .trim();
 
 
-    if (!search) {
+    if (search === "") {
 
-        displayMobiles(
-            mobiles
-        );
+        displayMobiles(mobiles);
 
-        title.innerText =
-            "All Mobiles";
+        if (title) {
+            title.innerText = "All Mobiles";
+        }
 
         return;
-
     }
 
 
     const result =
-        mobiles.filter(
-            function(mobile) {
+        mobiles.filter(function(mobile) {
 
-                return (
+            return (
 
-                    mobile.name
-                        .toLowerCase()
-                        .includes(
-                            search
-                        )
+                mobile.name
+                    .toLowerCase()
+                    .includes(search)
 
-                    ||
+                ||
 
-                    mobile.company
-                        .toLowerCase()
-                        .includes(
-                            search
-                        )
+                mobile.company
+                    .toLowerCase()
+                    .includes(search)
 
-                );
+            );
 
-            }
-        );
+        });
 
 
-    displayMobiles(
-        result
-    );
+    displayMobiles(result);
 
 
-    title.innerText =
-        "Search Results";
+    if (title) {
+        title.innerText = "Search Results";
+    }
 
 }
 
 
-/* =====================================================
-   ENTER SEARCH
-===================================================== */
+// =====================================================
+// ENTER SEARCH
+// =====================================================
 
-document
-    .getElementById(
-        "searchInput"
-    )
-    ?.addEventListener(
+const searchInput =
+    document.getElementById("searchInput");
+
+
+if (searchInput) {
+
+    searchInput.addEventListener(
         "keyup",
         function(event) {
 
-            if (
-                event.key ===
-                "Enter"
-            ) {
+            if (event.key === "Enter") {
 
                 searchMobiles();
 
@@ -656,19 +466,17 @@ document
         }
     );
 
+}
 
-/* =====================================================
-   DETAILS
-===================================================== */
 
-function showDetails(
-    index
-) {
+// =====================================================
+// VIEW DETAILS
+// =====================================================
+
+function showDetails(index) {
 
     const mobile =
-        currentMobiles[
-            index
-        ];
+        currentMobiles[index];
 
 
     if (!mobile) {
@@ -680,82 +488,106 @@ function showDetails(
         mobile;
 
 
-    document
-        .getElementById(
-            "modalImage"
-        )
-        .src =
-        mobile.image;
+    const modalImage =
+        document.getElementById("modalImage");
 
 
-    document
-        .getElementById(
-            "modalName"
-        )
-        .innerText =
-        mobile.name;
+    if (modalImage) {
+
+        modalImage.src =
+            mobile.image;
+
+        modalImage.onerror =
+            function() {
+
+                this.src =
+                    "https://via.placeholder.com/300x350?text=Mobile";
+
+            };
+
+    }
 
 
-    document
-        .getElementById(
-            "modalCompany"
-        )
-        .innerText =
-        mobile.company;
+    const modalName =
+        document.getElementById("modalName");
 
 
-    document
-        .getElementById(
-            "modalRam"
-        )
-        .innerText =
-        "💾 RAM: " +
-        mobile.ram;
+    if (modalName) {
+        modalName.innerText =
+            mobile.name;
+    }
 
 
-    document
-        .getElementById(
-            "modalStorage"
-        )
-        .innerText =
-        "💽 Storage: " +
-        mobile.storage;
+    const modalCompany =
+        document.getElementById("modalCompany");
 
 
-    document
-        .getElementById(
-            "modalCamera"
-        )
-        .innerText =
-        "📷 Camera: " +
-        mobile.camera;
+    if (modalCompany) {
+        modalCompany.innerText =
+            mobile.company;
+    }
 
 
-    document
-        .getElementById(
-            "modalNetwork"
-        )
-        .innerText =
-        "📶 Network: " +
-        mobile.network;
+    const modalRam =
+        document.getElementById("modalRam");
 
 
-    document
-        .getElementById(
-            "modalPrice"
-        )
-        .innerText =
-        formatPrice(
-            mobile.price
-        );
+    if (modalRam) {
+        modalRam.innerText =
+            "💾 RAM: " + mobile.ram;
+    }
 
 
-    document
-        .getElementById(
-            "productModal"
-        )
-        .style.display =
-        "flex";
+    const modalStorage =
+        document.getElementById("modalStorage");
+
+
+    if (modalStorage) {
+        modalStorage.innerText =
+            "💽 Storage: " + mobile.storage;
+    }
+
+
+    const modalCamera =
+        document.getElementById("modalCamera");
+
+
+    if (modalCamera) {
+        modalCamera.innerText =
+            "📷 Camera: " + mobile.camera;
+    }
+
+
+    const modalNetwork =
+        document.getElementById("modalNetwork");
+
+
+    if (modalNetwork) {
+        modalNetwork.innerText =
+            "📶 Network: " + mobile.network;
+    }
+
+
+    const modalPrice =
+        document.getElementById("modalPrice");
+
+
+    if (modalPrice) {
+        modalPrice.innerText =
+            formatPrice(mobile.price);
+    }
+
+
+    const productModal =
+        document.getElementById("productModal");
+
+
+    if (productModal) {
+
+        productModal.style.display =
+            "flex";
+
+    }
 
 
     document.body.style.overflow =
@@ -764,18 +596,22 @@ function showDetails(
 }
 
 
-/* =====================================================
-   CLOSE MODAL
-===================================================== */
+// =====================================================
+// CLOSE PRODUCT MODAL
+// =====================================================
 
 function closeModal() {
 
-    document
-        .getElementById(
-            "productModal"
-        )
-        .style.display =
-        "none";
+    const modal =
+        document.getElementById("productModal");
+
+
+    if (modal) {
+
+        modal.style.display =
+            "none";
+
+    }
 
 
     document.body.style.overflow =
@@ -784,13 +620,11 @@ function closeModal() {
 }
 
 
-/* =====================================================
-   CART
-===================================================== */
+// =====================================================
+// ADD TO CART
+// =====================================================
 
-function addToCart(
-    mobile
-) {
+function addToCart(mobile) {
 
     if (!mobile) {
         return;
@@ -798,16 +632,11 @@ function addToCart(
 
 
     const existing =
-        cart.find(
-            function(item) {
+        cart.find(function(item) {
 
-                return (
-                    item.name ===
-                    mobile.name
-                );
+            return item.name === mobile.name;
 
-            }
-        );
+        });
 
 
     if (existing) {
@@ -834,6 +663,10 @@ function addToCart(
 }
 
 
+// =====================================================
+// ADD MODAL TO CART
+// =====================================================
+
 function addModalToCart() {
 
     if (!selectedMobile) {
@@ -841,9 +674,7 @@ function addModalToCart() {
     }
 
 
-    addToCart(
-        selectedMobile
-    );
+    addToCart(selectedMobile);
 
 
     alert(
@@ -855,17 +686,25 @@ function addModalToCart() {
 }
 
 
+// =====================================================
+// OPEN CART
+// =====================================================
+
 function openCart() {
 
     renderCart();
 
 
-    document
-        .getElementById(
-            "cartModal"
-        )
-        .style.display =
-        "flex";
+    const cartModal =
+        document.getElementById("cartModal");
+
+
+    if (cartModal) {
+
+        cartModal.style.display =
+            "flex";
+
+    }
 
 
     document.body.style.overflow =
@@ -874,14 +713,22 @@ function openCart() {
 }
 
 
+// =====================================================
+// CLOSE CART
+// =====================================================
+
 function closeCart() {
 
-    document
-        .getElementById(
-            "cartModal"
-        )
-        .style.display =
-        "none";
+    const cartModal =
+        document.getElementById("cartModal");
+
+
+    if (cartModal) {
+
+        cartModal.style.display =
+            "none";
+
+    }
 
 
     document.body.style.overflow =
@@ -890,16 +737,14 @@ function closeCart() {
 }
 
 
-/* =====================================================
-   RENDER CART
-===================================================== */
+// =====================================================
+// RENDER CART
+// =====================================================
 
 function renderCart() {
 
     const cartItems =
-        document.getElementById(
-            "cartItems"
-        );
+        document.getElementById("cartItems");
 
 
     if (!cartItems) {
@@ -907,119 +752,90 @@ function renderCart() {
     }
 
 
-    cartItems.innerHTML =
-        "";
+    cartItems.innerHTML = "";
 
 
-    if (
-        cart.length === 0
-    ) {
+    if (cart.length === 0) {
 
         cartItems.innerHTML = `
-
             <div class="empty-cart">
-
-                <div
-                    style="
-                        font-size:42px;
-                        margin-bottom:12px;
-                    "
-                >
-                    🛒
-                </div>
-
-                Your cart is empty
-
+                🛒 Your cart is empty
             </div>
-
         `;
 
         updateCartTotal();
 
         return;
-
     }
 
 
-    cart.forEach(
-        function(
-            item,
-            index
-        ) {
+    cart.forEach(function(item, index) {
 
-            const div =
-                document.createElement(
-                    "div"
-                );
+        const div =
+            document.createElement("div");
 
-            div.className =
-                "cart-item";
+        div.className =
+            "cart-item";
 
 
-            div.innerHTML = `
+        div.innerHTML = `
 
-                <img
-                    src="${item.image}"
-                    alt="${item.name}"
-                    onerror="
-                        this.onerror=null;
-                        this.src='https://via.placeholder.com/100x120?text=Mobile';
-                    "
-                >
+            <img
+                src="${item.image}"
+                alt="${item.name}"
+                onerror="
+                    this.src='https://via.placeholder.com/100x120?text=Mobile';
+                "
+            >
 
-                <div class="cart-item-info">
+            <div class="cart-item-info">
 
-                    <h4>
-                        ${item.name}
-                    </h4>
+                <h4>
+                    ${item.name}
+                </h4>
 
-                    <div class="cart-item-price">
-                        ${formatPrice(
-                            item.price
-                        )}
-                    </div>
+                <div class="cart-item-price">
+                    ${formatPrice(item.price)}
+                </div>
 
-                    <div class="quantity">
+                <div class="quantity">
 
-                        <button
-                            type="button"
-                            onclick="changeQuantity(${index}, -1)"
-                        >
-                            −
-                        </button>
+                    <button
+                        type="button"
+                        onclick="changeQuantity(${index}, -1)"
+                    >
+                        −
+                    </button>
 
-                        <span>
-                            ${item.quantity}
-                        </span>
+                    <span>
+                        ${item.quantity}
+                    </span>
 
-                        <button
-                            type="button"
-                            onclick="changeQuantity(${index}, 1)"
-                        >
-                            +
-                        </button>
-
-                    </div>
+                    <button
+                        type="button"
+                        onclick="changeQuantity(${index}, 1)"
+                    >
+                        +
+                    </button>
 
                 </div>
 
-                <button
-                    type="button"
-                    class="remove-button"
-                    onclick="removeFromCart(${index})"
-                >
-                    ❌
-                </button>
+            </div>
 
-            `;
+            <button
+                type="button"
+                class="remove-button"
+                onclick="removeFromCart(${index})"
+            >
+                ❌
+            </button>
+
+        `;
 
 
-            cartItems.appendChild(
-                div
-            );
+        cartItems.appendChild(div);
 
-        }
-    );
+    });
 
 
     updateCartTotal();
@@ -1027,33 +843,23 @@ function renderCart() {
 }
 
 
-/* =====================================================
-   QUANTITY
-===================================================== */
+// =====================================================
+// CHANGE QUANTITY
+// =====================================================
 
-function changeQuantity(
-    index,
-    amount
-) {
+function changeQuantity(index, amount) {
 
     if (!cart[index]) {
         return;
     }
 
 
-    cart[index].quantity +=
-        amount;
+    cart[index].quantity += amount;
 
 
-    if (
-        cart[index].quantity <=
-        0
-    ) {
+    if (cart[index].quantity <= 0) {
 
-        cart.splice(
-            index,
-            1
-        );
+        cart.splice(index, 1);
 
     }
 
@@ -1067,23 +873,18 @@ function changeQuantity(
 }
 
 
-/* =====================================================
-   REMOVE
-===================================================== */
+// =====================================================
+// REMOVE FROM CART
+// =====================================================
 
-function removeFromCart(
-    index
-) {
+function removeFromCart(index) {
 
     if (!cart[index]) {
         return;
     }
 
 
-    cart.splice(
-        index,
-        1
-    );
+    cart.splice(index, 1);
 
 
     saveCart();
@@ -1095,74 +896,53 @@ function removeFromCart(
 }
 
 
-/* =====================================================
-   TOTAL
-===================================================== */
-
-function getCartTotal() {
-
-    return cart.reduce(
-        function(
-            total,
-            item
-        ) {
-
-            return (
-                total +
-                Number(
-                    item.price
-                ) *
-                Number(
-                    item.quantity
-                )
-            );
-
-        },
-        0
-    );
-
-}
-
+// =====================================================
+// CART TOTAL
+// =====================================================
 
 function updateCartTotal() {
 
-    const element =
-        document.getElementById(
-            "cartTotal"
-        );
+    let total = 0;
 
 
-    if (element) {
+    cart.forEach(function(item) {
 
-        element.innerText =
-            formatPrice(
-                getCartTotal()
-            );
+        total +=
+            Number(item.price) *
+            Number(item.quantity);
+
+    });
+
+
+    const cartTotal =
+        document.getElementById("cartTotal");
+
+
+    if (cartTotal) {
+
+        cartTotal.innerText =
+            formatPrice(total);
 
     }
 
 }
 
 
+// =====================================================
+// CART COUNT
+// =====================================================
+
 function updateCartCount() {
 
-    const count =
-        cart.reduce(
-            function(
-                total,
-                item
-            ) {
+    let count = 0;
 
-                return (
-                    total +
-                    Number(
-                        item.quantity
-                    )
-                );
 
-            },
-            0
-        );
+    cart.forEach(function(item) {
+
+        count +=
+            Number(item.quantity);
+
+    });
 
 
     if (cartCount) {
@@ -1175,25 +955,23 @@ function updateCartCount() {
 }
 
 
-/* =====================================================
-   SAVE CART
-===================================================== */
+// =====================================================
+// SAVE CART
+// =====================================================
 
 function saveCart() {
 
     localStorage.setItem(
         "mobileStoreCart",
-        JSON.stringify(
-            cart
-        )
+        JSON.stringify(cart)
     );
 
 }
 
 
-/* =====================================================
-   BUY NOW
-===================================================== */
+// =====================================================
+// BUY NOW
+// =====================================================
 
 function buyMobile() {
 
@@ -1207,7 +985,8 @@ function buyMobile() {
 
 
     const message =
-        "🛒 MobileStore Order\n\n" +
+
+        "🛒 *MobileStore Order*\n\n" +
 
         "📱 Mobile: " +
         selectedMobile.name +
@@ -1218,9 +997,7 @@ function buyMobile() {
         "\n" +
 
         "💰 Price: " +
-        formatPrice(
-            selectedMobile.price
-        ) +
+        formatPrice(selectedMobile.price) +
         "\n" +
 
         "💾 RAM: " +
@@ -1242,32 +1019,28 @@ function buyMobile() {
         "Please confirm my order.";
 
 
-    const url =
+    const whatsappURL =
         "https://wa.me/" +
         phoneNumber +
         "?text=" +
-        encodeURIComponent(
-            message
-        );
+        encodeURIComponent(message);
 
 
     window.open(
-        url,
+        whatsappURL,
         "_blank"
     );
 
 }
 
 
-/* =====================================================
-   CHECKOUT
-===================================================== */
+// =====================================================
+// CHECKOUT
+// =====================================================
 
 function checkout() {
 
-    if (
-        cart.length === 0
-    ) {
+    if (cart.length === 0) {
 
         alert(
             "🛒 Your cart is empty!"
@@ -1278,308 +1051,87 @@ function checkout() {
     }
 
 
-    document
-        .getElementById(
-            "cartModal"
-        )
-        .style.display =
-        "none";
+    let message =
+        "🛒 *MobileStore Cart Order*\n\n";
 
 
-    document
-        .getElementById(
-            "checkoutTotal"
-        )
-        .innerText =
-        formatPrice(
-            getCartTotal()
-        );
+    cart.forEach(function(item) {
 
+        message +=
 
-    document
-        .getElementById(
-            "checkoutModal"
-        )
-        .style.display =
-        "flex";
+            "📱 " +
+            item.name +
+            "\n" +
 
-}
+            "Qty: " +
+            item.quantity +
+            "\n" +
 
+            "Price: " +
+            formatPrice(
+                item.price *
+                item.quantity
+            ) +
 
-function closeCheckout() {
+            "\n\n";
 
-    document
-        .getElementById(
-            "checkoutModal"
-        )
-        .style.display =
-        "none";
+    });
 
 
-    document.body.style.overflow =
-        "";
+    let total = 0;
 
-}
 
+    cart.forEach(function(item) {
 
-/* =====================================================
-   PLACE ORDER
-===================================================== */
+        total +=
+            item.price *
+            item.quantity;
 
-function placeOrder() {
+    });
 
-    const name =
-        document
-            .getElementById(
-                "checkoutName"
-            )
-            .value
-            .trim();
 
+    message +=
+        "💰 *Total: " +
+        formatPrice(total) +
+        "*\n\n";
 
-    const phone =
-        document
-            .getElementById(
-                "checkoutPhone"
-            )
-            .value
-            .trim();
 
+    message +=
+        "Please confirm my order.";
 
-    const address =
-        document
-            .getElementById(
-                "checkoutAddress"
-            )
-            .value
-            .trim();
 
+    const phoneNumber =
+        "917990130683";
 
-    const city =
-        document
-            .getElementById(
-                "checkoutCity"
-            )
-            .value
-            .trim();
 
-
-    const pincode =
-        document
-            .getElementById(
-                "checkoutPincode"
-            )
-            .value
-            .trim();
-
-
-    const messageBox =
-        document.getElementById(
-            "checkoutMessage"
-        );
-
-
-    messageBox.innerText =
-        "";
-
-
-    if (
-        !name ||
-        !phone ||
-        !address ||
-        !city ||
-        !pincode
-    ) {
-
-        messageBox.innerText =
-            "Please fill in all delivery details.";
-
-        return;
-
-    }
-
-
-    if (
-        !/^[0-9]{10}$/.test(
-            phone
-        )
-    ) {
-
-        messageBox.innerText =
-            "Please enter a valid 10 digit mobile number.";
-
-        return;
-
-    }
-
-
-    if (
-        !/^[0-9]{6}$/.test(
-            pincode
-        )
-    ) {
-
-        messageBox.innerText =
-            "Please enter a valid 6 digit pincode.";
-
-        return;
-
-    }
-
-
-    let order =
-        "🛍️ MobileStore Order\n\n";
-
-
-    order +=
-        "👤 Customer: " +
-        name +
-        "\n";
-
-
-    order +=
-        "📞 Phone: " +
-        phone +
-        "\n";
-
-
-    order +=
-        "📍 Address: " +
-        address +
-        "\n";
-
-
-    order +=
-        "🏙️ City: " +
-        city +
-        "\n";
-
-
-    order +=
-        "📮 Pincode: " +
-        pincode +
-        "\n\n";
-
-
-    order +=
-        "📱 ORDER ITEMS\n";
-
-
-    cart.forEach(
-        function(item) {
-
-            order +=
-                item.name +
-                " × " +
-                item.quantity +
-                " = " +
-                formatPrice(
-                    item.price *
-                    item.quantity
-                ) +
-                "\n";
-
-        }
-    );
-
-
-    order +=
-        "\n💰 TOTAL: " +
-        formatPrice(
-            getCartTotal()
-        );
-
-
-    order +=
-        "\n\nPlease confirm my order.";
-
-
-    const url =
-        "https://wa.me/917990130683?text=" +
-        encodeURIComponent(
-            order
-        );
+    const whatsappURL =
+        "https://wa.me/" +
+        phoneNumber +
+        "?text=" +
+        encodeURIComponent(message);
 
 
     window.open(
-        url,
+        whatsappURL,
         "_blank"
     );
 
 }
 
 
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-async function logoutUser() {
-
-    const confirmLogout =
-        confirm(
-            "Are you sure you want to logout?"
-        );
-
-
-    if (!confirmLogout) {
-        return;
-    }
-
-
-    try {
-
-        await signOut(
-            auth
-        );
-
-
-        localStorage.removeItem(
-            "mobileStoreCart"
-        );
-
-
-        window.location.href =
-            "index.html";
-
-    } catch (error) {
-
-        console.error(
-            "Logout Error:",
-            error
-        );
-
-
-        alert(
-            "Logout failed. Please try again."
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   MODAL BACKGROUND
-===================================================== */
+// =====================================================
+// CLOSE MODAL WHEN CLICKING OUTSIDE
+// =====================================================
 
 window.addEventListener(
     "click",
     function(event) {
 
         const productModal =
-            document.getElementById(
-                "productModal"
-            );
+            document.getElementById("productModal");
 
         const cartModal =
-            document.getElementById(
-                "cartModal"
-            );
-
-        const checkoutModal =
-            document.getElementById(
-                "checkoutModal"
-            );
+            document.getElementById("cartModal");
 
 
         if (
@@ -1601,38 +1153,23 @@ window.addEventListener(
 
         }
 
-
-        if (
-            event.target ===
-            checkoutModal
-        ) {
-
-            closeCheckout();
-
-        }
-
     }
 );
 
 
-/* =====================================================
-   ESC KEY
-===================================================== */
+// =====================================================
+// ESC KEY
+// =====================================================
 
 document.addEventListener(
     "keydown",
     function(event) {
 
-        if (
-            event.key ===
-            "Escape"
-        ) {
+        if (event.key === "Escape") {
 
             closeModal();
 
             closeCart();
-
-            closeCheckout();
 
         }
 
@@ -1640,9 +1177,12 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   GLOBAL FUNCTIONS
-===================================================== */
+// =====================================================
+// MAKE FUNCTIONS GLOBAL
+// =====================================================
+
+window.displayMobiles =
+    displayMobiles;
 
 window.filterCompany =
     filterCompany;
@@ -1668,6 +1208,9 @@ window.openCart =
 window.closeCart =
     closeCart;
 
+window.renderCart =
+    renderCart;
+
 window.changeQuantity =
     changeQuantity;
 
@@ -1680,22 +1223,11 @@ window.buyMobile =
 window.checkout =
     checkout;
 
-window.closeCheckout =
-    closeCheckout;
 
-window.placeOrder =
-    placeOrder;
+// =====================================================
+// START
+// =====================================================
 
-window.logoutUser =
-    logoutUser;
-
-
-/* =====================================================
-   START
-===================================================== */
-
-displayMobiles(
-    mobiles
-);
+displayMobiles(mobiles);
 
 updateCartCount();
