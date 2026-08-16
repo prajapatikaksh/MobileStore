@@ -38,23 +38,203 @@
         href="mobile.css"
     >
 
+    <style>
+
+        /* =====================================
+           USER ACCOUNT
+        ===================================== */
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 7px 11px;
+
+            border: 1px solid
+                rgba(255,255,255,.09);
+
+            border-radius: 13px;
+
+            background:
+                rgba(255,255,255,.045);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7c3aed,
+                    #4f46e5
+                );
+
+            color: white;
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .user-details {
+            max-width: 120px;
+        }
+
+        .user-greeting {
+            display: block;
+
+            color: #706d7e;
+
+            font-size: 7px;
+        }
+
+        .user-name {
+            display: block;
+
+            margin-top: 2px;
+
+            overflow: hidden;
+
+            color: white;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .logout-button {
+            height: 40px;
+
+            padding: 0 12px;
+
+            border: 1px solid
+                rgba(239,68,68,.18);
+
+            border-radius: 11px;
+
+            background:
+                rgba(239,68,68,.08);
+
+            color: #f87171;
+
+            cursor: pointer;
+
+            font-family: inherit;
+
+            font-size: 9px;
+            font-weight: 700;
+
+            transition: .25s;
+        }
+
+        .logout-button:hover {
+            background: #dc2626;
+
+            color: white;
+
+            border-color: #dc2626;
+
+            transform: translateY(-2px);
+        }
+
+
+        /* =====================================
+           MOBILE USER AREA
+        ===================================== */
+
+        @media (max-width: 760px) {
+
+            .user-area {
+                margin-left: auto;
+            }
+
+            .user-details {
+                max-width: 90px;
+            }
+
+        }
+
+
+        @media (max-width: 430px) {
+
+            .user-details {
+                display: none;
+            }
+
+            .user-info {
+                padding: 4px;
+                border: none;
+                background: transparent;
+            }
+
+            .user-avatar {
+                width: 34px;
+                height: 34px;
+            }
+
+            .logout-button {
+                width: 38px;
+
+                padding: 0;
+
+                font-size: 15px;
+            }
+
+            .logout-text {
+                display: none;
+            }
+
+        }
+
+    </style>
+
 </head>
 
+
 <body>
+
+
+<!-- =====================================
+     BACKGROUND
+===================================== -->
 
 <div class="background">
 
     <div class="bg-orb orb-one"></div>
+
     <div class="bg-orb orb-two"></div>
+
     <div class="bg-orb orb-three"></div>
+
     <div class="bg-grid"></div>
 
 </div>
 
 
-<!-- ================= HEADER ================= -->
+
+<!-- =====================================
+     HEADER
+===================================== -->
 
 <header class="header">
+
+
+    <!-- LOGO -->
 
     <div class="logo">
 
@@ -76,6 +256,9 @@
 
     </div>
 
+
+
+    <!-- SEARCH -->
 
     <div class="search-box">
 
@@ -100,31 +283,67 @@
     </div>
 
 
-    <div class="header-actions">
+
+    <!-- RIGHT SIDE -->
+
+    <div class="user-area">
+
+
+        <!-- USER -->
 
         <div
-            id="userBox"
-            class="user-box"
+            class="user-info"
+            title="Logged in user"
         >
 
-            <div class="user-avatar">
-                👤
+            <div
+                class="user-avatar"
+                id="userAvatar"
+            >
+                U
             </div>
 
-            <div class="user-info">
+            <div class="user-details">
 
-                <strong id="userName">
+                <span class="user-greeting">
+                    Welcome
+                </span>
+
+                <span
+                    class="user-name"
+                    id="userName"
+                >
                     User
-                </strong>
-
-                <small id="userEmail">
-                    Loading...
-                </small>
+                </span>
 
             </div>
 
         </div>
 
+
+
+        <!-- LOGOUT -->
+
+        <button
+            type="button"
+            class="logout-button"
+            onclick="logoutUser()"
+            title="Logout"
+        >
+
+            <span class="logout-text">
+                Logout
+            </span>
+
+            <span>
+                🚪
+            </span>
+
+        </button>
+
+
+
+        <!-- CART -->
 
         <button
             type="button"
@@ -136,7 +355,7 @@
                 🛒
             </span>
 
-            <span class="cart-text">
+            <span>
                 Cart
             </span>
 
@@ -147,60 +366,93 @@
         </button>
 
 
-        <button
-            type="button"
-            class="logout-button"
-            onclick="logoutUser()"
-        >
-            Logout
-        </button>
-
     </div>
+
 
 </header>
 
 
-<!-- ================= HERO ================= -->
+
+<!-- =====================================
+     HERO
+===================================== -->
 
 <section class="hero">
 
+
     <div class="hero-content">
+
 
         <div class="hero-badge">
             ✨ NEW COLLECTION 2026
         </div>
 
+
         <h1>
+
             Find Your
-            <span>Perfect Smartphone</span>
+
+            <span>
+                Perfect Smartphone
+            </span>
+
         </h1>
+
 
         <p>
             Explore the latest smartphones from
             your favourite brands.
         </p>
 
+
         <div class="hero-stats">
 
             <div>
-                <strong>14+</strong>
-                <span>Mobiles</span>
+
+                <strong>
+                    14+
+                </strong>
+
+                <span>
+                    Mobiles
+                </span>
+
             </div>
 
-            <div>
-                <strong>10+</strong>
-                <span>Brands</span>
-            </div>
 
             <div>
-                <strong>5G</strong>
-                <span>Ready</span>
+
+                <strong>
+                    8+
+                </strong>
+
+                <span>
+                    Brands
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    5G
+                </strong>
+
+                <span>
+                    Ready
+                </span>
+
             </div>
 
         </div>
 
+
     </div>
 
+
+
+    <!-- HERO PHONE -->
 
     <div class="hero-phone">
 
@@ -211,23 +463,30 @@
             <div class="hero-phone-screen">
 
                 <div class="hero-phone-status">
+
                     9:41
+
                     <span>
                         ● ● ●
                     </span>
+
                 </div>
+
 
                 <div class="hero-phone-camera">
                     📷
                 </div>
 
+
                 <h3>
                     MobileStore
                 </h3>
 
+
                 <p>
                     Premium Collection
                 </p>
+
 
                 <div class="hero-product">
                     📱
@@ -239,12 +498,17 @@
 
     </div>
 
+
 </section>
 
 
-<!-- ================= COMPANIES ================= -->
+
+<!-- =====================================
+     COMPANY FILTER
+===================================== -->
 
 <section class="company-section">
+
 
     <div class="filter-heading">
 
@@ -261,6 +525,7 @@
 
     <div class="companies">
 
+
         <button
             type="button"
             class="company-filter active"
@@ -269,6 +534,7 @@
             <span>🔥</span>
             All
         </button>
+
 
         <button
             type="button"
@@ -279,6 +545,7 @@
             Apple
         </button>
 
+
         <button
             type="button"
             class="company-filter"
@@ -287,6 +554,7 @@
             <span>📱</span>
             Samsung
         </button>
+
 
         <button
             type="button"
@@ -297,6 +565,7 @@
             OnePlus
         </button>
 
+
         <button
             type="button"
             class="company-filter"
@@ -305,6 +574,7 @@
             <span>💙</span>
             Vivo
         </button>
+
 
         <button
             type="button"
@@ -315,6 +585,7 @@
             Oppo
         </button>
 
+
         <button
             type="button"
             class="company-filter"
@@ -323,6 +594,7 @@
             <span>⚡</span>
             Realme
         </button>
+
 
         <button
             type="button"
@@ -333,6 +605,7 @@
             Xiaomi
         </button>
 
+
         <button
             type="button"
             class="company-filter"
@@ -341,6 +614,7 @@
             <span>🪽</span>
             Motorola
         </button>
+
 
         <button
             type="button"
@@ -351,6 +625,7 @@
             Google
         </button>
 
+
         <button
             type="button"
             class="company-filter"
@@ -360,16 +635,22 @@
             Nothing
         </button>
 
+
     </div>
 
 </section>
 
 
-<!-- ================= PRODUCTS ================= -->
+
+<!-- =====================================
+     PRODUCTS
+===================================== -->
 
 <main class="products-section">
 
+
     <div class="section-heading">
+
 
         <div>
 
@@ -383,9 +664,11 @@
 
         </div>
 
+
         <div class="result-badge">
             🛍️ Latest Collection
         </div>
+
 
     </div>
 
@@ -395,17 +678,23 @@
         class="mobile-container"
     ></div>
 
+
 </main>
 
 
-<!-- ================= PRODUCT MODAL ================= -->
+
+<!-- =====================================
+     PRODUCT DETAILS MODAL
+===================================== -->
 
 <div
     id="productModal"
     class="modal"
 >
 
+
     <div class="modal-content">
+
 
         <button
             type="button"
@@ -429,10 +718,9 @@
         </div>
 
 
-        <div
-            id="modalCompany"
-            class="modal-company"
-        ></div>
+        <div class="modal-company">
+            <span id="modalCompany"></span>
+        </div>
 
 
         <h2 id="modalName">
@@ -442,25 +730,30 @@
 
         <div class="modal-details">
 
+
             <div
                 id="modalRam"
                 class="detail-item"
             ></div>
+
 
             <div
                 id="modalStorage"
                 class="detail-item"
             ></div>
 
+
             <div
                 id="modalCamera"
                 class="detail-item"
             ></div>
 
+
             <div
                 id="modalNetwork"
                 class="detail-item"
             ></div>
+
 
         </div>
 
@@ -475,39 +768,58 @@
 
         <div class="modal-actions">
 
+
             <button
                 type="button"
                 class="buy-button"
                 onclick="buyMobile()"
             >
-                <span>⚡</span>
+
+                <span>
+                    ⚡
+                </span>
+
                 Buy Now
+
             </button>
+
 
             <button
                 type="button"
                 class="modal-cart-button"
                 onclick="addModalToCart()"
             >
-                <span>🛒</span>
+
+                <span>
+                    🛒
+                </span>
+
                 Add to Cart
+
             </button>
 
+
         </div>
+
 
     </div>
 
 </div>
 
 
-<!-- ================= CART MODAL ================= -->
+
+<!-- =====================================
+     CART MODAL
+===================================== -->
 
 <div
     id="cartModal"
     class="modal"
 >
 
+
     <div class="cart-content">
+
 
         <button
             type="button"
@@ -520,9 +832,11 @@
 
         <div class="cart-title">
 
+
             <div class="cart-title-icon">
                 🛒
             </div>
+
 
             <div>
 
@@ -536,6 +850,7 @@
 
             </div>
 
+
         </div>
 
 
@@ -546,6 +861,7 @@
 
 
         <div class="cart-bottom">
+
 
             <div class="total-row">
 
@@ -565,160 +881,205 @@
                 class="checkout-button"
                 onclick="checkout()"
             >
+
                 Proceed to Checkout
-                <span>→</span>
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= CHECKOUT MODAL ================= -->
-
-<div
-    id="checkoutModal"
-    class="modal"
->
-
-    <div class="checkout-content">
-
-        <button
-            type="button"
-            class="close"
-            onclick="closeCheckout()"
-        >
-            ×
-        </button>
-
-
-        <div class="checkout-header">
-
-            <div class="checkout-icon">
-                📦
-            </div>
-
-            <div>
-
-                <h2>
-                    Delivery Details
-                </h2>
-
-                <p>
-                    Enter your details to place the order
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="checkout-form">
-
-            <input
-                type="text"
-                id="checkoutName"
-                placeholder="Full Name"
-                autocomplete="name"
-            >
-
-            <input
-                type="tel"
-                id="checkoutPhone"
-                placeholder="Mobile Number"
-                maxlength="10"
-                autocomplete="tel"
-            >
-
-            <textarea
-                id="checkoutAddress"
-                placeholder="Full Address"
-                rows="3"
-            ></textarea>
-
-
-            <div class="checkout-row">
-
-                <input
-                    type="text"
-                    id="checkoutCity"
-                    placeholder="City"
-                >
-
-                <input
-                    type="text"
-                    id="checkoutPincode"
-                    placeholder="Pincode"
-                    maxlength="6"
-                >
-
-            </div>
-
-
-            <div
-                id="checkoutMessage"
-                class="checkout-message"
-            ></div>
-
-
-            <div class="checkout-total">
 
                 <span>
-                    Order Total
+                    →
                 </span>
 
-                <strong id="checkoutTotal">
-                    ₹0
-                </strong>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="place-order-button"
-                onclick="placeOrder()"
-            >
-                Place Order on WhatsApp
-                <span>→</span>
             </button>
 
+
         </div>
+
 
     </div>
 
 </div>
 
 
-<!-- ================= FOOTER ================= -->
+
+<!-- =====================================
+     FOOTER
+===================================== -->
 
 <footer>
+
 
     <div class="footer-logo">
         📱 MobileStore
     </div>
 
+
     <p>
         Your favourite mobiles, all in one place.
     </p>
+
 
     <div class="developer">
         Made with ❤️ by Kaksh
     </div>
 
+
     <div class="footer-copy">
         © 2026 MobileStore. All rights reserved.
     </div>
 
+
 </footer>
 
 
-<script
-    type="module"
-    src="mobile.js"
-></script>
+
+<!-- =====================================
+     FIREBASE AUTH
+===================================== -->
+
+<script type="module">
+
+    import {
+        initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+
+
+    import {
+        getAuth,
+        onAuthStateChanged,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+
+    const firebaseConfig = {
+
+        apiKey:
+            "AIzaSyC_A-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
+
+        authDomain:
+            "mobilestore-d044c.firebaseapp.com",
+
+        projectId:
+            "mobilestore-d044c",
+
+        storageBucket:
+            "mobilestore-d044c.firebasestorage.app",
+
+        messagingSenderId:
+            "942752515187",
+
+        appId:
+            "1:942752515187:web:779e0e178a4729e5b21606",
+
+        measurementId:
+            "G-XXBFTKTLPH"
+
+    };
+
+
+    const app =
+        initializeApp(firebaseConfig);
+
+
+    const auth =
+        getAuth(app);
+
+
+    /* =================================
+       CHECK LOGIN
+    ================================= */
+
+    onAuthStateChanged(
+        auth,
+        function(user) {
+
+            if (!user) {
+
+                window.location.href =
+                    "index.html";
+
+                return;
+
+            }
+
+
+            const name =
+                user.displayName ||
+                user.email?.split("@")[0] ||
+                "User";
+
+
+            const userName =
+                document.getElementById(
+                    "userName"
+                );
+
+
+            const userAvatar =
+                document.getElementById(
+                    "userAvatar"
+                );
+
+
+            if (userName) {
+
+                userName.textContent =
+                    name;
+
+            }
+
+
+            if (userAvatar) {
+
+                userAvatar.textContent =
+                    name
+                        .charAt(0)
+                        .toUpperCase();
+
+            }
+
+        }
+    );
+
+
+    /* =================================
+       LOGOUT
+    ================================= */
+
+    window.logoutUser =
+        async function() {
+
+            try {
+
+                await signOut(auth);
+
+                window.location.href =
+                    "index.html";
+
+            } catch (error) {
+
+                console.error(
+                    "Logout Error:",
+                    error
+                );
+
+                alert(
+                    "Logout failed. Please try again."
+                );
+
+            }
+
+        };
+
+</script>
+
+
+
+<!-- =====================================
+     MOBILESTORE JAVASCRIPT
+===================================== -->
+
+<script src="mobile.js"></script>
+
 
 </body>
+
 </html>
