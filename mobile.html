@@ -44,9 +44,9 @@
 <body>
 
 
-<!-- =================================
+<!-- =====================================================
      BACKGROUND
-================================= -->
+===================================================== -->
 
 <div class="background">
 
@@ -62,12 +62,14 @@
 
 
 
-<!-- =================================
+<!-- =====================================================
      HEADER
-================================= -->
+===================================================== -->
 
 <header class="header">
 
+
+    <!-- LOGO -->
 
     <div class="logo">
 
@@ -117,6 +119,45 @@
 
 
 
+    <!-- USER AREA -->
+
+    <div class="user-area">
+
+        <div class="user-info">
+
+            <div class="user-avatar">
+                👤
+            </div>
+
+            <div>
+
+                <span class="user-greeting">
+                    Welcome
+                </span>
+
+                <strong
+                    data-user-name
+                >
+                    Customer
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="logout-button"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+
+
     <!-- CART -->
 
     <button
@@ -129,7 +170,7 @@
             🛒
         </span>
 
-        <span>
+        <span class="cart-text">
             Cart
         </span>
 
@@ -144,9 +185,9 @@
 
 
 
-<!-- =================================
+<!-- =====================================================
      HERO
-================================= -->
+===================================================== -->
 
 <section class="hero">
 
@@ -174,24 +215,48 @@
         <div class="hero-stats">
 
             <div>
-                <strong>14+</strong>
-                <span>Mobiles</span>
+
+                <strong>
+                    14+
+                </strong>
+
+                <span>
+                    Mobiles
+                </span>
+
             </div>
 
-            <div>
-                <strong>8+</strong>
-                <span>Brands</span>
-            </div>
 
             <div>
-                <strong>5G</strong>
-                <span>Ready</span>
+
+                <strong>
+                    8+
+                </strong>
+
+                <span>
+                    Brands
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    5G
+                </strong>
+
+                <span>
+                    Ready
+                </span>
+
             </div>
 
         </div>
 
 
     </div>
+
 
 
     <!-- HERO PHONE -->
@@ -205,23 +270,30 @@
             <div class="hero-phone-screen">
 
                 <div class="hero-phone-status">
+
                     9:41
+
                     <span>
                         ● ● ●
                     </span>
+
                 </div>
+
 
                 <div class="hero-phone-camera">
                     📷
                 </div>
 
+
                 <h3>
                     MobileStore
                 </h3>
 
+
                 <p>
                     Premium Collection
                 </p>
+
 
                 <div class="hero-product">
                     📱
@@ -238,9 +310,9 @@
 
 
 
-<!-- =================================
+<!-- =====================================================
      COMPANY FILTER
-================================= -->
+===================================================== -->
 
 <section class="company-section">
 
@@ -373,14 +445,13 @@
 
     </div>
 
-
 </section>
 
 
 
-<!-- =================================
+<!-- =====================================================
      PRODUCTS
-================================= -->
+===================================================== -->
 
 <main class="products-section">
 
@@ -417,9 +488,9 @@
 
 
 
-<!-- =================================
+<!-- =====================================================
      PRODUCT DETAILS MODAL
-================================= -->
+===================================================== -->
 
 <div
     id="productModal"
@@ -453,7 +524,9 @@
 
 
         <div class="modal-company">
+
             <span id="modalCompany"></span>
+
         </div>
 
 
@@ -508,8 +581,13 @@
                 class="buy-button"
                 onclick="buyMobile()"
             >
-                <span>⚡</span>
+
+                <span>
+                    ⚡
+                </span>
+
                 Buy Now
+
             </button>
 
 
@@ -518,8 +596,13 @@
                 class="modal-cart-button"
                 onclick="addModalToCart()"
             >
-                <span>🛒</span>
+
+                <span>
+                    🛒
+                </span>
+
                 Add to Cart
+
             </button>
 
 
@@ -532,9 +615,9 @@
 
 
 
-<!-- =================================
+<!-- =====================================================
      CART MODAL
-================================= -->
+===================================================== -->
 
 <div
     id="cartModal"
@@ -556,9 +639,11 @@
 
         <div class="cart-title">
 
+
             <div class="cart-title-icon">
                 🛒
             </div>
+
 
             <div>
 
@@ -571,6 +656,7 @@
                 </p>
 
             </div>
+
 
         </div>
 
@@ -602,8 +688,13 @@
                 class="checkout-button"
                 onclick="checkout()"
             >
+
                 Proceed to Checkout
-                <span>→</span>
+
+                <span>
+                    →
+                </span>
+
             </button>
 
 
@@ -616,9 +707,205 @@
 
 
 
-<!-- =================================
+<!-- =====================================================
+     CHECKOUT MODAL
+===================================================== -->
+
+<div
+    id="checkoutModal"
+    class="modal"
+>
+
+
+    <div class="checkout-content">
+
+
+        <button
+            type="button"
+            class="close"
+            onclick="closeCheckout()"
+        >
+            ×
+        </button>
+
+
+        <div class="checkout-header">
+
+
+            <div class="checkout-icon">
+                🧾
+            </div>
+
+
+            <div>
+
+                <h2>
+                    Checkout
+                </h2>
+
+                <p>
+                    Enter your delivery details
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- CUSTOMER NAME -->
+
+        <div class="checkout-field">
+
+            <label>
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                id="checkoutName"
+                placeholder="Enter your full name"
+                autocomplete="name"
+            >
+
+        </div>
+
+
+
+        <!-- PHONE -->
+
+        <div class="checkout-field">
+
+            <label>
+                Mobile Number
+            </label>
+
+            <input
+                type="tel"
+                id="checkoutPhone"
+                placeholder="Enter 10 digit mobile number"
+                maxlength="10"
+                autocomplete="tel"
+            >
+
+        </div>
+
+
+
+        <!-- ADDRESS -->
+
+        <div class="checkout-field">
+
+            <label>
+                Delivery Address
+            </label>
+
+            <textarea
+                id="checkoutAddress"
+                placeholder="Enter your complete address"
+                rows="3"
+            ></textarea>
+
+        </div>
+
+
+
+        <!-- CITY + PINCODE -->
+
+        <div class="checkout-row">
+
+
+            <div class="checkout-field">
+
+                <label>
+                    City
+                </label>
+
+                <input
+                    type="text"
+                    id="checkoutCity"
+                    placeholder="City"
+                >
+
+            </div>
+
+
+            <div class="checkout-field">
+
+                <label>
+                    Pincode
+                </label>
+
+                <input
+                    type="text"
+                    id="checkoutPincode"
+                    placeholder="Pincode"
+                    maxlength="6"
+                >
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ORDER TOTAL -->
+
+        <div class="checkout-total">
+
+            <span>
+                Order Total
+            </span>
+
+            <strong id="checkoutTotal">
+                ₹0
+            </strong>
+
+        </div>
+
+
+
+        <!-- CHECKOUT MESSAGE -->
+
+        <div
+            id="checkoutMessage"
+            class="checkout-message"
+        ></div>
+
+
+
+        <!-- PLACE ORDER -->
+
+        <button
+            type="button"
+            class="place-order-button"
+            onclick="placeOrder()"
+        >
+
+            <span>
+                🛍️
+            </span>
+
+            Place Order
+
+            <span>
+                →
+            </span>
+
+        </button>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
      FOOTER
-================================= -->
+===================================================== -->
 
 <footer>
 
@@ -647,11 +934,97 @@
 
 
 
-<!-- =================================
-     JAVASCRIPT
-================================= -->
+<!-- =====================================================
+     MOBILE JAVASCRIPT
+===================================================== -->
 
 <script src="mobile.js"></script>
+
+
+<!-- =====================================================
+     USER DISPLAY
+===================================================== -->
+
+<script type="module">
+
+    import {
+        getAuth,
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+    import {
+        initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+
+
+    const firebaseConfig = {
+
+        apiKey: "AIzaSyC_A-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
+
+        authDomain: "mobilestore-d044c.firebaseapp.com",
+
+        projectId: "mobilestore-d044c",
+
+        storageBucket: "mobilestore-d044c.firebasestorage.app",
+
+        messagingSenderId: "942752515187",
+
+        appId: "1:942752515187:web:779e0e178a4729e5b21606",
+
+        measurementId: "G-XXBFTKTLPH"
+
+    };
+
+
+    const mobileStoreApp =
+        initializeApp(
+            firebaseConfig,
+            "MobileStorePage"
+        );
+
+
+    const mobileStoreAuth =
+        getAuth(
+            mobileStoreApp
+        );
+
+
+    onAuthStateChanged(
+        mobileStoreAuth,
+        function(user) {
+
+            if (!user) {
+
+                window.location.href =
+                    "index.html";
+
+                return;
+
+            }
+
+
+            const name =
+                user.displayName ||
+                "Customer";
+
+
+            document
+                .querySelectorAll(
+                    "[data-user-name]"
+                )
+                .forEach(
+                    function(element) {
+
+                        element.textContent =
+                            name;
+
+                    }
+                );
+
+        }
+    );
+
+</script>
 
 
 </body>
