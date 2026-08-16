@@ -1,6 +1,106 @@
 /* =====================================================
-   MOBILESTORE - MOBILE.JS
+   MOBILESTORE FINAL MOBILE.JS
 ===================================================== */
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+
+/* =====================================================
+   FIREBASE
+===================================================== */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyC_A-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
+
+    authDomain:
+        "mobilestore-d044c.firebaseapp.com",
+
+    projectId:
+        "mobilestore-d044c",
+
+    storageBucket:
+        "mobilestore-d044c.firebasestorage.app",
+
+    messagingSenderId:
+        "942752515187",
+
+    appId:
+        "1:942752515187:web:779e0e178a4729e5b21606",
+
+    measurementId:
+        "G-XXBFTKTLPH"
+
+};
+
+
+const firebaseApp =
+    initializeApp(
+        firebaseConfig
+    );
+
+const auth =
+    getAuth(
+        firebaseApp
+    );
+
+
+/* =====================================================
+   LOGIN PROTECTION
+===================================================== */
+
+onAuthStateChanged(
+    auth,
+    function(user) {
+
+        if (!user) {
+
+            window.location.href =
+                "index.html";
+
+            return;
+
+        }
+
+
+        const userName =
+            document.getElementById(
+                "userName"
+            );
+
+        const userEmail =
+            document.getElementById(
+                "userEmail"
+            );
+
+
+        if (userName) {
+
+            userName.innerText =
+                user.displayName ||
+                "MobileStore User";
+
+        }
+
+
+        if (userEmail) {
+
+            userEmail.innerText =
+                user.email || "";
+
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -170,9 +270,11 @@ const mobiles = [
    VARIABLES
 ===================================================== */
 
-let currentMobiles = mobiles;
+let currentMobiles =
+    mobiles;
 
-let selectedMobile = null;
+let selectedMobile =
+    null;
 
 
 /* =====================================================
@@ -180,6 +282,7 @@ let selectedMobile = null;
 ===================================================== */
 
 let cart = [];
+
 
 try {
 
@@ -190,12 +293,7 @@ try {
             )
         ) || [];
 
-} catch (error) {
-
-    console.error(
-        "Cart Load Error:",
-        error
-    );
+} catch {
 
     cart = [];
 
@@ -223,14 +321,16 @@ const cartCount =
 
 
 /* =====================================================
-   PRICE FORMAT
+   PRICE
 ===================================================== */
 
 function formatPrice(price) {
 
     return (
         "₹" +
-        Number(price).toLocaleString(
+        Number(
+            price
+        ).toLocaleString(
             "en-IN"
         )
     );
@@ -239,21 +339,27 @@ function formatPrice(price) {
 
 
 /* =====================================================
-   DISPLAY MOBILES
+   DISPLAY
 ===================================================== */
 
 function displayMobiles(list) {
 
-    currentMobiles = list;
+    currentMobiles =
+        list;
 
     if (!container) {
         return;
     }
 
-    container.innerHTML = "";
+
+    container.innerHTML =
+        "";
 
 
-    if (!list || list.length === 0) {
+    if (
+        !list ||
+        list.length === 0
+    ) {
 
         container.innerHTML = `
 
@@ -261,49 +367,47 @@ function displayMobiles(list) {
                 style="
                     grid-column:1/-1;
                     text-align:center;
-                    padding:50px 20px;
-                    color:#9290a4;
+                    padding:60px 20px;
                 "
             >
 
                 <div
                     style="
-                        font-size:45px;
+                        font-size:50px;
                         margin-bottom:15px;
                     "
                 >
                     📱
                 </div>
 
-                <div
-                    style="
-                        font-size:18px;
-                        font-weight:700;
-                        color:white;
-                    "
-                >
+                <h3>
                     Mobile not found
-                </div>
+                </h3>
 
-                <div
+                <p
                     style="
+                        color:#777486;
                         margin-top:8px;
                         font-size:11px;
                     "
                 >
                     Try another mobile or brand.
-                </div>
+                </p>
 
             </div>
 
         `;
 
         return;
+
     }
 
 
     list.forEach(
-        function(mobile, index) {
+        function(
+            mobile,
+            index
+        ) {
 
             const card =
                 document.createElement(
@@ -346,7 +450,9 @@ function displayMobiles(list) {
                     </div>
 
                     <div class="price">
-                        ${formatPrice(mobile.price)}
+                        ${formatPrice(
+                            mobile.price
+                        )}
                     </div>
 
                     <button
@@ -362,7 +468,9 @@ function displayMobiles(list) {
             `;
 
 
-            container.appendChild(card);
+            container.appendChild(
+                card
+            );
 
         }
     );
@@ -371,61 +479,57 @@ function displayMobiles(list) {
 
 
 /* =====================================================
-   COMPANY FILTER
+   FILTER
 ===================================================== */
 
-function filterCompany(company) {
+function filterCompany(
+    company
+) {
 
-    const buttons =
-        document.querySelectorAll(
+    document
+        .querySelectorAll(
             ".company-filter"
-        );
+        )
+        .forEach(
+            function(button) {
 
-
-    buttons.forEach(
-        function(button) {
-
-            button.classList.remove(
-                "active"
-            );
-
-        }
-    );
-
-
-    buttons.forEach(
-        function(button) {
-
-            if (
-                button.textContent
-                    .trim()
-                    .includes(company)
-            ) {
-
-                button.classList.add(
+                button.classList.remove(
                     "active"
                 );
 
+
+                if (
+                    button.textContent
+                        .trim()
+                        .includes(
+                            company
+                        )
+                ) {
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                }
+
             }
-
-        }
-    );
+        );
 
 
-    if (company === "All") {
+    if (
+        company ===
+        "All"
+    ) {
 
         displayMobiles(
             mobiles
         );
 
-        if (title) {
-
-            title.innerText =
-                "All Mobiles";
-
-        }
+        title.innerText =
+            "All Mobiles";
 
         return;
+
     }
 
 
@@ -447,13 +551,9 @@ function filterCompany(company) {
     );
 
 
-    if (title) {
-
-        title.innerText =
-            company +
-            " Mobiles";
-
-    }
+    title.innerText =
+        company +
+        " Mobiles";
 
 }
 
@@ -481,18 +581,14 @@ function searchMobiles() {
             .trim();
 
 
-    if (search === "") {
+    if (!search) {
 
         displayMobiles(
             mobiles
         );
 
-        if (title) {
-
-            title.innerText =
-                "All Mobiles";
-
-        }
+        title.innerText =
+            "All Mobiles";
 
         return;
 
@@ -507,13 +603,17 @@ function searchMobiles() {
 
                     mobile.name
                         .toLowerCase()
-                        .includes(search)
+                        .includes(
+                            search
+                        )
 
                     ||
 
                     mobile.company
                         .toLowerCase()
-                        .includes(search)
+                        .includes(
+                            search
+                        )
 
                 );
 
@@ -526,12 +626,8 @@ function searchMobiles() {
     );
 
 
-    if (title) {
-
-        title.innerText =
-            "Search Results";
-
-    }
+    title.innerText =
+        "Search Results";
 
 }
 
@@ -540,15 +636,11 @@ function searchMobiles() {
    ENTER SEARCH
 ===================================================== */
 
-const searchInput =
-    document.getElementById(
+document
+    .getElementById(
         "searchInput"
-    );
-
-
-if (searchInput) {
-
-    searchInput.addEventListener(
+    )
+    ?.addEventListener(
         "keyup",
         function(event) {
 
@@ -564,17 +656,19 @@ if (searchInput) {
         }
     );
 
-}
-
 
 /* =====================================================
-   VIEW DETAILS
+   DETAILS
 ===================================================== */
 
-function showDetails(index) {
+function showDetails(
+    index
+) {
 
     const mobile =
-        currentMobiles[index];
+        currentMobiles[
+            index
+        ];
 
 
     if (!mobile) {
@@ -586,189 +680,117 @@ function showDetails(index) {
         mobile;
 
 
-    const modalImage =
-        document.getElementById(
+    document
+        .getElementById(
             "modalImage"
-        );
+        )
+        .src =
+        mobile.image;
 
-    const modalName =
-        document.getElementById(
+
+    document
+        .getElementById(
             "modalName"
-        );
+        )
+        .innerText =
+        mobile.name;
 
-    const modalCompany =
-        document.getElementById(
+
+    document
+        .getElementById(
             "modalCompany"
-        );
+        )
+        .innerText =
+        mobile.company;
 
-    const modalRam =
-        document.getElementById(
+
+    document
+        .getElementById(
             "modalRam"
-        );
+        )
+        .innerText =
+        "💾 RAM: " +
+        mobile.ram;
 
-    const modalStorage =
-        document.getElementById(
+
+    document
+        .getElementById(
             "modalStorage"
-        );
+        )
+        .innerText =
+        "💽 Storage: " +
+        mobile.storage;
 
-    const modalCamera =
-        document.getElementById(
+
+    document
+        .getElementById(
             "modalCamera"
-        );
+        )
+        .innerText =
+        "📷 Camera: " +
+        mobile.camera;
 
-    const modalNetwork =
-        document.getElementById(
+
+    document
+        .getElementById(
             "modalNetwork"
-        );
+        )
+        .innerText =
+        "📶 Network: " +
+        mobile.network;
 
-    const modalPrice =
-        document.getElementById(
+
+    document
+        .getElementById(
             "modalPrice"
+        )
+        .innerText =
+        formatPrice(
+            mobile.price
         );
 
-    const productModal =
-        document.getElementById(
+
+    document
+        .getElementById(
             "productModal"
-        );
+        )
+        .style.display =
+        "flex";
 
 
-    if (modalImage) {
-
-        modalImage.src =
-            mobile.image;
-
-        modalImage.onerror =
-            function() {
-
-                this.onerror = null;
-
-                this.src =
-                    "https://via.placeholder.com/300x350?text=Mobile";
-
-            };
-
-    }
-
-
-    if (modalName) {
-
-        modalName.innerText =
-            mobile.name;
-
-    }
-
-
-    if (modalCompany) {
-
-        modalCompany.innerText =
-            mobile.company;
-
-    }
-
-
-    if (modalRam) {
-
-        modalRam.innerText =
-            "💾 RAM: " +
-            mobile.ram;
-
-    }
-
-
-    if (modalStorage) {
-
-        modalStorage.innerText =
-            "💽 Storage: " +
-            mobile.storage;
-
-    }
-
-
-    if (modalCamera) {
-
-        modalCamera.innerText =
-            "📷 Camera: " +
-            mobile.camera;
-
-    }
-
-
-    if (modalNetwork) {
-
-        modalNetwork.innerText =
-            "📶 Network: " +
-            mobile.network;
-
-    }
-
-
-    if (modalPrice) {
-
-        modalPrice.innerText =
-            formatPrice(
-                mobile.price
-            );
-
-    }
-
-
-    if (productModal) {
-
-        productModal.style.display =
-            "flex";
-
-        document.body.style.overflow =
-            "hidden";
-
-    }
+    document.body.style.overflow =
+        "hidden";
 
 }
 
 
 /* =====================================================
-   CLOSE PRODUCT MODAL
+   CLOSE MODAL
 ===================================================== */
 
 function closeModal() {
 
-    const modal =
-        document.getElementById(
+    document
+        .getElementById(
             "productModal"
-        );
+        )
+        .style.display =
+        "none";
 
 
-    if (modal) {
-
-        modal.style.display =
-            "none";
-
-    }
-
-
-    if (
-        document.getElementById(
-            "cartModal"
-        )?.style.display !==
-        "flex" &&
-        document.getElementById(
-            "checkoutModal"
-        )?.style.display !==
-        "flex"
-    ) {
-
-        document.body.style.overflow =
-            "";
-
-    }
+    document.body.style.overflow =
+        "";
 
 }
 
 
 /* =====================================================
-   ADD TO CART
+   CART
 ===================================================== */
 
-function addToCart(mobile) {
+function addToCart(
+    mobile
+) {
 
     if (!mobile) {
         return;
@@ -812,10 +834,6 @@ function addToCart(mobile) {
 }
 
 
-/* =====================================================
-   ADD MODAL TO CART
-===================================================== */
-
 function addModalToCart() {
 
     if (!selectedMobile) {
@@ -837,65 +855,37 @@ function addModalToCart() {
 }
 
 
-/* =====================================================
-   OPEN CART
-===================================================== */
-
 function openCart() {
 
     renderCart();
 
 
-    const cartModal =
-        document.getElementById(
+    document
+        .getElementById(
             "cartModal"
-        );
+        )
+        .style.display =
+        "flex";
 
 
-    if (cartModal) {
-
-        cartModal.style.display =
-            "flex";
-
-        document.body.style.overflow =
-            "hidden";
-
-    }
+    document.body.style.overflow =
+        "hidden";
 
 }
 
 
-/* =====================================================
-   CLOSE CART
-===================================================== */
-
 function closeCart() {
 
-    const cartModal =
-        document.getElementById(
+    document
+        .getElementById(
             "cartModal"
-        );
+        )
+        .style.display =
+        "none";
 
 
-    if (cartModal) {
-
-        cartModal.style.display =
-            "none";
-
-    }
-
-
-    if (
-        document.getElementById(
-            "checkoutModal"
-        )?.style.display !==
-        "flex"
-    ) {
-
-        document.body.style.overflow =
-            "";
-
-    }
+    document.body.style.overflow =
+        "";
 
 }
 
@@ -917,11 +907,11 @@ function renderCart() {
     }
 
 
-    cartItems.innerHTML = "";
+    cartItems.innerHTML =
+        "";
 
 
     if (
-        !cart ||
         cart.length === 0
     ) {
 
@@ -947,11 +937,15 @@ function renderCart() {
         updateCartTotal();
 
         return;
+
     }
 
 
     cart.forEach(
-        function(item, index) {
+        function(
+            item,
+            index
+        ) {
 
             const div =
                 document.createElement(
@@ -980,7 +974,9 @@ function renderCart() {
                     </h4>
 
                     <div class="cart-item-price">
-                        ${formatPrice(item.price)}
+                        ${formatPrice(
+                            item.price
+                        )}
                     </div>
 
                     <div class="quantity">
@@ -1007,7 +1003,6 @@ function renderCart() {
 
                 </div>
 
-
                 <button
                     type="button"
                     class="remove-button"
@@ -1033,7 +1028,7 @@ function renderCart() {
 
 
 /* =====================================================
-   CHANGE QUANTITY
+   QUANTITY
 ===================================================== */
 
 function changeQuantity(
@@ -1073,10 +1068,12 @@ function changeQuantity(
 
 
 /* =====================================================
-   REMOVE FROM CART
+   REMOVE
 ===================================================== */
 
-function removeFromCart(index) {
+function removeFromCart(
+    index
+) {
 
     if (!cart[index]) {
         return;
@@ -1099,41 +1096,45 @@ function removeFromCart(index) {
 
 
 /* =====================================================
-   CART TOTAL
+   TOTAL
 ===================================================== */
 
 function getCartTotal() {
 
-    let total = 0;
+    return cart.reduce(
+        function(
+            total,
+            item
+        ) {
 
+            return (
+                total +
+                Number(
+                    item.price
+                ) *
+                Number(
+                    item.quantity
+                )
+            );
 
-    cart.forEach(
-        function(item) {
-
-            total +=
-                Number(item.price) *
-                Number(item.quantity);
-
-        }
+        },
+        0
     );
-
-
-    return total;
 
 }
 
 
 function updateCartTotal() {
 
-    const totalElement =
+    const element =
         document.getElementById(
             "cartTotal"
         );
 
 
-    if (totalElement) {
+    if (element) {
 
-        totalElement.innerText =
+        element.innerText =
             formatPrice(
                 getCartTotal()
             );
@@ -1143,25 +1144,25 @@ function updateCartTotal() {
 }
 
 
-/* =====================================================
-   CART COUNT
-===================================================== */
-
 function updateCartCount() {
 
-    let count = 0;
+    const count =
+        cart.reduce(
+            function(
+                total,
+                item
+            ) {
 
-
-    cart.forEach(
-        function(item) {
-
-            count +=
-                Number(
-                    item.quantity
+                return (
+                    total +
+                    Number(
+                        item.quantity
+                    )
                 );
 
-        }
-    );
+            },
+            0
+        );
 
 
     if (cartCount) {
@@ -1180,21 +1181,12 @@ function updateCartCount() {
 
 function saveCart() {
 
-    try {
-
-        localStorage.setItem(
-            "mobileStoreCart",
-            JSON.stringify(cart)
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Cart Save Error:",
-            error
-        );
-
-    }
+    localStorage.setItem(
+        "mobileStoreCart",
+        JSON.stringify(
+            cart
+        )
+    );
 
 }
 
@@ -1250,7 +1242,7 @@ function buyMobile() {
         "Please confirm my order.";
 
 
-    const whatsappURL =
+    const url =
         "https://wa.me/" +
         phoneNumber +
         "?text=" +
@@ -1260,7 +1252,7 @@ function buyMobile() {
 
 
     window.open(
-        whatsappURL,
+        url,
         "_blank"
     );
 
@@ -1274,7 +1266,6 @@ function buyMobile() {
 function checkout() {
 
     if (
-        !cart ||
         cart.length === 0
     ) {
 
@@ -1283,77 +1274,46 @@ function checkout() {
         );
 
         return;
+
     }
 
 
-    const cartModal =
-        document.getElementById(
+    document
+        .getElementById(
             "cartModal"
-        );
+        )
+        .style.display =
+        "none";
 
 
-    if (cartModal) {
-
-        cartModal.style.display =
-            "none";
-
-    }
-
-
-    const checkoutModal =
-        document.getElementById(
-            "checkoutModal"
-        );
-
-
-    if (checkoutModal) {
-
-        checkoutModal.style.display =
-            "flex";
-
-    }
-
-
-    const checkoutTotal =
-        document.getElementById(
+    document
+        .getElementById(
             "checkoutTotal"
+        )
+        .innerText =
+        formatPrice(
+            getCartTotal()
         );
 
 
-    if (checkoutTotal) {
-
-        checkoutTotal.innerText =
-            formatPrice(
-                getCartTotal()
-            );
-
-    }
-
-
-    document.body.style.overflow =
-        "hidden";
+    document
+        .getElementById(
+            "checkoutModal"
+        )
+        .style.display =
+        "flex";
 
 }
 
 
-/* =====================================================
-   CLOSE CHECKOUT
-===================================================== */
-
 function closeCheckout() {
 
-    const checkoutModal =
-        document.getElementById(
+    document
+        .getElementById(
             "checkoutModal"
-        );
-
-
-    if (checkoutModal) {
-
-        checkoutModal.style.display =
-            "none";
-
-    }
+        )
+        .style.display =
+        "none";
 
 
     document.body.style.overflow =
@@ -1369,46 +1329,58 @@ function closeCheckout() {
 function placeOrder() {
 
     const name =
-        document.getElementById(
-            "checkoutName"
-        )?.value.trim();
+        document
+            .getElementById(
+                "checkoutName"
+            )
+            .value
+            .trim();
 
 
     const phone =
-        document.getElementById(
-            "checkoutPhone"
-        )?.value.trim();
+        document
+            .getElementById(
+                "checkoutPhone"
+            )
+            .value
+            .trim();
 
 
     const address =
-        document.getElementById(
-            "checkoutAddress"
-        )?.value.trim();
+        document
+            .getElementById(
+                "checkoutAddress"
+            )
+            .value
+            .trim();
 
 
     const city =
-        document.getElementById(
-            "checkoutCity"
-        )?.value.trim();
+        document
+            .getElementById(
+                "checkoutCity"
+            )
+            .value
+            .trim();
 
 
     const pincode =
-        document.getElementById(
-            "checkoutPincode"
-        )?.value.trim();
+        document
+            .getElementById(
+                "checkoutPincode"
+            )
+            .value
+            .trim();
 
 
-    const message =
+    const messageBox =
         document.getElementById(
             "checkoutMessage"
         );
 
 
-    if (message) {
-
-        message.innerText = "";
-
-    }
+    messageBox.innerText =
+        "";
 
 
     if (
@@ -1419,15 +1391,8 @@ function placeOrder() {
         !pincode
     ) {
 
-        if (message) {
-
-            message.style.color =
-                "#f87171";
-
-            message.innerText =
-                "Please fill in all delivery details.";
-
-        }
+        messageBox.innerText =
+            "Please fill in all delivery details.";
 
         return;
 
@@ -1440,15 +1405,8 @@ function placeOrder() {
         )
     ) {
 
-        if (message) {
-
-            message.style.color =
-                "#f87171";
-
-            message.innerText =
-                "Please enter a valid 10 digit mobile number.";
-
-        }
+        messageBox.innerText =
+            "Please enter a valid 10 digit mobile number.";
 
         return;
 
@@ -1461,68 +1419,56 @@ function placeOrder() {
         )
     ) {
 
-        if (message) {
-
-            message.style.color =
-                "#f87171";
-
-            message.innerText =
-                "Please enter a valid 6 digit pincode.";
-
-        }
+        messageBox.innerText =
+            "Please enter a valid 6 digit pincode.";
 
         return;
 
     }
 
 
-    const total =
-        getCartTotal();
+    let order =
+        "🛍️ MobileStore Order\n\n";
 
 
-    let orderText =
-        "🛍️ *MobileStore Order*\n\n";
-
-
-    orderText +=
+    order +=
         "👤 Customer: " +
         name +
         "\n";
 
 
-    orderText +=
+    order +=
         "📞 Phone: " +
         phone +
         "\n";
 
 
-    orderText +=
+    order +=
         "📍 Address: " +
         address +
         "\n";
 
 
-    orderText +=
+    order +=
         "🏙️ City: " +
         city +
         "\n";
 
 
-    orderText +=
+    order +=
         "📮 Pincode: " +
         pincode +
         "\n\n";
 
 
-    orderText +=
-        "*ORDER ITEMS*\n";
+    order +=
+        "📱 ORDER ITEMS\n";
 
 
     cart.forEach(
         function(item) {
 
-            orderText +=
-                "📱 " +
+            order +=
                 item.name +
                 " × " +
                 item.quantity +
@@ -1537,31 +1483,26 @@ function placeOrder() {
     );
 
 
-    orderText +=
-        "\n💰 *Total: " +
-        formatPrice(total) +
-        "*";
+    order +=
+        "\n💰 TOTAL: " +
+        formatPrice(
+            getCartTotal()
+        );
 
 
-    orderText +=
+    order +=
         "\n\nPlease confirm my order.";
 
 
-    const phoneNumber =
-        "917990130683";
-
-
-    const whatsappURL =
-        "https://wa.me/" +
-        phoneNumber +
-        "?text=" +
+    const url =
+        "https://wa.me/917990130683?text=" +
         encodeURIComponent(
-            orderText
+            order
         );
 
 
     window.open(
-        whatsappURL,
+        url,
         "_blank"
     );
 
@@ -1572,7 +1513,7 @@ function placeOrder() {
    LOGOUT
 ===================================================== */
 
-function logout() {
+async function logoutUser() {
 
     const confirmLogout =
         confirm(
@@ -1585,132 +1526,40 @@ function logout() {
     }
 
 
-    localStorage.removeItem(
-        "mobileStoreCart"
-    );
+    try {
+
+        await signOut(
+            auth
+        );
 
 
-    /*
-       Firebase logout is handled here
-       without affecting the page code.
-    */
-
-    import(
-        "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js"
-    )
-    .then(
-        async function(module) {
-
-            try {
-
-                const {
-                    initializeApp,
-                    getApps
-                } = await import(
-                    "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js"
-                );
+        localStorage.removeItem(
+            "mobileStoreCart"
+        );
 
 
-                const firebaseConfig = {
+        window.location.href =
+            "index.html";
 
-                    apiKey:
-                        "AIzaSyC_A-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
+    } catch (error) {
 
-                    authDomain:
-                        "mobilestore-d044c.firebaseapp.com",
-
-                    projectId:
-                        "mobilestore-d044c",
-
-                    storageBucket:
-                        "mobilestore-d044c.firebasestorage.app",
-
-                    messagingSenderId:
-                        "942752515187",
-
-                    appId:
-                        "1:942752515187:web:779e0e178a4729e5b21606",
-
-                    measurementId:
-                        "G-XXBFTKTLPH"
-
-                };
+        console.error(
+            "Logout Error:",
+            error
+        );
 
 
-                let app;
+        alert(
+            "Logout failed. Please try again."
+        );
 
-
-                const existingApps =
-                    getApps();
-
-
-                if (
-                    existingApps.length > 0
-                ) {
-
-                    app =
-                        existingApps[0];
-
-                } else {
-
-                    app =
-                        initializeApp(
-                            firebaseConfig
-                        );
-
-                }
-
-
-                const auth =
-                    module.getAuth(
-                        app
-                    );
-
-
-                await module.signOut(
-                    auth
-                );
-
-
-                window.location.href =
-                    "index.html";
-
-
-            } catch (error) {
-
-                console.error(
-                    "Logout Error:",
-                    error
-                );
-
-
-                window.location.href =
-                    "index.html";
-
-            }
-
-        }
-    )
-    .catch(
-        function(error) {
-
-            console.error(
-                "Firebase Error:",
-                error
-            );
-
-
-            window.location.href =
-                "index.html";
-
-        }
-    );
+    }
 
 }
 
 
 /* =====================================================
-   CLOSE MODALS BY BACKGROUND CLICK
+   MODAL BACKGROUND
 ===================================================== */
 
 window.addEventListener(
@@ -1792,11 +1641,8 @@ document.addEventListener(
 
 
 /* =====================================================
-   MAKE FUNCTIONS GLOBAL
+   GLOBAL FUNCTIONS
 ===================================================== */
-
-window.displayMobiles =
-    displayMobiles;
 
 window.filterCompany =
     filterCompany;
@@ -1822,23 +1668,11 @@ window.openCart =
 window.closeCart =
     closeCart;
 
-window.renderCart =
-    renderCart;
-
 window.changeQuantity =
     changeQuantity;
 
 window.removeFromCart =
     removeFromCart;
-
-window.updateCartTotal =
-    updateCartTotal;
-
-window.updateCartCount =
-    updateCartCount;
-
-window.saveCart =
-    saveCart;
 
 window.buyMobile =
     buyMobile;
@@ -1852,8 +1686,8 @@ window.closeCheckout =
 window.placeOrder =
     placeOrder;
 
-window.logout =
-    logout;
+window.logoutUser =
+    logoutUser;
 
 
 /* =====================================================
