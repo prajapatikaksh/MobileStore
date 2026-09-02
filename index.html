@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>MobileStore | Premium Smartphones</title>
+    <title>MobileStore</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,116 +15,80 @@
 
 <body>
 
-<!-- =====================================================
-     BACKGROUND
-===================================================== -->
-
-<div class="bg-grid"></div>
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-
-
-<!-- =====================================================
+<!-- =========================================================
      AUTH PAGE
-===================================================== -->
+========================================================= -->
 
-<section id="authPage" class="page active">
+<section id="authPage" class="page active-page">
 
-    <div class="auth-container">
+    <div class="auth-wrapper">
 
         <div class="auth-brand">
             <div class="brand-logo">M</div>
-
-            <h1>Mobile<span>Store</span></h1>
-
-            <p>Premium smartphones. Simple shopping.</p>
+            <div>
+                <h1>MobileStore</h1>
+                <p>Premium Smartphones</p>
+            </div>
         </div>
-
 
         <!-- LOGIN -->
 
         <div id="loginBox" class="auth-card">
 
-            <div class="card-heading">
-                <h2>Welcome Back</h2>
+            <div class="auth-heading">
+                <span class="mini-label">WELCOME BACK</span>
+                <h2>Welcome</h2>
                 <p>Login to continue shopping</p>
             </div>
 
-            <form id="loginForm">
+            <div class="input-group">
+                <label>Email</label>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                >
+            </div>
 
-                <div class="input-group">
-                    <label>Email</label>
+            <div class="input-group">
+                <label>Password</label>
 
+                <div class="password-box">
                     <input
-                        type="email"
-                        id="loginEmail"
-                        placeholder="Enter your email"
-                        required
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
                     >
+
+                    <button
+                        type="button"
+                        id="loginPasswordToggle"
+                        class="eye-btn"
+                    >
+                        Show
+                    </button>
                 </div>
+            </div>
 
-
-                <div class="input-group">
-
-                    <label>Password</label>
-
-                    <div class="password-box">
-
-                        <input
-                            type="password"
-                            id="loginPassword"
-                            placeholder="Enter your password"
-                            required
-                        >
-
-                        <button
-                            type="button"
-                            id="loginPasswordToggle"
-                            class="password-toggle"
-                        >
-                            Show
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <button type="submit" class="primary-btn">
-                    Login
-                </button>
-
-            </form>
-
-
-            <button
-                type="button"
-                id="forgotPasswordBtn"
-                class="text-btn"
-            >
-                Forgot Password?
+            <button id="loginBtn" class="primary-btn">
+                Login
             </button>
 
+            <button id="forgotPasswordBtn" class="text-btn">
+                Forgot Password?
+            </button>
 
             <div class="divider">
                 <span>OR</span>
             </div>
 
-
-            <button
-                type="button"
-                id="showRegisterBtn"
-                class="secondary-btn"
-            >
+            <button id="showRegisterBtn" class="secondary-btn">
                 Create New Account
             </button>
 
-
-            <button
-                type="button"
-                id="adminAccessBtn"
-                class="admin-link"
-            >
+            <button id="adminAccessBtn" class="admin-access-btn">
                 Admin Login
             </button>
 
@@ -135,95 +99,64 @@
 
         <div id="registerBox" class="auth-card hidden">
 
-            <div class="card-heading">
+            <div class="auth-heading">
+                <span class="mini-label">NEW ACCOUNT</span>
                 <h2>Create Account</h2>
-                <p>Register for MobileStore</p>
+                <p>Register to start shopping</p>
             </div>
 
+            <div class="input-group">
+                <label>Full Name</label>
+                <input
+                    type="text"
+                    id="registerName"
+                    placeholder="Enter full name"
+                >
+            </div>
 
-            <form id="registerForm">
+            <div class="input-group">
+                <label>Phone</label>
+                <input
+                    type="tel"
+                    id="registerPhone"
+                    placeholder="Enter phone number"
+                >
+            </div>
 
-                <div class="input-group">
+            <div class="input-group">
+                <label>Email</label>
+                <input
+                    type="email"
+                    id="registerEmail"
+                    placeholder="Enter email"
+                >
+            </div>
 
-                    <label>Full Name</label>
+            <div class="input-group">
+                <label>Password</label>
 
+                <div class="password-box">
                     <input
-                        type="text"
-                        id="registerName"
-                        placeholder="Enter your name"
-                        required
+                        type="password"
+                        id="registerPassword"
+                        placeholder="Create password"
                     >
 
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>Phone Number</label>
-
-                    <input
-                        type="tel"
-                        id="registerPhone"
-                        placeholder="Enter phone number"
-                        required
+                    <button
+                        type="button"
+                        id="registerPasswordToggle"
+                        class="eye-btn"
                     >
-
+                        Show
+                    </button>
                 </div>
+            </div>
 
+            <button id="registerBtn" class="primary-btn">
+                Register
+            </button>
 
-                <div class="input-group">
-
-                    <label>Email</label>
-
-                    <input
-                        type="email"
-                        id="registerEmail"
-                        placeholder="Enter email"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>Password</label>
-
-                    <div class="password-box">
-
-                        <input
-                            type="password"
-                            id="registerPassword"
-                            placeholder="Create password"
-                            minlength="6"
-                            required
-                        >
-
-                        <button
-                            type="button"
-                            id="registerPasswordToggle"
-                            class="password-toggle"
-                        >
-                            Show
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <button type="submit" class="primary-btn">
-                    Create Account
-                </button>
-
-            </form>
-
-
-            <button
-                type="button"
-                id="showLoginBtn"
-                class="secondary-btn"
-            >
+            <button id="showLoginBtn" class="text-btn">
                 Already have an account? Login
             </button>
 
@@ -234,74 +167,61 @@
 </section>
 
 
-
-<!-- =====================================================
+<!-- =========================================================
      STORE PAGE
-===================================================== -->
+========================================================= -->
 
-<section id="storePage" class="page hidden">
+<section id="storePage" class="page">
 
-    <!-- NAVBAR -->
+    <header class="main-header">
 
-    <header class="navbar">
+        <div class="header-left">
 
-        <div class="nav-left">
-
-            <button
-                type="button"
-                class="nav-logo"
-                data-page="storePage"
-            >
-                <span class="mini-logo">M</span>
-                MobileStore
+            <button id="mobileMenuBtn" class="icon-btn">
+                ☰
             </button>
+
+            <div class="store-logo">
+                <div class="logo-small">M</div>
+
+                <div>
+                    <strong>MobileStore</strong>
+                    <small>Smart Shopping</small>
+                </div>
+            </div>
 
         </div>
 
 
-        <div class="search-container">
-
-            <span class="search-icon">⌕</span>
+        <div class="search-area">
 
             <input
-                type="search"
+                type="text"
                 id="searchInput"
-                placeholder="Search smartphones..."
+                placeholder="Search mobiles..."
             >
+
+            <button id="searchBtn">
+                Search
+            </button>
 
         </div>
 
 
-        <div class="nav-actions">
+        <div class="header-actions">
 
-            <button
-                type="button"
-                id="profileBtn"
-                class="nav-btn"
-            >
-                <span>👤</span>
-                <span id="userNameNav">User</span>
-            </button>
-
-
-            <button
-                type="button"
-                id="cartBtn"
-                class="nav-btn cart-nav-btn"
-            >
+            <button id="cartBtn" class="header-action">
                 🛒
-
                 <span>Cart</span>
-
                 <b id="cartCount">0</b>
             </button>
 
+            <button id="profileBtn" class="header-action profile-action">
+                👤
+                <span id="userNameNav">User</span>
+            </button>
 
-            <button
-                type="button"
-                id="logoutBtn"
-                class="nav-btn logout-btn"
-            >
+            <button id="logoutBtn" class="logout-btn">
                 Logout
             </button>
 
@@ -310,479 +230,258 @@
     </header>
 
 
+    <div class="store-layout">
 
-    <!-- HERO -->
+        <!-- SIDEBAR -->
 
-    <div class="store-container">
+        <aside class="sidebar">
 
-        <section class="hero">
-
-            <div class="hero-content">
-
-                <span class="hero-tag">
-                    NEW GENERATION SMARTPHONES
-                </span>
-
-                <h1>
-                    Find Your
-                    <span>Perfect Phone.</span>
-                </h1>
-
-                <p>
-                    Explore the latest smartphones with powerful
-                    performance, amazing cameras and premium design.
-                </p>
-
-                <button
-                    type="button"
-                    class="primary-btn hero-btn"
-                    data-action="scrollProducts"
-                >
-                    Explore Phones →
-                </button>
-
+            <div class="sidebar-title">
+                <span>BRANDS</span>
             </div>
 
+            <button class="brand-btn active" data-brand="All">
+                All Mobiles
+            </button>
 
-            <div class="hero-visual">
+            <button class="brand-btn" data-brand="Apple">
+                Apple
+            </button>
 
-                <div class="phone-3d">
+            <button class="brand-btn" data-brand="Samsung">
+                Samsung
+            </button>
 
-                    <div class="phone-camera"></div>
+            <button class="brand-btn" data-brand="OnePlus">
+                OnePlus
+            </button>
 
-                    <div class="phone-screen">
+            <button class="brand-btn" data-brand="Google">
+                Google
+            </button>
 
-                        <div class="screen-time">
-                            10:09
-                        </div>
+            <button class="brand-btn" data-brand="Xiaomi">
+                Xiaomi
+            </button>
 
-                        <div class="screen-text">
-                            MobileStore
-                        </div>
+            <button class="brand-btn" data-brand="Realme">
+                Realme
+            </button>
 
-                    </div>
+            <button class="brand-btn" data-brand="Motorola">
+                Motorola
+            </button>
 
-                </div>
+            <button class="brand-btn" data-brand="Nothing">
+                Nothing
+            </button>
 
-            </div>
+            <button class="brand-btn" data-brand="POCO">
+                POCO
+            </button>
 
-        </section>
-
-
-
-        <!-- CATEGORIES -->
-
-        <section class="categories-section">
-
-            <div class="section-heading">
-
-                <div>
-                    <span class="section-label">
-                        COLLECTION
-                    </span>
-
-                    <h2>Shop by Brand</h2>
-                </div>
-
-            </div>
-
-
-            <div class="categories">
-
-                <button
-                    type="button"
-                    class="category active"
-                    data-brand="All"
-                >
-                    All
-                </button>
-
-                <button
-                    type="button"
-                    class="category"
-                    data-brand="Apple"
-                >
-                    Apple
-                </button>
-
-                <button
-                    type="button"
-                    class="category"
-                    data-brand="Samsung"
-                >
-                    Samsung
-                </button>
-
-                <button
-                    type="button"
-                    class="category"
-                    data-brand="OnePlus"
-                >
-                    OnePlus
-                </button>
-
-                <button
-                    type="button"
-                    class="category"
-                    data-brand="Google"
-                >
-                    Google
-                </button>
-
-                <button
-                    type="button"
-                    class="category"
-                    data-brand="Xiaomi"
-                >
-                    Xiaomi
-                </button>
-
-                <button
-                    type="button"
-                    class="category"
-                    data-brand="Realme"
-                >
-                    Realme
-                </button>
-
-                <button
-                    type="button"
-                    class="category"
-                    data-brand="Motorola"
-                >
-                    Motorola
-                </button>
-
-                <button
-                    type="button"
-                    class="category"
-                    data-brand="Nothing"
-                >
-                    Nothing
-                </button>
-
-                <button
-                    type="button"
-                    class="category"
-                    data-brand="POCO"
-                >
-                    POCO
-                </button>
-
-            </div>
-
-        </section>
-
+        </aside>
 
 
         <!-- PRODUCTS -->
 
-        <section id="productsSection" class="products-section">
+        <main class="store-content">
 
-            <div class="products-header">
+            <div class="store-top">
 
                 <div>
-
-                    <span class="section-label">
-                        SMARTPHONES
-                    </span>
-
-                    <h2>Latest Devices</h2>
-
+                    <span class="mini-label">SMARTPHONES</span>
+                    <h2>Explore Mobiles</h2>
                 </div>
 
-
-                <span id="productResultText">
-                    Loading products...
+                <span id="productCount" class="product-count">
+                    0 Products
                 </span>
 
             </div>
 
+            <div id="productsGrid" class="products-grid"></div>
 
-            <div
-                id="productGrid"
-                class="product-grid"
-            ></div>
-
-        </section>
+        </main>
 
     </div>
 
-
-
-    <!-- FOOTER -->
-
-    <footer class="footer">
-
-        <h3>MobileStore</h3>
-
-        <p>
-            Premium smartphones at your fingertips.
-        </p>
-
-        <div class="footer-line"></div>
-
-        <p>
-            BY PRAJAPATI KAKSH
-        </p>
-
-        <small>
-            © 2026 MobileStore. All Rights Reserved.
-        </small>
-
-    </footer>
-
 </section>
 
 
-
-<!-- =====================================================
+<!-- =========================================================
      PRODUCT DETAILS
-===================================================== -->
+========================================================= -->
 
-<section id="productPage" class="page hidden">
+<section id="productDetailsPage" class="page">
 
-    <header class="simple-header">
+    <div class="simple-header">
 
-        <button
-            type="button"
-            class="back-btn"
-            data-page="storePage"
-        >
-            ← Back to Store
+        <button id="backToStoreBtn" class="back-btn">
+            ← Back
         </button>
 
-        <button
-            type="button"
-            class="cart-simple-btn"
-            data-page="cartPage"
-        >
-            🛒 Cart
-            <b id="detailCartCount">0</b>
+        <div class="simple-title">
+            Product Details
+        </div>
+
+        <button id="detailsCartBtn" class="cart-top-btn">
+            🛒 <span id="detailsCartCount">0</span>
         </button>
 
-    </header>
+    </div>
 
-
-    <main class="details-container">
-
-        <div id="productDetails"></div>
-
-    </main>
+    <main id="productDetails" class="details-container"></main>
 
 </section>
 
 
+<!-- =========================================================
+     CART
+========================================================= -->
 
-<!-- =====================================================
-     CART PAGE
-===================================================== -->
+<section id="cartPage" class="page">
 
-<section id="cartPage" class="page hidden">
+    <div class="simple-header">
 
-    <header class="simple-header">
-
-        <button
-            type="button"
-            class="back-btn"
-            data-page="storePage"
-        >
+        <button id="backFromCartBtn" class="back-btn">
             ← Continue Shopping
         </button>
 
-        <h2>Shopping Cart</h2>
+        <div class="simple-title">
+            My Cart
+        </div>
 
-    </header>
+        <div></div>
 
+    </div>
 
-    <main class="cart-container">
-
-        <div id="cartContent"></div>
-
-    </main>
+    <main id="cartContainer" class="cart-container"></main>
 
 </section>
 
 
+<!-- =========================================================
+     CHECKOUT
+========================================================= -->
 
-<!-- =====================================================
-     CHECKOUT PAGE
-===================================================== -->
+<section id="checkoutPage" class="page">
 
-<section id="checkoutPage" class="page hidden">
+    <div class="simple-header">
 
-    <header class="simple-header">
-
-        <button
-            type="button"
-            class="back-btn"
-            data-page="cartPage"
-        >
-            ← Back to Cart
+        <button id="backFromCheckoutBtn" class="back-btn">
+            ← Back
         </button>
 
-        <h2>Checkout</h2>
+        <div class="simple-title">
+            Checkout
+        </div>
 
-    </header>
+        <div></div>
+
+    </div>
 
 
     <main class="checkout-container">
 
         <div class="checkout-form-card">
 
-            <div class="card-heading">
+            <span class="mini-label">DELIVERY DETAILS</span>
 
-                <h2>Delivery Details</h2>
+            <h2>Delivery Information</h2>
 
-                <p>
-                    Enter your details to place the order.
-                </p>
-
+            <div class="input-group">
+                <label>Full Name</label>
+                <input id="checkoutName" type="text">
             </div>
 
+            <div class="input-group">
+                <label>Phone</label>
+                <input id="checkoutPhone" type="tel">
+            </div>
 
-            <form id="checkoutForm">
+            <div class="input-group">
+                <label>Email</label>
+                <input id="checkoutEmail" type="email">
+            </div>
 
-                <div class="input-group">
-
-                    <label>Full Name</label>
-
-                    <input
-                        type="text"
-                        id="checkoutName"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>Phone Number</label>
-
-                    <input
-                        type="tel"
-                        id="checkoutPhone"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>Email</label>
-
-                    <input
-                        type="email"
-                        id="checkoutEmail"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>Delivery Address</label>
-
-                    <textarea
-                        id="checkoutAddress"
-                        rows="5"
-                        placeholder="Enter complete delivery address"
-                        required
-                    ></textarea>
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="primary-btn"
-                >
-                    Place Order
-                </button>
-
-            </form>
+            <div class="input-group">
+                <label>Complete Delivery Address</label>
+                <textarea
+                    id="checkoutAddress"
+                    placeholder="House No, Street, Area, City, State, Pincode"
+                ></textarea>
+            </div>
 
         </div>
 
 
-        <div
-            id="checkoutSummary"
-            class="checkout-summary"
-        ></div>
+        <div class="checkout-summary-card">
+
+            <span class="mini-label">ORDER SUMMARY</span>
+
+            <h2>Your Order</h2>
+
+            <div id="checkoutSummary"></div>
+
+            <div class="checkout-total-row">
+                <span>Total</span>
+                <strong id="checkoutTotal">₹0</strong>
+            </div>
+
+            <button id="placeOrderBtn" class="primary-btn">
+                Place Order
+            </button>
+
+        </div>
 
     </main>
 
 </section>
 
 
+<!-- =========================================================
+     SUCCESS
+========================================================= -->
 
-<!-- =====================================================
-     SUCCESS PAGE
-===================================================== -->
+<section id="successPage" class="page">
 
-<section id="successPage" class="page hidden">
-
-    <main class="success-container">
+    <div class="success-card">
 
         <div class="success-icon">
             ✓
         </div>
 
-        <h1>Order Placed!</h1>
+        <span class="mini-label">ORDER SUCCESSFUL</span>
+
+        <h1>Thank You!</h1>
 
         <p>
             Your order has been successfully placed.
         </p>
 
+        <div id="successOrderInfo" class="success-order-info"></div>
 
-        <div class="order-id-box">
+        <button id="whatsappBtn" class="whatsapp-btn">
+            Send Order on WhatsApp
+        </button>
 
-            <span>Order ID</span>
+        <button id="continueShoppingBtn" class="secondary-btn">
+            Continue Shopping
+        </button>
 
-            <strong id="successOrderId">
-                —
-            </strong>
-
-        </div>
-
-
-        <div class="success-actions">
-
-            <button
-                type="button"
-                id="successWhatsappBtn"
-                class="primary-btn"
-            >
-                Send Order on WhatsApp
-            </button>
-
-
-            <button
-                type="button"
-                class="secondary-btn"
-                data-page="storePage"
-            >
-                Continue Shopping
-            </button>
-
-        </div>
-
-    </main>
+    </div>
 
 </section>
 
 
-
-<!-- =====================================================
+<!-- =========================================================
      ADMIN LOGIN
-===================================================== -->
+========================================================= -->
 
-<section id="adminLoginPage" class="page hidden">
+<section id="adminLoginPage" class="page">
 
-    <div class="auth-container">
+    <div class="auth-wrapper">
 
         <div class="auth-brand">
 
@@ -790,87 +489,74 @@
                 A
             </div>
 
-            <h1>
-                Mobile<span>Store</span>
-            </h1>
-
-            <p>
-                Admin Dashboard
-            </p>
+            <div>
+                <h1>MobileStore</h1>
+                <p>Admin Panel</p>
+            </div>
 
         </div>
 
 
         <div class="auth-card">
 
-            <div class="card-heading">
+            <div class="auth-heading">
+
+                <span class="mini-label">
+                    ADMIN ACCESS
+                </span>
 
                 <h2>Admin Login</h2>
 
                 <p>
-                    Sign in to manage your store.
+                    Login to manage your store
                 </p>
 
             </div>
 
 
-            <form id="adminLoginForm">
+            <div class="input-group">
 
-                <div class="input-group">
+                <label>Email</label>
 
-                    <label>Admin Email</label>
+                <input
+                    id="adminEmail"
+                    type="email"
+                    placeholder="Admin email"
+                >
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label>Password</label>
+
+                <div class="password-box">
 
                     <input
-                        type="email"
-                        id="adminEmail"
-                        placeholder="admin@mobilestore.com"
-                        required
+                        id="adminPassword"
+                        type="password"
+                        placeholder="Admin password"
                     >
 
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>Password</label>
-
-                    <div class="password-box">
-
-                        <input
-                            type="password"
-                            id="adminPassword"
-                            placeholder="Enter admin password"
-                            required
-                        >
-
-                        <button
-                            type="button"
-                            id="adminPasswordToggle"
-                            class="password-toggle"
-                        >
-                            Show
-                        </button>
-
-                    </div>
+                    <button
+                        type="button"
+                        id="adminPasswordToggle"
+                        class="eye-btn"
+                    >
+                        Show
+                    </button>
 
                 </div>
 
-
-                <button
-                    type="submit"
-                    class="primary-btn"
-                >
-                    Login to Dashboard
-                </button>
-
-            </form>
+            </div>
 
 
-            <button
-                type="button"
-                class="secondary-btn"
-                data-page="authPage"
-            >
+            <button id="adminLoginBtn" class="primary-btn">
+                Login as Admin
+            </button>
+
+            <button id="backToUserLoginBtn" class="text-btn">
                 ← Back to User Login
             </button>
 
@@ -881,41 +567,29 @@
 </section>
 
 
-
-<!-- =====================================================
+<!-- =========================================================
      ADMIN DASHBOARD
-===================================================== -->
+========================================================= -->
 
-<section id="adminPage" class="page hidden">
+<section id="adminPage" class="page">
 
-    <header class="admin-navbar">
+    <header class="admin-header">
 
-        <div class="admin-title">
+        <div class="admin-header-brand">
 
-            <span class="mini-logo">
-                M
-            </span>
+            <div class="logo-small admin-logo">
+                A
+            </div>
 
             <div>
-
-                <strong>
-                    MobileStore Admin
-                </strong>
-
-                <small>
-                    Management Dashboard
-                </small>
-
+                <strong>MobileStore Admin</strong>
+                <small>Management Dashboard</small>
             </div>
 
         </div>
 
 
-        <button
-            type="button"
-            id="adminLogoutBtn"
-            class="logout-btn"
-        >
+        <button id="adminLogoutBtn" class="logout-btn">
             Logout
         </button>
 
@@ -924,278 +598,255 @@
 
     <main class="admin-container">
 
-
         <!-- STATS -->
 
-        <div class="admin-stats">
+        <div class="stats-grid">
 
             <div class="stat-card">
-
                 <span>Total Users</span>
-
-                <strong id="totalUsers">
-                    0
-                </strong>
-
+                <strong id="totalUsers">0</strong>
             </div>
 
-
             <div class="stat-card">
-
                 <span>Total Orders</span>
-
-                <strong id="totalOrders">
-                    0
-                </strong>
-
+                <strong id="totalOrders">0</strong>
             </div>
 
+            <div class="stat-card">
+                <span>Total Sales</span>
+                <strong id="totalSales">₹0</strong>
+            </div>
 
             <div class="stat-card">
-
-                <span>Total Sales</span>
-
-                <strong id="totalSales">
-                    ₹0
-                </strong>
-
+                <span>Total Products</span>
+                <strong id="totalProducts">0</strong>
             </div>
 
         </div>
 
 
+        <!-- PRODUCT MANAGEMENT -->
 
-        <!-- ADD PRODUCT -->
+        <section class="admin-section">
 
-        <section class="admin-card">
-
-            <div class="admin-card-header">
+            <div class="admin-section-heading">
 
                 <div>
-
-                    <span class="section-label">
-                        INVENTORY
+                    <span class="mini-label">
+                        PRODUCT MANAGEMENT
                     </span>
 
-                    <h2>Add New Product</h2>
-
+                    <h2 id="productFormTitle">
+                        Add New Product
+                    </h2>
                 </div>
-
-            </div>
-
-
-            <form id="productForm">
-
-                <div class="admin-form-grid">
-
-                    <div class="input-group">
-
-                        <label>Product Name</label>
-
-                        <input
-                            type="text"
-                            id="productName"
-                            placeholder="iPhone 17 Pro"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>Brand</label>
-
-                        <input
-                            type="text"
-                            id="productBrand"
-                            placeholder="Apple"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>Price</label>
-
-                        <input
-                            type="number"
-                            id="productPrice"
-                            placeholder="129999"
-                            min="0"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>Old Price</label>
-
-                        <input
-                            type="number"
-                            id="productOldPrice"
-                            placeholder="139999"
-                            min="0"
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>Image URL</label>
-
-                        <input
-                            type="url"
-                            id="productImage"
-                            placeholder="https://..."
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>RAM</label>
-
-                        <input
-                            type="text"
-                            id="productRam"
-                            placeholder="8GB"
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>Storage</label>
-
-                        <input
-                            type="text"
-                            id="productStorage"
-                            placeholder="256GB"
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>Camera</label>
-
-                        <input
-                            type="text"
-                            id="productCamera"
-                            placeholder="48MP"
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>Battery</label>
-
-                        <input
-                            type="text"
-                            id="productBattery"
-                            placeholder="5000mAh"
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>Processor</label>
-
-                        <input
-                            type="text"
-                            id="productProcessor"
-                            placeholder="Snapdragon..."
-                        >
-
-                    </div>
-
-                </div>
-
 
                 <button
-                    type="submit"
-                    class="primary-btn"
+                    id="cancelProductEditBtn"
+                    class="small-btn hidden"
                 >
-                    + Add Product
+                    Cancel Edit
                 </button>
-
-            </form>
-
-        </section>
-
-
-
-        <!-- ADMIN PRODUCTS -->
-
-        <section class="admin-card">
-
-            <div class="admin-card-header">
-
-                <div>
-
-                    <span class="section-label">
-                        PRODUCTS
-                    </span>
-
-                    <h2>Manage Products</h2>
-
-                </div>
-
-
-                <input
-                    type="search"
-                    id="productSearch"
-                    class="admin-search"
-                    placeholder="Search products..."
-                >
 
             </div>
 
 
-            <div
-                id="adminProductGrid"
-                class="admin-product-grid"
-            ></div>
+            <div class="product-form">
+
+                <input type="hidden" id="editingProductId">
+
+
+                <div class="input-group">
+                    <label>Product Name *</label>
+                    <input
+                        id="productName"
+                        type="text"
+                        placeholder="e.g. iPhone 17 Pro"
+                    >
+                </div>
+
+
+                <div class="input-group">
+                    <label>Brand *</label>
+
+                    <select id="productBrand">
+
+                        <option value="">
+                            Select Brand
+                        </option>
+
+                        <option>Apple</option>
+                        <option>Samsung</option>
+                        <option>OnePlus</option>
+                        <option>Google</option>
+                        <option>Xiaomi</option>
+                        <option>Realme</option>
+                        <option>Motorola</option>
+                        <option>Nothing</option>
+                        <option>POCO</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+                    <label>Price *</label>
+
+                    <input
+                        id="productPrice"
+                        type="number"
+                        placeholder="129999"
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+                    <label>Old Price</label>
+
+                    <input
+                        id="productOldPrice"
+                        type="number"
+                        placeholder="139999"
+                    >
+
+                </div>
+
+
+                <div class="input-group full-width">
+                    <label>Image URL *</label>
+
+                    <input
+                        id="productImage"
+                        type="text"
+                        placeholder="https://example.com/mobile.png"
+                    >
+
+                    <small class="input-help">
+                        PNG, JPG, JPEG, WEBP direct image URL supported.
+                    </small>
+
+                </div>
+
+
+                <div class="input-group">
+                    <label>RAM</label>
+
+                    <input
+                        id="productRam"
+                        type="text"
+                        placeholder="8GB"
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+                    <label>Storage</label>
+
+                    <input
+                        id="productStorage"
+                        type="text"
+                        placeholder="256GB"
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+                    <label>Camera</label>
+
+                    <input
+                        id="productCamera"
+                        type="text"
+                        placeholder="50MP"
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+                    <label>Battery</label>
+
+                    <input
+                        id="productBattery"
+                        type="text"
+                        placeholder="5000mAh"
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+                    <label>Processor</label>
+
+                    <input
+                        id="productProcessor"
+                        type="text"
+                        placeholder="Snapdragon"
+                    >
+
+                </div>
+
+
+                <div class="form-actions full-width">
+
+                    <button
+                        id="saveProductBtn"
+                        class="primary-btn"
+                    >
+                        Add Product
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Image</th>
+                            <th>Product</th>
+                            <th>Brand</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="productsTableBody"></tbody>
+
+                </table>
+
+            </div>
 
         </section>
-
 
 
         <!-- USERS -->
 
-        <section class="admin-card">
+        <section class="admin-section">
 
-            <div class="admin-card-header">
+            <div class="admin-section-heading">
 
                 <div>
-
-                    <span class="section-label">
+                    <span class="mini-label">
                         CUSTOMERS
                     </span>
 
                     <h2>Registered Users</h2>
-
                 </div>
 
-
                 <input
-                    type="search"
                     id="userSearch"
-                    class="admin-search"
+                    class="table-search"
+                    type="text"
                     placeholder="Search users..."
                 >
 
@@ -1204,21 +855,21 @@
 
             <div class="table-wrapper">
 
-                <table>
+                <table class="admin-table">
 
                     <thead>
 
                         <tr>
-
-                            <th>Name</th>
-                            <th>Phone</th>
+                            <th>Full Name</th>
                             <th>Email</th>
+                            <th>Phone</th>
+                            <th>User ID</th>
+                            <th>Total Orders</th>
+                            <th>Total Spent</th>
                             <th>Registration Date</th>
-
                         </tr>
 
                     </thead>
-
 
                     <tbody id="usersTableBody"></tbody>
 
@@ -1229,28 +880,24 @@
         </section>
 
 
-
         <!-- ORDERS -->
 
-        <section class="admin-card">
+        <section class="admin-section">
 
-            <div class="admin-card-header">
+            <div class="admin-section-heading">
 
                 <div>
-
-                    <span class="section-label">
-                        SALES
+                    <span class="mini-label">
+                        ORDERS
                     </span>
 
-                    <h2>Orders</h2>
-
+                    <h2>Customer Orders</h2>
                 </div>
 
-
                 <input
-                    type="search"
                     id="orderSearch"
-                    class="admin-search"
+                    class="table-search"
+                    type="text"
                     placeholder="Search orders..."
                 >
 
@@ -1259,23 +906,24 @@
 
             <div class="table-wrapper">
 
-                <table>
+                <table class="admin-table orders-table">
 
                     <thead>
 
                         <tr>
-
                             <th>Order ID</th>
                             <th>Customer</th>
-                            <th>Items</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Product</th>
+                            <th>Qty</th>
                             <th>Total</th>
+                            <th>Order Date</th>
                             <th>Status</th>
-                            <th>Date</th>
-
                         </tr>
 
                     </thead>
-
 
                     <tbody id="ordersTableBody"></tbody>
 
@@ -1290,25 +938,14 @@
 </section>
 
 
-
-<!-- =====================================================
-     TOAST
-===================================================== -->
-
-<div
-    id="toast"
-    class="toast"
->
-    <span id="toastMessage"></span>
-</div>
+<footer class="site-footer">
+    BY PRAJAPATI KAKSH
+    <br>
+    © 2026 MobileStore. All Rights Reserved.
+</footer>
 
 
-
-<!-- =====================================================
-     FIREBASE + APP SCRIPT
-===================================================== -->
-
-<script type="module" src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
