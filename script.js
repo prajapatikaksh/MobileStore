@@ -1,282 +1,213 @@
 /* =========================================================
-   MOBILESTORE - COMPLETE SYSTEM
-   ========================================================= */
-
-
-/* =========================================================
-   STORAGE KEYS
+   MOBILESTORE - FIREBASE VERSION
+   USER AUTH + FIRESTORE + ADMIN + PRODUCTS + ORDERS
 ========================================================= */
 
-const USERS_KEY = "mobileStoreUsers";
-const ORDERS_KEY = "mobileStoreOrders";
-const CURRENT_USER_KEY = "mobileStoreCurrentUser";
-const CART_KEY = "mobileStoreCart";
-const LAST_EMAIL_KEY = "mobileStoreLastRegisteredEmail";
-const PRODUCTS_KEY = "mobileStoreProducts";
+import {
+    initializeApp,
+    getApps,
+    getApp
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 
-const DATA_VERSION_KEY = "mobileStoreDataVersion";
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    signOut,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
-const CURRENT_DATA_VERSION =
-    "2026-NEW-PRODUCT-SYSTEM-V1";
+import {
+    getFirestore,
+    collection,
+    doc,
+    setDoc,
+    addDoc,
+    deleteDoc,
+    getDoc,
+    getDocs,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 
 /* =========================================================
-   ADMIN
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC_C-EmObRGhRFxiaiHrXQ4zb49TzCPJ3w",
+    authDomain: "mobilestore-d044c.firebaseapp.com",
+    projectId: "mobilestore-d044c",
+    storageBucket: "mobilestore-d044c.firebasestorage.app",
+    messagingSenderId: "942752515187",
+    appId: "1:942752515187:web:779e0e178a4729e5b21606",
+    measurementId: "G-XXBFTKTLPH"
+};
+
+
+/* =========================================================
+   FIREBASE APPS
+   Separate User + Admin sessions
+========================================================= */
+
+const userApp = initializeApp(firebaseConfig, "MobileStoreUserApp");
+const adminApp = initializeApp(firebaseConfig, "MobileStoreAdminApp");
+
+const userAuth = getAuth(userApp);
+const adminAuth = getAuth(adminApp);
+
+const db = getFirestore(userApp);
+const adminDb = getFirestore(adminApp);
+
+
+/* =========================================================
+   CONSTANTS
 ========================================================= */
 
 const ADMIN_EMAIL = "admin@mobilestore.com";
 const ADMIN_PASSWORD = "admin123";
 
-const WHATSAPP_NUMBER = "917990130683";
-
-
-/* =========================================================
-   GLOBAL VARIABLES
-========================================================= */
-
-let selectedBrand = "All";
-let selectedProduct = null;
-let selectedOrderForWhatsApp = null;
-
-
-/* =========================================================
-   ONE-TIME OLD DATA RESET
-========================================================= */
-
-function resetOldDataOnce() {
-
-    const currentVersion =
-        localStorage.getItem(DATA_VERSION_KEY);
-
-    if (currentVersion !== CURRENT_DATA_VERSION) {
-
-        [
-            USERS_KEY,
-            ORDERS_KEY,
-            CURRENT_USER_KEY,
-            CART_KEY,
-            LAST_EMAIL_KEY,
-            PRODUCTS_KEY
-        ].forEach(key => {
-            localStorage.removeItem(key);
-        });
-
-        localStorage.setItem(
-            DATA_VERSION_KEY,
-            CURRENT_DATA_VERSION
-        );
-    }
-}
-
-
-/* =========================================================
-   SAFE STORAGE FUNCTIONS
-========================================================= */
-
-function getData(key, fallback) {
-
-    try {
-
-        const value =
-            localStorage.getItem(key);
-
-        if (!value) {
-            return fallback;
-        }
-
-        return JSON.parse(value);
-
-    } catch (error) {
-
-        console.error(
-            "Storage read error:",
-            key,
-            error
-        );
-
-        return fallback;
-    }
-}
-
-
-function saveData(key, value) {
-
-    try {
-
-        localStorage.setItem(
-            key,
-            JSON.stringify(value)
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Storage save error:",
-            key,
-            error
-        );
-    }
-}
-
-
-/* =========================================================
-   INITIAL DATA
-========================================================= */
-
-function initializeData() {
-
-    if (!Array.isArray(getData(USERS_KEY, null))) {
-        saveData(USERS_KEY, []);
-    }
-
-    if (!Array.isArray(getData(ORDERS_KEY, null))) {
-        saveData(ORDERS_KEY, []);
-    }
-
-    if (!Array.isArray(getData(CART_KEY, null))) {
-        saveData(CART_KEY, []);
-    }
-
-    if (!Array.isArray(getData(PRODUCTS_KEY, null))) {
-        saveData(PRODUCTS_KEY, []);
-    }
-}
+const CART_KEY = "mobileStoreCart";
+const CURRENT_USER_KEY = "mobileStoreCurrentUser";
+const LAST_EMAIL_KEY = "mobileStoreLastRegisteredEmail";
 
 
 /* =========================================================
    ELEMENTS
 ========================================================= */
 
-const authPage =
-    document.getElementById("authPage");
-
-const storePage =
-    document.getElementById("storePage");
-
-const productDetailsPage =
-    document.getElementById("productDetailsPage");
-
-const cartPage =
-    document.getElementById("cartPage");
-
-const checkoutPage =
-    document.getElementById("checkoutPage");
-
-const successPage =
-    document.getElementById("successPage");
-
-const adminLoginPage =
-    document.getElementById("adminLoginPage");
-
-const adminPage =
-    document.getElementById("adminPage");
+const authPage = document.getElementById("authPage");
+const storePage = document.getElementById("storePage");
+const productPage = document.getElementById("productPage");
+const cartPage = document.getElementById("cartPage");
+const checkoutPage = document.getElementById("checkoutPage");
+const successPage = document.getElementById("successPage");
+const adminLoginPage = document.getElementById("adminLoginPage");
+const adminPage = document.getElementById("adminPage");
 
 
 /* =========================================================
-   PAGE SYSTEM
+   AUTH ELEMENTS
 ========================================================= */
 
-function hideAllPages() {
+const loginBox = document.getElementById("loginBox");
+const registerBox = document.getElementById("registerBox");
 
-    document
-        .querySelectorAll(".page")
-        .forEach(page => {
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
 
-            page.classList.remove(
-                "active-page"
-            );
+const loginEmail = document.getElementById("loginEmail");
+const loginPassword = document.getElementById("loginPassword");
 
-        });
-}
+const registerName = document.getElementById("registerName");
+const registerPhone = document.getElementById("registerPhone");
+const registerEmail = document.getElementById("registerEmail");
+const registerPassword = document.getElementById("registerPassword");
 
+const showRegisterBtn = document.getElementById("showRegisterBtn");
+const showLoginBtn = document.getElementById("showLoginBtn");
 
-function showPage(id) {
+const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
+const adminAccessBtn = document.getElementById("adminAccessBtn");
 
-    hideAllPages();
-
-    const page =
-        document.getElementById(id);
-
-    if (page) {
-
-        page.classList.add(
-            "active-page"
-        );
-
-    }
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-}
+const loginPasswordToggle = document.getElementById("loginPasswordToggle");
+const registerPasswordToggle = document.getElementById("registerPasswordToggle");
 
 
 /* =========================================================
-   MONEY
+   STORE ELEMENTS
+========================================================= */
+
+const searchInput = document.getElementById("searchInput");
+const cartBtn = document.getElementById("cartBtn");
+const cartCount = document.getElementById("cartCount");
+const profileBtn = document.getElementById("profileBtn");
+const userNameNav = document.getElementById("userNameNav");
+const logoutBtn = document.getElementById("logoutBtn");
+
+const productGrid = document.getElementById("productGrid");
+const productResultText = document.getElementById("productResultText");
+
+const categories = document.querySelectorAll(".category");
+
+
+/* =========================================================
+   PRODUCT ELEMENTS
+========================================================= */
+
+const productDetails = document.getElementById("productDetails");
+const detailCartCount = document.getElementById("detailCartCount");
+
+
+/* =========================================================
+   CART / CHECKOUT ELEMENTS
+========================================================= */
+
+const cartContent = document.getElementById("cartContent");
+
+const checkoutForm = document.getElementById("checkoutForm");
+const checkoutName = document.getElementById("checkoutName");
+const checkoutPhone = document.getElementById("checkoutPhone");
+const checkoutEmail = document.getElementById("checkoutEmail");
+const checkoutAddress = document.getElementById("checkoutAddress");
+const checkoutSummary = document.getElementById("checkoutSummary");
+
+const successOrderId = document.getElementById("successOrderId");
+const successWhatsappBtn = document.getElementById("successWhatsappBtn");
+
+
+/* =========================================================
+   ADMIN ELEMENTS
+========================================================= */
+
+const adminLoginForm = document.getElementById("adminLoginForm");
+const adminEmail = document.getElementById("adminEmail");
+const adminPassword = document.getElementById("adminPassword");
+const adminPasswordToggle = document.getElementById("adminPasswordToggle");
+
+const adminLogoutBtn = document.getElementById("adminLogoutBtn");
+
+const totalUsers = document.getElementById("totalUsers");
+const totalOrders = document.getElementById("totalOrders");
+const totalSales = document.getElementById("totalSales");
+
+const userSearch = document.getElementById("userSearch");
+const usersTableBody = document.getElementById("usersTableBody");
+
+const orderSearch = document.getElementById("orderSearch");
+const ordersTableBody = document.getElementById("ordersTableBody");
+
+
+/* =========================================================
+   APP STATE
+========================================================= */
+
+let products = [];
+let selectedBrand = "All";
+let selectedProduct = null;
+
+let unsubscribeProducts = null;
+
+let allUsers = [];
+let allOrders = [];
+
+let currentWhatsappMessage = "";
+
+
+/* =========================================================
+   BASIC HELPERS
 ========================================================= */
 
 function money(value) {
-
-    const amount =
-        Number(value) || 0;
-
-    return "₹" +
-        amount.toLocaleString("en-IN");
+    return "₹" + Number(value || 0).toLocaleString("en-IN");
 }
 
-
-/* =========================================================
-   DATE
-========================================================= */
-
-function formatDate(dateValue) {
-
-    if (!dateValue) {
-        return "-";
-    }
-
-    const date =
-        new Date(dateValue);
-
-    if (Number.isNaN(date.getTime())) {
-        return "-";
-    }
-
-    return date.toLocaleString(
-        "en-IN",
-        {
-            dateStyle: "medium",
-            timeStyle: "short"
-        }
-    );
-}
-
-
-/* =========================================================
-   ID GENERATOR
-========================================================= */
-
-function createId(prefix) {
-
-    return (
-        prefix +
-        "-" +
-        Date.now().toString(36) +
-        "-" +
-        Math.random()
-            .toString(36)
-            .substring(2, 7)
-    ).toUpperCase();
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
 
 function escapeHTML(value) {
-
     return String(value ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
@@ -286,166 +217,156 @@ function escapeHTML(value) {
 }
 
 
-/* =========================================================
-   IMAGE ERROR HANDLER
-========================================================= */
+function showPage(page) {
+    [
+        authPage,
+        storePage,
+        productPage,
+        cartPage,
+        checkoutPage,
+        successPage,
+        adminLoginPage,
+        adminPage
+    ].forEach(pageElement => {
+        if (pageElement) {
+            pageElement.classList.remove("active");
+            pageElement.style.display = "none";
+        }
+    });
 
-function imageFallback(img) {
-
-    img.onerror = null;
-
-    img.src =
-        "data:image/svg+xml;charset=UTF-8," +
-        encodeURIComponent(`
-            <svg xmlns="http://www.w3.org/2000/svg"
-                 width="500"
-                 height="500"
-                 viewBox="0 0 500 500">
-
-                <rect width="500"
-                      height="500"
-                      fill="#111827"/>
-
-                <text
-                    x="250"
-                    y="245"
-                    text-anchor="middle"
-                    fill="#94a3b8"
-                    font-size="28"
-                    font-family="Arial">
-                    Image Not Available
-                </text>
-
-                <text
-                    x="250"
-                    y="285"
-                    text-anchor="middle"
-                    fill="#64748b"
-                    font-size="18"
-                    font-family="Arial">
-                    Check Image URL
-                </text>
-
-            </svg>
-        `);
+    if (page) {
+        page.classList.add("active");
+        page.style.display = "block";
+    }
 }
 
 
-/* =========================================================
-   LOGIN / REGISTER ELEMENTS
-========================================================= */
+function showAuth() {
+    showPage(authPage);
 
-const loginBox =
-    document.getElementById("loginBox");
-
-const registerBox =
-    document.getElementById("registerBox");
-
-const loginEmail =
-    document.getElementById("loginEmail");
-
-const loginPassword =
-    document.getElementById("loginPassword");
-
-const registerName =
-    document.getElementById("registerName");
-
-const registerPhone =
-    document.getElementById("registerPhone");
-
-const registerEmail =
-    document.getElementById("registerEmail");
-
-const registerPassword =
-    document.getElementById("registerPassword");
+    if (loginBox) loginBox.style.display = "block";
+    if (registerBox) registerBox.style.display = "none";
+}
 
 
-/* =========================================================
-   SHOW LOGIN / REGISTER
-========================================================= */
-
-document
-    .getElementById("showRegisterBtn")
-    .addEventListener("click", () => {
-
-        loginBox.classList.add("hidden");
-        registerBox.classList.remove("hidden");
-
-    });
-
-
-document
-    .getElementById("showLoginBtn")
-    .addEventListener("click", () => {
-
-        registerBox.classList.add("hidden");
-        loginBox.classList.remove("hidden");
-
-        const lastEmail =
-            localStorage.getItem(
-                LAST_EMAIL_KEY
-            );
-
-        if (lastEmail) {
-            loginEmail.value = lastEmail;
-        }
-
-    });
-
-
-/* =========================================================
-   PASSWORD TOGGLE
-========================================================= */
-
-function setupPasswordToggle(
-    inputId,
-    buttonId
-) {
-
-    const input =
-        document.getElementById(inputId);
-
-    const button =
-        document.getElementById(buttonId);
-
-    if (!input || !button) {
-        return;
+function getCart() {
+    try {
+        return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    } catch {
+        return [];
     }
+}
 
-    button.addEventListener(
-        "click",
-        () => {
 
-            if (input.type === "password") {
+function saveCart(cart) {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    updateCartCount();
+}
 
-                input.type = "text";
-                button.textContent = "Hide";
 
-            } else {
+function clearCart() {
+    localStorage.removeItem(CART_KEY);
+    updateCartCount();
+}
 
-                input.type = "password";
-                button.textContent = "Show";
 
-            }
+function getCurrentUserData() {
+    try {
+        return JSON.parse(
+            localStorage.getItem(CURRENT_USER_KEY)
+        ) || null;
+    } catch {
+        return null;
+    }
+}
 
-        }
+
+function saveCurrentUserData(user) {
+    localStorage.setItem(
+        CURRENT_USER_KEY,
+        JSON.stringify(user)
     );
 }
 
 
+function clearCurrentUserData() {
+    localStorage.removeItem(CURRENT_USER_KEY);
+}
+
+
+function updateCartCount() {
+    const cart = getCart();
+
+    const count = cart.reduce(
+        (total, item) => total + Number(item.quantity || 1),
+        0
+    );
+
+    if (cartCount) {
+        cartCount.textContent = count;
+    }
+
+    if (detailCartCount) {
+        detailCartCount.textContent = count;
+    }
+}
+
+
+/* =========================================================
+   AUTH UI
+========================================================= */
+
+if (showRegisterBtn) {
+    showRegisterBtn.addEventListener("click", () => {
+        if (loginBox) loginBox.style.display = "none";
+        if (registerBox) registerBox.style.display = "block";
+    });
+}
+
+
+if (showLoginBtn) {
+    showLoginBtn.addEventListener("click", () => {
+        if (registerBox) registerBox.style.display = "none";
+        if (loginBox) loginBox.style.display = "block";
+    });
+}
+
+
+/* =========================================================
+   PASSWORD TOGGLES
+========================================================= */
+
+function setupPasswordToggle(button, input) {
+
+    if (!button || !input) return;
+
+    button.addEventListener("click", () => {
+
+        if (input.type === "password") {
+            input.type = "text";
+            button.textContent = "🙈";
+        } else {
+            input.type = "password";
+            button.textContent = "👁️";
+        }
+
+    });
+}
+
+
 setupPasswordToggle(
-    "loginPassword",
-    "loginPasswordToggle"
+    loginPasswordToggle,
+    loginPassword
 );
 
 setupPasswordToggle(
-    "registerPassword",
-    "registerPasswordToggle"
+    registerPasswordToggle,
+    registerPassword
 );
 
 setupPasswordToggle(
-    "adminPassword",
-    "adminPasswordToggle"
+    adminPasswordToggle,
+    adminPassword
 );
 
 
@@ -453,252 +374,174 @@ setupPasswordToggle(
    REGISTER
 ========================================================= */
 
-document
-    .getElementById("registerBtn")
-    .addEventListener("click", () => {
+if (registerForm) {
 
-        const name =
-            registerName.value.trim();
+    registerForm.addEventListener("submit", async (event) => {
 
-        const phone =
-            registerPhone.value.trim();
+        event.preventDefault();
 
-        const email =
-            registerEmail.value
-                .trim()
-                .toLowerCase();
+        const name = registerName?.value.trim();
+        const phone = registerPhone?.value.trim();
+        const email = registerEmail?.value.trim().toLowerCase();
+        const password = registerPassword?.value;
 
-        const password =
-            registerPassword.value;
-
-        if (!name ||
-            !phone ||
-            !email ||
-            !password) {
-
-            alert(
-                "Please fill all fields."
-            );
-
+        if (!name || !phone || !email || !password) {
+            alert("Please fill all fields.");
             return;
         }
 
         if (password.length < 6) {
-
-            alert(
-                "Password must be at least 6 characters."
-            );
-
+            alert("Password must be at least 6 characters.");
             return;
         }
 
+        try {
 
-        const users =
-            getData(
-                USERS_KEY,
-                []
+            const credential =
+                await createUserWithEmailAndPassword(
+                    userAuth,
+                    email,
+                    password
+                );
+
+            const uid = credential.user.uid;
+
+            await setDoc(
+                doc(db, "users", uid),
+                {
+                    uid: uid,
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    registrationDate: serverTimestamp()
+                }
             );
 
-        const existingUser =
-            users.find(
-                user =>
-                    String(user.email)
-                        .toLowerCase() === email
+            localStorage.setItem(
+                LAST_EMAIL_KEY,
+                email
             );
 
+            alert("Registration successful. Please login.");
 
-        if (existingUser) {
+            registerForm.reset();
 
-            alert(
-                "This email is already registered."
-            );
+            if (registerBox) {
+                registerBox.style.display = "none";
+            }
 
-            return;
+            if (loginBox) {
+                loginBox.style.display = "block";
+            }
+
+            if (loginEmail) {
+                loginEmail.value = email;
+            }
+
+            await signOut(userAuth);
+
+        } catch (error) {
+
+            console.error(error);
+
+            if (error.code === "auth/email-already-in-use") {
+                alert("This email is already registered.");
+            } else if (error.code === "auth/invalid-email") {
+                alert("Invalid email address.");
+            } else if (error.code === "auth/weak-password") {
+                alert("Password is too weak.");
+            } else {
+                alert(error.message);
+            }
         }
-
-
-        const newUser = {
-
-            id: createId("USR"),
-
-            name: name,
-
-            phone: phone,
-
-            email: email,
-
-            password: password,
-
-            registeredAt:
-                new Date().toISOString()
-
-        };
-
-
-        users.push(newUser);
-
-        saveData(
-            USERS_KEY,
-            users
-        );
-
-
-        localStorage.setItem(
-            LAST_EMAIL_KEY,
-            email
-        );
-
-
-        alert(
-            "Registration successful!"
-        );
-
-
-        registerName.value = "";
-        registerPhone.value = "";
-        registerEmail.value = "";
-        registerPassword.value = "";
-
-
-        registerBox.classList.add(
-            "hidden"
-        );
-
-        loginBox.classList.remove(
-            "hidden"
-        );
-
-        loginEmail.value = email;
-
-        loginPassword.focus();
 
     });
+
+}
 
 
 /* =========================================================
    LOGIN
 ========================================================= */
 
-document
-    .getElementById("loginBtn")
-    .addEventListener("click", loginUser);
+if (loginForm) {
 
+    loginForm.addEventListener("submit", async (event) => {
 
-loginPassword.addEventListener(
-    "keydown",
-    event => {
+        event.preventDefault();
 
-        if (event.key === "Enter") {
-            loginUser();
+        const email =
+            loginEmail?.value.trim().toLowerCase();
+
+        const password =
+            loginPassword?.value;
+
+        if (!email || !password) {
+            alert("Please enter email and password.");
+            return;
         }
 
-    }
-);
+        try {
 
+            const credential =
+                await signInWithEmailAndPassword(
+                    userAuth,
+                    email,
+                    password
+                );
 
-function loginUser() {
+            const user = credential.user;
 
-    const email =
-        loginEmail.value
-            .trim()
-            .toLowerCase();
+            let userData = {
+                uid: user.uid,
+                email: user.email,
+                name: user.email.split("@")[0],
+                phone: ""
+            };
 
-    const password =
-        loginPassword.value;
+            try {
 
+                const userDoc =
+                    await getDoc(
+                        doc(db, "users", user.uid)
+                    );
 
-    if (!email || !password) {
+                if (userDoc.exists()) {
+                    userData = {
+                        ...userData,
+                        ...userDoc.data()
+                    };
+                }
 
-        alert(
-            "Enter email and password."
-        );
+            } catch (firestoreError) {
+                console.warn(
+                    "User profile read failed:",
+                    firestoreError
+                );
+            }
 
-        return;
-    }
+            saveCurrentUserData(userData);
 
+            openStore();
 
-    const users =
-        getData(
-            USERS_KEY,
-            []
-        );
+        } catch (error) {
 
+            console.error(error);
 
-    const user =
-        users.find(
-            item =>
-                String(item.email)
-                    .toLowerCase() === email &&
-                String(item.password) === password
-        );
+            if (
+                error.code === "auth/invalid-credential" ||
+                error.code === "auth/wrong-password" ||
+                error.code === "auth/user-not-found"
+            ) {
+                alert("Wrong email or password.");
+            } else if (error.code === "auth/too-many-requests") {
+                alert("Too many attempts. Please try again later.");
+            } else {
+                alert(error.message);
+            }
+        }
 
-
-    if (!user) {
-
-        alert(
-            "Invalid email or password."
-        );
-
-        return;
-    }
-
-
-    /*
-       IMPORTANT:
-
-       Current user is stored in localStorage.
-       Therefore login remains active until
-       user manually clicks Logout.
-    */
-
-    saveData(
-        CURRENT_USER_KEY,
-        user
-    );
-
-
-    openStore();
-}
-
-
-/* =========================================================
-   OPEN STORE
-========================================================= */
-
-function openStore() {
-
-    const currentUser =
-        getData(
-            CURRENT_USER_KEY,
-            null
-        );
-
-
-    if (!currentUser) {
-
-        showPage("authPage");
-
-        return;
-    }
-
-
-    const userNameNav =
-        document.getElementById(
-            "userNameNav"
-        );
-
-
-    userNameNav.textContent =
-        String(
-            currentUser.name || "User"
-        );
-
-
-    showPage("storePage");
-
-    renderProducts();
-
-    updateCartCount();
+    });
 
 }
 
@@ -707,167 +550,432 @@ function openStore() {
    FORGOT PASSWORD
 ========================================================= */
 
-document
-    .getElementById("forgotPasswordBtn")
-    .addEventListener("click", () => {
+if (forgotPasswordBtn) {
+
+    forgotPasswordBtn.addEventListener("click", async () => {
 
         const email =
-            prompt(
-                "Enter your registered email:"
-            );
-
+            loginEmail?.value.trim().toLowerCase();
 
         if (!email) {
+            alert("Please enter your email first.");
+            loginEmail?.focus();
             return;
         }
 
+        try {
 
-        const users =
-            getData(
-                USERS_KEY,
-                []
+            await sendPasswordResetEmail(
+                userAuth,
+                email
             );
-
-
-        const index =
-            users.findIndex(
-                user =>
-                    String(user.email)
-                        .toLowerCase() ===
-                    email.trim().toLowerCase()
-            );
-
-
-        if (index === -1) {
 
             alert(
-                "Email not found."
+                "Password reset email sent. Please check your inbox."
             );
 
-            return;
+        } catch (error) {
+
+            console.error(error);
+
+            if (error.code === "auth/user-not-found") {
+                alert("No account found with this email.");
+            } else {
+                alert(error.message);
+            }
         }
-
-
-        const newPassword =
-            prompt(
-                "Enter your new password:"
-            );
-
-
-        if (!newPassword) {
-            return;
-        }
-
-
-        if (newPassword.length < 6) {
-
-            alert(
-                "Password must be at least 6 characters."
-            );
-
-            return;
-        }
-
-
-        users[index].password =
-            newPassword;
-
-        saveData(
-            USERS_KEY,
-            users
-        );
-
-
-        alert(
-            "Password changed successfully."
-        );
 
     });
+
+}
+
+
+/* =========================================================
+   USER AUTH STATE
+========================================================= */
+
+onAuthStateChanged(userAuth, async (user) => {
+
+    if (user) {
+
+        if (user.email === ADMIN_EMAIL) {
+            return;
+        }
+
+        let userData = {
+            uid: user.uid,
+            email: user.email,
+            name: user.email?.split("@")[0] || "User",
+            phone: ""
+        };
+
+        try {
+
+            const snapshot =
+                await getDoc(
+                    doc(db, "users", user.uid)
+                );
+
+            if (snapshot.exists()) {
+                userData = {
+                    ...userData,
+                    ...snapshot.data()
+                };
+            }
+
+        } catch (error) {
+            console.warn(error);
+        }
+
+        saveCurrentUserData(userData);
+
+        openStore();
+
+    } else {
+
+        const existingUser =
+            getCurrentUserData();
+
+        if (!existingUser) {
+            showAuth();
+        }
+    }
+
+});
+
+
+/* =========================================================
+   OPEN STORE
+========================================================= */
+
+function openStore() {
+
+    showPage(storePage);
+
+    const user =
+        getCurrentUserData();
+
+    if (userNameNav) {
+        userNameNav.textContent =
+            user?.name || "User";
+    }
+
+    updateCartCount();
+
+    startProductsListener();
+}
+
+
+window.openStore = openStore;
 
 
 /* =========================================================
    LOGOUT
 ========================================================= */
 
-document
-    .getElementById("logoutBtn")
-    .addEventListener("click", () => {
+if (logoutBtn) {
 
-        /*
-           Only current login is removed.
+    logoutBtn.addEventListener("click", async () => {
 
-           Cart is NOT removed.
-           User/order/product data is NOT removed.
-        */
+        try {
 
-        localStorage.removeItem(
-            CURRENT_USER_KEY
-        );
+            await signOut(userAuth);
 
+            clearCurrentUserData();
 
-        loginPassword.value = "";
+            showAuth();
 
-        showPage("authPage");
+        } catch (error) {
+
+            console.error(error);
+            alert(error.message);
+
+        }
 
     });
 
+}
+
 
 /* =========================================================
-   BRAND FILTER
+   ADMIN ACCESS
 ========================================================= */
 
-document
-    .querySelectorAll(".brand-btn")
-    .forEach(button => {
+if (adminAccessBtn) {
 
-        button.addEventListener(
-            "click",
-            () => {
+    adminAccessBtn.addEventListener("click", () => {
 
-                document
-                    .querySelectorAll(".brand-btn")
-                    .forEach(btn =>
-                        btn.classList.remove(
-                            "active"
-                        )
-                    );
+        showPage(adminLoginPage);
+
+        if (adminEmail) {
+            adminEmail.value = ADMIN_EMAIL;
+        }
+
+    });
+
+}
 
 
-                button.classList.add(
-                    "active"
-                );
+/* =========================================================
+   ADMIN LOGIN
+========================================================= */
+
+if (adminLoginForm) {
+
+    adminLoginForm.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const email =
+            adminEmail?.value.trim().toLowerCase();
+
+        const password =
+            adminPassword?.value;
+
+        if (!email || !password) {
+            alert("Enter admin email and password.");
+            return;
+        }
+
+        if (email !== ADMIN_EMAIL) {
+            alert("Invalid admin account.");
+            return;
+        }
+
+        try {
+
+            await signInWithEmailAndPassword(
+                adminAuth,
+                email,
+                password
+            );
+
+            openAdmin();
+
+        } catch (error) {
+
+            console.error(error);
+
+            if (
+                error.code === "auth/invalid-credential" ||
+                error.code === "auth/wrong-password" ||
+                error.code === "auth/user-not-found"
+            ) {
+                alert("Invalid admin email or password.");
+            } else {
+                alert(error.message);
+            }
+        }
+
+    });
+
+}
 
 
-                selectedBrand =
-                    button.dataset.brand;
+/* =========================================================
+   OPEN ADMIN
+========================================================= */
 
+async function openAdmin() {
+
+    showPage(adminPage);
+
+    await createAdminProductPanel();
+
+    loadAdminUsers();
+    loadAdminOrders();
+    startAdminProductsListener();
+
+}
+
+
+window.openAdmin = openAdmin;
+
+
+/* =========================================================
+   ADMIN AUTH STATE
+========================================================= */
+
+onAuthStateChanged(adminAuth, (user) => {
+
+    if (!user) return;
+
+    if (user.email === ADMIN_EMAIL) {
+        openAdmin();
+    }
+
+});
+
+
+/* =========================================================
+   ADMIN LOGOUT
+========================================================= */
+
+if (adminLogoutBtn) {
+
+    adminLogoutBtn.addEventListener("click", async () => {
+
+        try {
+
+            await signOut(adminAuth);
+
+            showPage(authPage);
+
+            if (loginBox) {
+                loginBox.style.display = "block";
+            }
+
+            if (registerBox) {
+                registerBox.style.display = "none";
+            }
+
+        } catch (error) {
+
+            console.error(error);
+            alert(error.message);
+
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   FIRESTORE PRODUCTS
+   IMPORTANT:
+   No old hard-coded products.
+   Only admin-added products appear.
+========================================================= */
+
+function startProductsListener() {
+
+    if (unsubscribeProducts) {
+        unsubscribeProducts();
+        unsubscribeProducts = null;
+    }
+
+    const productsRef =
+        collection(db, "products");
+
+    unsubscribeProducts =
+        onSnapshot(
+            query(
+                productsRef,
+                orderBy("createdAt", "desc")
+            ),
+            (snapshot) => {
+
+                products =
+                    snapshot.docs.map(item => ({
+                        id: item.id,
+                        ...item.data()
+                    }));
 
                 renderProducts();
+
+            },
+            (error) => {
+
+                console.error(
+                    "Products listener error:",
+                    error
+                );
+
+                /*
+                 If createdAt/orderBy causes an index issue,
+                 this fallback loads products without ordering.
+                */
+
+                loadProductsFallback();
 
             }
         );
 
-    });
+}
+
+
+async function loadProductsFallback() {
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(db, "products")
+            );
+
+        products =
+            snapshot.docs.map(item => ({
+                id: item.id,
+                ...item.data()
+            }));
+
+        products.sort((a, b) => {
+
+            const aTime =
+                a.createdAt?.seconds || 0;
+
+            const bTime =
+                b.createdAt?.seconds || 0;
+
+            return bTime - aTime;
+
+        });
+
+        renderProducts();
+
+    } catch (error) {
+
+        console.error(error);
+
+        if (productGrid) {
+            productGrid.innerHTML = `
+                <div class="empty-state">
+                    <h3>Unable to load products</h3>
+                    <p>${escapeHTML(error.message)}</p>
+                </div>
+            `;
+        }
+    }
+
+}
 
 
 /* =========================================================
-   SEARCH
+   PRODUCT FILTER
 ========================================================= */
 
-document
-    .getElementById("searchBtn")
-    .addEventListener(
-        "click",
-        renderProducts
-    );
+function getFilteredProducts() {
 
+    const search =
+        searchInput?.value
+            .trim()
+            .toLowerCase() || "";
 
-document
-    .getElementById("searchInput")
-    .addEventListener(
-        "input",
-        renderProducts
-    );
+    return products.filter(product => {
+
+        const brand =
+            String(product.brand || "")
+                .toLowerCase();
+
+        const name =
+            String(product.name || "")
+                .toLowerCase();
+
+        const matchesBrand =
+            selectedBrand === "All" ||
+            brand === selectedBrand.toLowerCase();
+
+        const matchesSearch =
+            !search ||
+            name.includes(search) ||
+            brand.includes(search);
+
+        return matchesBrand && matchesSearch;
+
+    });
+
+}
 
 
 /* =========================================================
@@ -876,240 +984,179 @@ document
 
 function renderProducts() {
 
-    const grid =
-        document.getElementById(
-            "productsGrid"
-        );
+    if (!productGrid) return;
 
-    const count =
-        document.getElementById(
-            "productCount"
-        );
+    const filtered =
+        getFilteredProducts();
 
+    if (productResultText) {
+        productResultText.textContent =
+            `${filtered.length} Product${filtered.length !== 1 ? "s" : ""} Found`;
+    }
 
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
+    if (!filtered.length) {
 
-
-    const search =
-        document
-            .getElementById("searchInput")
-            .value
-            .trim()
-            .toLowerCase();
-
-
-    let filtered =
-        products.filter(
-            product => {
-
-                const brand =
-                    String(
-                        product.brand || ""
-                    );
-
-                const name =
-                    String(
-                        product.name || ""
-                    );
-
-
-                const brandMatch =
-                    selectedBrand === "All" ||
-                    brand === selectedBrand;
-
-
-                const searchMatch =
-                    !search ||
-                    name.toLowerCase()
-                        .includes(search) ||
-                    brand.toLowerCase()
-                        .includes(search);
-
-
-                return (
-                    brandMatch &&
-                    searchMatch
-                );
-
-            }
-        );
-
-
-    count.textContent =
-        `${filtered.length} Product${filtered.length !== 1 ? "s" : ""}`;
-
-
-    if (filtered.length === 0) {
-
-        grid.innerHTML = `
-
-            <div class="empty-products">
-
-                <div class="empty-icon">
-                    📱
-                </div>
-
-                <h3>No Products Found</h3>
-
-                <p>
-                    ${
-                        products.length === 0
-                            ? "Admin has not added any product yet."
-                            : "Try another brand or search."
-                    }
-                </p>
-
+        productGrid.innerHTML = `
+            <div class="empty-state">
+                <h3>No products found</h3>
+                <p>Admin has not added matching products yet.</p>
             </div>
-
         `;
 
         return;
     }
 
+    productGrid.innerHTML =
+        filtered.map(product => {
 
-    grid.innerHTML =
-        filtered.map(
-            product =>
-                productCardHTML(product)
-        ).join("");
+            const discount =
+                product.oldPrice &&
+                Number(product.oldPrice) > Number(product.price)
+                    ? Math.round(
+                        (
+                            (Number(product.oldPrice) -
+                                Number(product.price))
+                            /
+                            Number(product.oldPrice)
+                        ) * 100
+                    )
+                    : 0;
 
+            return `
+                <div class="product-card">
 
-    grid
-        .querySelectorAll(
-            "[data-product-id]"
-        )
-        .forEach(card => {
+                    <div
+                        class="product-image"
+                        onclick="openProduct('${escapeHTML(product.id)}')"
+                    >
+                        <img
+                            src="${escapeHTML(product.image || "")}"
+                            alt="${escapeHTML(product.name)}"
+                            loading="lazy"
+                        >
+                    </div>
 
-            card.addEventListener(
-                "click",
-                () => {
+                    <div class="product-info">
 
-                    const id =
-                        card.dataset.productId;
+                        <div class="product-brand">
+                            ${escapeHTML(product.brand || "")}
+                        </div>
 
-                    openProductDetails(id);
+                        <h3>
+                            ${escapeHTML(product.name || "Product")}
+                        </h3>
 
-                }
-            );
+                        <div class="product-price">
+                            <strong>
+                                ${money(product.price)}
+                            </strong>
 
-        });
+                            ${
+                                product.oldPrice
+                                ? `
+                                    <span class="old-price">
+                                        ${money(product.oldPrice)}
+                                    </span>
+                                `
+                                : ""
+                            }
+
+                            ${
+                                discount > 0
+                                ? `
+                                    <span class="discount">
+                                        ${discount}% OFF
+                                    </span>
+                                `
+                                : ""
+                            }
+                        </div>
+
+                        <div class="product-specs">
+
+                            ${
+                                product.ram
+                                ? `<span>${escapeHTML(product.ram)} RAM</span>`
+                                : ""
+                            }
+
+                            ${
+                                product.storage
+                                ? `<span>${escapeHTML(product.storage)}</span>`
+                                : ""
+                            }
+
+                            ${
+                                product.camera
+                                ? `<span>${escapeHTML(product.camera)}</span>`
+                                : ""
+                            }
+
+                        </div>
+
+                        <div class="product-actions">
+
+                            <button
+                                type="button"
+                                onclick="openProduct('${escapeHTML(product.id)}')"
+                            >
+                                View Details
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="addToCart('${escapeHTML(product.id)}')"
+                            >
+                                Add to Cart
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
 
 }
 
 
 /* =========================================================
-   PRODUCT CARD
+   CATEGORY FILTER
 ========================================================= */
 
-function productCardHTML(product) {
+categories.forEach(category => {
 
-    const id =
-        escapeHTML(product.id);
+    category.addEventListener("click", () => {
 
-    const name =
-        escapeHTML(product.name);
+        categories.forEach(item => {
+            item.classList.remove("active");
+        });
 
-    const brand =
-        escapeHTML(product.brand);
+        category.classList.add("active");
 
-    const image =
-        escapeHTML(product.image);
+        selectedBrand =
+            category.dataset.brand || "All";
 
-    const price =
-        money(product.price);
+        renderProducts();
 
-    const oldPrice =
-        Number(product.oldPrice) > 0
-            ? money(product.oldPrice)
-            : "";
+    });
+
+});
 
 
-    return `
+/* =========================================================
+   SEARCH
+========================================================= */
 
-        <article
-            class="product-card"
-            data-product-id="${id}"
-        >
+if (searchInput) {
 
-            <div class="product-image-wrap">
+    searchInput.addEventListener(
+        "input",
+        renderProducts
+    );
 
-                <img
-                    src="${image}"
-                    alt="${name}"
-                    loading="lazy"
-                    onerror="imageFallback(this)"
-                >
-
-                ${
-                    oldPrice
-                        ? `<span class="discount-badge">
-                                OFFER
-                           </span>`
-                        : ""
-                }
-
-            </div>
-
-
-            <div class="product-info">
-
-                <span class="product-brand">
-                    ${brand}
-                </span>
-
-                <h3>
-                    ${name}
-                </h3>
-
-
-                <div class="price-row">
-
-                    <strong>
-                        ${price}
-                    </strong>
-
-                    ${
-                        oldPrice
-                            ? `<del>${oldPrice}</del>`
-                            : ""
-                    }
-
-                </div>
-
-
-                <div class="spec-mini">
-
-                    <span>
-                        ${escapeHTML(product.ram || "-")}
-                    </span>
-
-                    <span>
-                        ${escapeHTML(product.storage || "-")}
-                    </span>
-
-                    <span>
-                        ${escapeHTML(product.camera || "-")}
-                    </span>
-
-                </div>
-
-
-                <button
-                    class="view-product-btn"
-                    type="button"
-                >
-                    View Details
-                </button>
-
-            </div>
-
-        </article>
-
-    `;
 }
 
 
@@ -1117,142 +1164,98 @@ function productCardHTML(product) {
    PRODUCT DETAILS
 ========================================================= */
 
-function openProductDetails(productId) {
+function openProduct(productId) {
 
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
-
-
-    selectedProduct =
+    const product =
         products.find(
-            product =>
-                String(product.id) ===
-                String(productId)
+            item => item.id === productId
         );
 
-
-    if (!selectedProduct) {
-
-        alert(
-            "Product not found."
-        );
-
+    if (!product) {
+        alert("Product not found.");
         return;
     }
 
+    selectedProduct = product;
 
-    renderProductDetails();
+    if (!productDetails) return;
 
-    showPage(
-        "productDetailsPage"
-    );
+    productDetails.innerHTML = `
 
-    updateCartCount();
-
-}
-
-
-function renderProductDetails() {
-
-    const container =
-        document.getElementById(
-            "productDetails"
-        );
-
-
-    if (!selectedProduct) {
-        return;
-    }
-
-
-    const p =
-        selectedProduct;
-
-
-    container.innerHTML = `
-
-        <div class="details-image-card">
-
+        <div class="detail-image">
             <img
-                src="${escapeHTML(p.image)}"
-                alt="${escapeHTML(p.name)}"
-                onerror="imageFallback(this)"
+                src="${escapeHTML(product.image || "")}"
+                alt="${escapeHTML(product.name)}"
             >
-
         </div>
 
+        <div class="detail-info">
 
-        <div class="details-info">
-
-            <span class="product-brand">
-                ${escapeHTML(p.brand)}
-            </span>
+            <div class="product-brand">
+                ${escapeHTML(product.brand || "")}
+            </div>
 
             <h1>
-                ${escapeHTML(p.name)}
+                ${escapeHTML(product.name || "")}
             </h1>
 
-
-            <div class="details-price">
-
+            <div class="detail-price">
                 <strong>
-                    ${money(p.price)}
+                    ${money(product.price)}
                 </strong>
 
                 ${
-                    Number(p.oldPrice) > 0
-                        ? `<del>${money(p.oldPrice)}</del>`
-                        : ""
+                    product.oldPrice
+                    ? `
+                        <span class="old-price">
+                            ${money(product.oldPrice)}
+                        </span>
+                    `
+                    : ""
                 }
+            </div>
+
+            <div class="detail-specs">
+
+                <div>
+                    <b>RAM</b>
+                    <span>${escapeHTML(product.ram || "-")}</span>
+                </div>
+
+                <div>
+                    <b>Storage</b>
+                    <span>${escapeHTML(product.storage || "-")}</span>
+                </div>
+
+                <div>
+                    <b>Camera</b>
+                    <span>${escapeHTML(product.camera || "-")}</span>
+                </div>
+
+                <div>
+                    <b>Battery</b>
+                    <span>${escapeHTML(product.battery || "-")}</span>
+                </div>
+
+                <div>
+                    <b>Processor</b>
+                    <span>${escapeHTML(product.processor || "-")}</span>
+                </div>
 
             </div>
 
-
-            <div class="spec-grid">
-
-                <div>
-                    <span>RAM</span>
-                    <strong>${escapeHTML(p.ram || "-")}</strong>
-                </div>
-
-                <div>
-                    <span>Storage</span>
-                    <strong>${escapeHTML(p.storage || "-")}</strong>
-                </div>
-
-                <div>
-                    <span>Camera</span>
-                    <strong>${escapeHTML(p.camera || "-")}</strong>
-                </div>
-
-                <div>
-                    <span>Battery</span>
-                    <strong>${escapeHTML(p.battery || "-")}</strong>
-                </div>
-
-                <div>
-                    <span>Processor</span>
-                    <strong>${escapeHTML(p.processor || "-")}</strong>
-                </div>
-
-            </div>
-
-
-            <div class="details-actions">
+            <div class="detail-actions">
 
                 <button
-                    id="detailsAddCartBtn"
-                    class="secondary-btn"
+                    type="button"
+                    onclick="addToCart('${escapeHTML(product.id)}')"
                 >
                     Add to Cart
                 </button>
 
                 <button
-                    id="detailsBuyBtn"
-                    class="primary-btn"
+                    type="button"
+                    onclick="buyNow('${escapeHTML(product.id)}')"
                 >
                     Buy Now
                 </button>
@@ -1260,578 +1263,277 @@ function renderProductDetails() {
             </div>
 
         </div>
-
     `;
 
+    updateCartCount();
 
-    document
-        .getElementById("detailsAddCartBtn")
-        .addEventListener(
-            "click",
-            () => {
-
-                addToCart(
-                    selectedProduct.id
-                );
-
-            }
-        );
-
-
-    document
-        .getElementById("detailsBuyBtn")
-        .addEventListener(
-            "click",
-            () => {
-
-                addToCart(
-                    selectedProduct.id,
-                    1,
-                    true
-                );
-
-            }
-        );
+    showPage(productPage);
 
 }
+
+
+window.openProduct = openProduct;
 
 
 /* =========================================================
-   CART
+   ADD TO CART
 ========================================================= */
 
-function getCart() {
-
-    const cart =
-        getData(
-            CART_KEY,
-            []
-        );
-
-    return Array.isArray(cart)
-        ? cart
-        : [];
-}
-
-
-function saveCart(cart) {
-
-    saveData(
-        CART_KEY,
-        cart
-    );
-
-    updateCartCount();
-}
-
-
-function addToCart(
-    productId,
-    quantity = 1,
-    goCheckout = false
-) {
-
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
-
+function addToCart(productId) {
 
     const product =
         products.find(
-            item =>
-                String(item.id) ===
-                String(productId)
+            item => item.id === productId
         );
-
 
     if (!product) {
-
-        alert(
-            "Product not found."
-        );
-
+        alert("Product not found.");
         return;
     }
 
-
-    const cart =
-        getCart();
-
+    let cart = getCart();
 
     const existing =
         cart.find(
-            item =>
-                String(item.productId) ===
-                String(productId)
+            item => item.id === productId
         );
-
 
     if (existing) {
 
         existing.quantity =
-            Number(existing.quantity || 0) +
-            Number(quantity);
+            Number(existing.quantity || 1) + 1;
 
     } else {
 
         cart.push({
-
-            productId:
-                product.id,
-
-            quantity:
-                Number(quantity)
-
+            id: product.id,
+            name: product.name,
+            brand: product.brand,
+            price: Number(product.price || 0),
+            oldPrice: Number(product.oldPrice || 0),
+            image: product.image,
+            quantity: 1
         });
 
     }
 
-
     saveCart(cart);
 
-
-    if (goCheckout) {
-
-        openCheckout();
-
-    } else {
-
-        alert(
-            `${product.name} added to cart.`
-        );
-
-    }
+    alert(`${product.name} added to cart.`);
 
 }
+
+
+window.addToCart = addToCart;
 
 
 /* =========================================================
-   CART COUNT
+   BUY NOW
 ========================================================= */
 
-function updateCartCount() {
+function buyNow(productId) {
 
-    const cart =
-        getCart();
-
-
-    const count =
-        cart.reduce(
-            (total, item) =>
-                total +
-                Number(item.quantity || 0),
-            0
+    const product =
+        products.find(
+            item => item.id === productId
         );
 
-
-    const cartCount =
-        document.getElementById(
-            "cartCount"
-        );
-
-    const detailsCartCount =
-        document.getElementById(
-            "detailsCartCount"
-        );
-
-
-    if (cartCount) {
-        cartCount.textContent =
-            count;
+    if (!product) {
+        alert("Product not found.");
+        return;
     }
 
+    const cart = [{
+        id: product.id,
+        name: product.name,
+        brand: product.brand,
+        price: Number(product.price || 0),
+        oldPrice: Number(product.oldPrice || 0),
+        image: product.image,
+        quantity: 1
+    }];
 
-    if (detailsCartCount) {
-        detailsCartCount.textContent =
-            count;
-    }
+    saveCart(cart);
+
+    openCheckout();
 
 }
+
+
+window.buyNow = buyNow;
 
 
 /* =========================================================
    CART PAGE
 ========================================================= */
 
-document
-    .getElementById("cartBtn")
-    .addEventListener(
-        "click",
-        openCart
-    );
+if (cartBtn) {
 
-
-document
-    .getElementById("detailsCartBtn")
-    .addEventListener(
-        "click",
-        openCart
-    );
-
-
-document
-    .getElementById("backFromCartBtn")
-    .addEventListener(
-        "click",
-        openStore
-    );
-
-
-function openCart() {
-
-    renderCart();
-
-    showPage(
-        "cartPage"
-    );
+    cartBtn.addEventListener("click", () => {
+        openCart();
+    });
 
 }
 
 
+function openCart() {
+
+    showPage(cartPage);
+
+    renderCart();
+
+}
+
+
+window.openCart = openCart;
+
+
+/* =========================================================
+   RENDER CART
+========================================================= */
+
 function renderCart() {
 
-    const container =
-        document.getElementById(
-            "cartContainer"
-        );
+    if (!cartContent) return;
 
+    const cart = getCart();
 
-    const cart =
-        getCart();
+    if (!cart.length) {
 
-
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
-
-
-    if (cart.length === 0) {
-
-        container.innerHTML = `
-
-            <div class="empty-cart">
-
-                <div class="empty-icon">
-                    🛒
-                </div>
-
-                <h2>Your cart is empty</h2>
-
-                <p>
-                    Add some smartphones to your cart.
-                </p>
-
-                <button
-                    class="primary-btn"
-                    onclick="openStore()"
-                >
-                    Shop Now
-                </button>
-
+        cartContent.innerHTML = `
+            <div class="empty-state">
+                <h3>Your cart is empty</h3>
+                <p>Add some products to continue.</p>
             </div>
-
         `;
 
         return;
     }
-
 
     let total = 0;
 
+    cart.forEach(item => {
+        total +=
+            Number(item.price || 0) *
+            Number(item.quantity || 1);
+    });
 
-    const validItems =
-        cart.map(item => {
+    cartContent.innerHTML = `
 
-            const product =
-                products.find(
-                    p =>
-                        String(p.id) ===
-                        String(item.productId)
-                );
+        <div class="cart-items">
 
+            ${cart.map(item => `
 
-            if (!product) {
-                return null;
-            }
+                <div class="cart-item">
 
+                    <div class="cart-item-image">
+                        <img
+                            src="${escapeHTML(item.image || "")}"
+                            alt="${escapeHTML(item.name)}"
+                        >
+                    </div>
 
-            const quantity =
-                Number(item.quantity || 1);
+                    <div class="cart-item-info">
 
+                        <h3>
+                            ${escapeHTML(item.name)}
+                        </h3>
 
-            const itemTotal =
-                Number(product.price || 0) *
-                quantity;
+                        <p>
+                            ${escapeHTML(item.brand || "")}
+                        </p>
 
+                        <strong>
+                            ${money(item.price)}
+                        </strong>
 
-            total += itemTotal;
+                        <div class="quantity-controls">
 
+                            <button
+                                type="button"
+                                onclick="changeQuantity('${escapeHTML(item.id)}', -1)"
+                            >
+                                −
+                            </button>
 
-            return {
-                item,
-                product,
-                quantity,
-                itemTotal
-            };
+                            <span>
+                                ${Number(item.quantity || 1)}
+                            </span>
 
-        }).filter(Boolean);
+                            <button
+                                type="button"
+                                onclick="changeQuantity('${escapeHTML(item.id)}', 1)"
+                            >
+                                +
+                            </button>
 
+                        </div>
 
-    if (validItems.length === 0) {
+                        <button
+                            type="button"
+                            onclick="removeFromCart('${escapeHTML(item.id)}')"
+                        >
+                            Remove
+                        </button>
 
-        saveCart([]);
+                    </div>
 
-        container.innerHTML = `
+                </div>
 
-            <div class="empty-cart">
-
-                <h2>No valid products in cart</h2>
-
-                <button
-                    class="primary-btn"
-                    onclick="openStore()"
-                >
-                    Shop Now
-                </button>
-
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML = `
-
-        <div class="cart-list">
-
-            ${
-                validItems.map(
-                    data =>
-                        cartItemHTML(data)
-                ).join("")
-            }
+            `).join("")}
 
         </div>
 
-
         <div class="cart-summary">
 
-            <span>Total Amount</span>
+            <h2>
+                Cart Total
+            </h2>
 
-            <strong>
+            <h2>
                 ${money(total)}
-            </strong>
+            </h2>
 
             <button
-                id="cartCheckoutBtn"
-                class="primary-btn"
+                type="button"
+                onclick="openCheckout()"
             >
                 Proceed to Checkout
             </button>
 
         </div>
-
     `;
 
-
-    container
-        .querySelectorAll(
-            ".quantity-minus"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    changeQuantity(
-                        button.dataset.id,
-                        -1
-                    );
-
-                }
-            );
-
-        });
-
-
-    container
-        .querySelectorAll(
-            ".quantity-plus"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    changeQuantity(
-                        button.dataset.id,
-                        1
-                    );
-
-                }
-            );
-
-        });
-
-
-    container
-        .querySelectorAll(
-            ".remove-cart-item"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    removeFromCart(
-                        button.dataset.id
-                    );
-
-                }
-            );
-
-        });
-
-
-    document
-        .getElementById(
-            "cartCheckoutBtn"
-        )
-        .addEventListener(
-            "click",
-            openCheckout
-        );
+    updateCartCount();
 
 }
 
 
-function cartItemHTML(data) {
+/* =========================================================
+   CHANGE QUANTITY
+========================================================= */
 
-    const p =
-        data.product;
+function changeQuantity(productId, change) {
 
-
-    return `
-
-        <div class="cart-item">
-
-            <div class="cart-product-image">
-
-                <img
-                    src="${escapeHTML(p.image)}"
-                    alt="${escapeHTML(p.name)}"
-                    onerror="imageFallback(this)"
-                >
-
-            </div>
-
-
-            <div class="cart-product-info">
-
-                <span>
-                    ${escapeHTML(p.brand)}
-                </span>
-
-                <h3>
-                    ${escapeHTML(p.name)}
-                </h3>
-
-                <strong>
-                    ${money(p.price)}
-                </strong>
-
-            </div>
-
-
-            <div class="quantity-control">
-
-                <button
-                    class="quantity-minus"
-                    data-id="${escapeHTML(p.id)}"
-                >
-                    −
-                </button>
-
-                <b>
-                    ${data.quantity}
-                </b>
-
-                <button
-                    class="quantity-plus"
-                    data-id="${escapeHTML(p.id)}"
-                >
-                    +
-                </button>
-
-            </div>
-
-
-            <div class="cart-item-total">
-
-                ${money(data.itemTotal)}
-
-            </div>
-
-
-            <button
-                class="remove-cart-item"
-                data-id="${escapeHTML(p.id)}"
-            >
-                Delete
-            </button>
-
-        </div>
-
-    `;
-
-}
-
-
-function changeQuantity(
-    productId,
-    amount
-) {
-
-    const cart =
-        getCart();
-
+    let cart = getCart();
 
     const item =
         cart.find(
-            x =>
-                String(x.productId) ===
-                String(productId)
+            product => product.id === productId
         );
 
-
-    if (!item) {
-        return;
-    }
-
+    if (!item) return;
 
     item.quantity =
-        Number(item.quantity || 0) +
-        Number(amount);
-
+        Number(item.quantity || 1) + change;
 
     if (item.quantity <= 0) {
 
-        const index =
-            cart.indexOf(item);
-
-        cart.splice(index, 1);
-
+        cart =
+            cart.filter(
+                product => product.id !== productId
+            );
     }
-
 
     saveCart(cart);
 
@@ -1839,160 +1541,101 @@ function changeQuantity(
 
 }
 
+
+window.changeQuantity = changeQuantity;
+
+
+/* =========================================================
+   REMOVE FROM CART
+========================================================= */
 
 function removeFromCart(productId) {
 
-    const cart =
-        getCart()
-            .filter(
-                item =>
-                    String(item.productId) !==
-                    String(productId)
-            );
+    let cart = getCart();
 
+    cart =
+        cart.filter(
+            item => item.id !== productId
+        );
 
     saveCart(cart);
 
     renderCart();
 
 }
+
+
+window.removeFromCart = removeFromCart;
 
 
 /* =========================================================
    CHECKOUT
 ========================================================= */
 
-document
-    .getElementById(
-        "backFromCheckoutBtn"
-    )
-    .addEventListener(
-        "click",
-        openCart
-    );
-
-
 function openCheckout() {
 
-    const cart =
-        getCart();
+    const cart = getCart();
 
-
-    if (cart.length === 0) {
-
-        alert(
-            "Your cart is empty."
-        );
-
+    if (!cart.length) {
+        alert("Your cart is empty.");
         return;
     }
 
+    const user =
+        getCurrentUserData();
 
-    const currentUser =
-        getData(
-            CURRENT_USER_KEY,
-            null
-        );
-
-
-    if (!currentUser) {
-
-        showPage("authPage");
-
-        return;
+    if (checkoutName) {
+        checkoutName.value =
+            user?.name || "";
     }
 
+    if (checkoutPhone) {
+        checkoutPhone.value =
+            user?.phone || "";
+    }
 
-    document.getElementById(
-        "checkoutName"
-    ).value =
-        currentUser.name || "";
-
-
-    document.getElementById(
-        "checkoutPhone"
-    ).value =
-        currentUser.phone || "";
-
-
-    document.getElementById(
-        "checkoutEmail"
-    ).value =
-        currentUser.email || "";
-
+    if (checkoutEmail) {
+        checkoutEmail.value =
+            user?.email || "";
+    }
 
     renderCheckoutSummary();
 
-    showPage(
-        "checkoutPage"
-    );
+    showPage(checkoutPage);
 
 }
 
 
+window.openCheckout = openCheckout;
+
+
+/* =========================================================
+   CHECKOUT SUMMARY
+========================================================= */
+
 function renderCheckoutSummary() {
 
-    const summary =
-        document.getElementById(
-            "checkoutSummary"
-        );
+    if (!checkoutSummary) return;
 
-
-    const totalElement =
-        document.getElementById(
-            "checkoutTotal"
-        );
-
-
-    const cart =
-        getCart();
-
-
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
-
+    const cart = getCart();
 
     let total = 0;
 
-
-    summary.innerHTML =
+    checkoutSummary.innerHTML =
         cart.map(item => {
 
-            const product =
-                products.find(
-                    p =>
-                        String(p.id) ===
-                        String(item.productId)
-                );
-
-
-            if (!product) {
-                return "";
-            }
-
-
-            const quantity =
-                Number(item.quantity || 1);
-
-
             const itemTotal =
-                Number(product.price || 0) *
-                quantity;
-
+                Number(item.price || 0) *
+                Number(item.quantity || 1);
 
             total += itemTotal;
 
-
             return `
-
                 <div class="checkout-item">
 
                     <span>
-                        ${escapeHTML(product.name)}
-                        × ${quantity}
+                        ${escapeHTML(item.name)}
+                        × ${Number(item.quantity || 1)}
                     </span>
 
                     <strong>
@@ -2000,14 +1643,20 @@ function renderCheckoutSummary() {
                     </strong>
 
                 </div>
-
             `;
 
-        }).join("");
+        }).join("") +
+        `
+            <div class="checkout-total">
 
+                <span>Total</span>
 
-    totalElement.textContent =
-        money(total);
+                <strong>
+                    ${money(total)}
+                </strong>
+
+            </div>
+        `;
 
 }
 
@@ -2016,441 +1665,359 @@ function renderCheckoutSummary() {
    PLACE ORDER
 ========================================================= */
 
-document
-    .getElementById(
-        "placeOrderBtn"
-    )
-    .addEventListener(
-        "click",
-        placeOrder
-    );
+if (checkoutForm) {
 
+    checkoutForm.addEventListener(
+        "submit",
+        async (event) => {
 
-function placeOrder() {
+            event.preventDefault();
 
-    const currentUser =
-        getData(
-            CURRENT_USER_KEY,
-            null
-        );
+            const firebaseUser =
+                userAuth.currentUser;
 
-
-    if (!currentUser) {
-
-        alert(
-            "Please login first."
-        );
-
-        showPage("authPage");
-
-        return;
-    }
-
-
-    const name =
-        document
-            .getElementById("checkoutName")
-            .value
-            .trim();
-
-
-    const phone =
-        document
-            .getElementById("checkoutPhone")
-            .value
-            .trim();
-
-
-    const email =
-        document
-            .getElementById("checkoutEmail")
-            .value
-            .trim();
-
-
-    const address =
-        document
-            .getElementById("checkoutAddress")
-            .value
-            .trim();
-
-
-    if (!name ||
-        !phone ||
-        !email ||
-        !address) {
-
-        alert(
-            "Please fill complete delivery details."
-        );
-
-        return;
-    }
-
-
-    const cart =
-        getCart();
-
-
-    if (cart.length === 0) {
-
-        alert(
-            "Your cart is empty."
-        );
-
-        return;
-    }
-
-
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
-
-
-    const items = [];
-
-    let total = 0;
-
-
-    cart.forEach(
-        cartItem => {
-
-            const product =
-                products.find(
-                    p =>
-                        String(p.id) ===
-                        String(cartItem.productId)
-                );
-
-
-            if (!product) {
+            if (!firebaseUser) {
+                alert("Please login first.");
+                showAuth();
                 return;
             }
 
+            const cart = getCart();
 
-            const quantity =
-                Number(
-                    cartItem.quantity || 1
-                );
+            if (!cart.length) {
+                alert("Your cart is empty.");
+                return;
+            }
 
+            const name =
+                checkoutName?.value.trim();
 
-            const itemTotal =
-                Number(product.price || 0) *
-                quantity;
+            const phone =
+                checkoutPhone?.value.trim();
 
+            const email =
+                checkoutEmail?.value.trim();
 
-            total += itemTotal;
+            const address =
+                checkoutAddress?.value.trim();
 
+            if (!name || !phone || !email || !address) {
+                alert("Please fill all checkout details.");
+                return;
+            }
 
-            items.push({
+            let total = 0;
 
-                productId:
-                    product.id,
+            cart.forEach(item => {
 
-                productName:
-                    product.name,
-
-                brand:
-                    product.brand,
-
-                price:
-                    Number(product.price || 0),
-
-                quantity:
-                    quantity,
-
-                itemTotal:
-                    itemTotal
+                total +=
+                    Number(item.price || 0) *
+                    Number(item.quantity || 1);
 
             });
 
+            try {
+
+                const orderData = {
+
+                    userId: firebaseUser.uid,
+
+                    customer: {
+                        name: name,
+                        phone: phone,
+                        email: email,
+                        address: address
+                    },
+
+                    items: cart.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        brand: item.brand || "",
+                        price: Number(item.price || 0),
+                        quantity: Number(item.quantity || 1),
+                        image: item.image || ""
+                    })),
+
+                    total: total,
+
+                    status: "Pending",
+
+                    date: serverTimestamp()
+
+                };
+
+                const orderRef =
+                    await addDoc(
+                        collection(db, "orders"),
+                        orderData
+                    );
+
+                const orderId =
+                    orderRef.id;
+
+                clearCart();
+
+                if (successOrderId) {
+                    successOrderId.textContent =
+                        orderId;
+                }
+
+                currentWhatsappMessage =
+                    createWhatsappMessage(
+                        orderId,
+                        orderData
+                    );
+
+                showPage(successPage);
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Order could not be placed: " +
+                    error.message
+                );
+
+            }
+
         }
-    );
-
-
-    if (items.length === 0) {
-
-        alert(
-            "Products in cart are no longer available."
-        );
-
-        saveCart([]);
-
-        return;
-    }
-
-
-    const order = {
-
-        id:
-            createId("ORD"),
-
-        userId:
-            currentUser.id,
-
-        customerName:
-            name,
-
-        customerPhone:
-            phone,
-
-        customerEmail:
-            email,
-
-        address:
-            address,
-
-        items:
-            items,
-
-        total:
-            total,
-
-        orderDate:
-            new Date().toISOString(),
-
-        status:
-            "Pending"
-
-    };
-
-
-    const orders =
-        getData(
-            ORDERS_KEY,
-            []
-        );
-
-
-    orders.push(order);
-
-
-    saveData(
-        ORDERS_KEY,
-        orders
-    );
-
-
-    selectedOrderForWhatsApp =
-        order;
-
-
-    saveCart([]);
-
-
-    document.getElementById(
-        "checkoutAddress"
-    ).value = "";
-
-
-    document.getElementById(
-        "successOrderInfo"
-    ).innerHTML = `
-
-        <div>
-            <span>Order ID</span>
-            <strong>
-                ${escapeHTML(order.id)}
-            </strong>
-        </div>
-
-        <div>
-            <span>Amount</span>
-            <strong>
-                ${money(order.total)}
-            </strong>
-        </div>
-
-        <div>
-            <span>Status</span>
-            <strong>
-                ${escapeHTML(order.status)}
-            </strong>
-        </div>
-
-    `;
-
-
-    showPage(
-        "successPage"
     );
 
 }
 
 
 /* =========================================================
-   WHATSAPP
+   WHATSAPP ORDER MESSAGE
 ========================================================= */
 
-document
-    .getElementById(
-        "whatsappBtn"
-    )
-    .addEventListener(
-        "click",
-        sendOrderWhatsApp
-    );
-
-
-function sendOrderWhatsApp() {
-
-    if (!selectedOrderForWhatsApp) {
-
-        alert(
-            "Order information not found."
-        );
-
-        return;
-    }
-
-
-    const order =
-        selectedOrderForWhatsApp;
-
+function createWhatsappMessage(
+    orderId,
+    order
+) {
 
     let message =
-        `*MobileStore Order*%0A%0A`;
-
-
-    message +=
-        `*Order ID:* ${order.id}%0A`;
+        `Hello MobileStore,%0A%0A`;
 
     message +=
-        `*Customer:* ${order.customerName}%0A`;
+        `Order ID: ${orderId}%0A`;
 
     message +=
-        `*Phone:* ${order.customerPhone}%0A`;
+        `Customer: ${encodeURIComponent(order.customer.name)}%0A`;
 
     message +=
-        `*Email:* ${order.customerEmail}%0A`;
+        `Phone: ${encodeURIComponent(order.customer.phone)}%0A`;
 
     message +=
-        `*Address:* ${order.address}%0A%0A`;
-
+        `Email: ${encodeURIComponent(order.customer.email)}%0A`;
 
     message +=
-        `*Products:*%0A`;
+        `Address: ${encodeURIComponent(order.customer.address)}%0A%0A`;
+
+    message += `Products:%0A`;
+
+    order.items.forEach(item => {
+
+        message +=
+            `• ${encodeURIComponent(item.name)} × ${item.quantity} = ${money(item.price * item.quantity)}%0A`;
+
+    });
+
+    message +=
+        `%0ATotal: ${money(order.total)}%0A`;
+
+    return message;
+
+}
 
 
-    order.items.forEach(
-        item => {
+/* =========================================================
+   WHATSAPP BUTTON
+========================================================= */
 
-            message +=
-                `• ${item.productName} × ${item.quantity} = ${money(item.itemTotal)}%0A`;
+if (successWhatsappBtn) {
+
+    successWhatsappBtn.addEventListener(
+        "click",
+        () => {
+
+            /*
+              CHANGE THIS NUMBER TO YOUR
+              MOBILESTORE WHATSAPP NUMBER.
+              
+              Example:
+              919876543210
+            */
+
+            const whatsappNumber =
+                "91XXXXXXXXXX";
+
+            const url =
+                `https://wa.me/${whatsappNumber}?text=${currentWhatsappMessage}`;
+
+            window.open(
+                url,
+                "_blank"
+            );
 
         }
-    );
-
-
-    message +=
-        `%0A*Total:* ${money(order.total)}`;
-
-
-    const whatsappURL =
-        `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
-
-
-    window.open(
-        whatsappURL,
-        "_blank"
     );
 
 }
 
 
 /* =========================================================
-   CONTINUE SHOPPING
+   ADMIN PRODUCT MANAGEMENT UI
 ========================================================= */
 
-document
-    .getElementById(
-        "continueShoppingBtn"
-    )
-    .addEventListener(
-        "click",
-        openStore
-    );
+async function createAdminProductPanel() {
 
+    if (!adminPage) return;
 
-/* =========================================================
-   ADMIN LOGIN
-========================================================= */
+    let panel =
+        document.getElementById(
+            "firebaseAdminProductsPanel"
+        );
 
-document
-    .getElementById(
-        "adminAccessBtn"
-    )
-    .addEventListener(
-        "click",
-        () => {
+    if (panel) return;
 
-            showPage(
-                "adminLoginPage"
-            );
+    panel =
+        document.createElement("section");
 
-        }
-    );
+    panel.id =
+        "firebaseAdminProductsPanel";
 
+    panel.innerHTML = `
 
-document
-    .getElementById(
-        "backToUserLoginBtn"
-    )
-    .addEventListener(
-        "click",
-        () => {
+        <div class="admin-product-manager">
 
-            showPage(
-                "authPage"
-            );
+            <div class="admin-product-header">
 
-        }
-    );
+                <div>
+                    <h2>Product Management</h2>
+                    <p>
+                        Add products here. Every logged-in user
+                        will see these products.
+                    </p>
+                </div>
 
+            </div>
 
-document
-    .getElementById(
-        "adminLoginBtn"
-    )
-    .addEventListener(
-        "click",
-        adminLogin
-    );
+            <form id="firebaseProductForm">
 
+                <div class="admin-product-grid">
 
-function adminLogin() {
+                    <input
+                        id="productBrand"
+                        type="text"
+                        placeholder="Brand"
+                        required
+                    >
 
-    const email =
-        document
-            .getElementById(
-                "adminEmail"
-            )
-            .value
-            .trim()
-            .toLowerCase();
+                    <input
+                        id="productName"
+                        type="text"
+                        placeholder="Product Name"
+                        required
+                    >
 
+                    <input
+                        id="productPrice"
+                        type="number"
+                        placeholder="Price"
+                        min="0"
+                        required
+                    >
 
-    const password =
-        document
-            .getElementById(
-                "adminPassword"
-            )
-            .value;
+                    <input
+                        id="productOldPrice"
+                        type="number"
+                        placeholder="Old Price"
+                        min="0"
+                    >
 
+                    <input
+                        id="productRam"
+                        type="text"
+                        placeholder="RAM e.g. 8GB"
+                    >
 
-    if (
-        email === ADMIN_EMAIL &&
-        password === ADMIN_PASSWORD
-    ) {
+                    <input
+                        id="productStorage"
+                        type="text"
+                        placeholder="Storage e.g. 256GB"
+                    >
 
-        openAdmin();
+                    <input
+                        id="productCamera"
+                        type="text"
+                        placeholder="Camera e.g. 50MP"
+                    >
 
-    } else {
+                    <input
+                        id="productBattery"
+                        type="text"
+                        placeholder="Battery e.g. 5000mAh"
+                    >
 
-        alert(
-            "Invalid admin credentials."
+                    <input
+                        id="productProcessor"
+                        type="text"
+                        placeholder="Processor"
+                    >
+
+                    <input
+                        id="productImage"
+                        type="url"
+                        placeholder="Product Image URL"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    id="addFirebaseProductBtn"
+                >
+                    + Add Product
+                </button>
+
+            </form>
+
+            <div
+                id="firebaseAdminProductList"
+                class="admin-product-list"
+            ></div>
+
+        </div>
+    `;
+
+    const possibleContainers = [
+        adminPage.querySelector(".admin-main"),
+        adminPage.querySelector(".admin-content"),
+        adminPage.querySelector(".admin-container"),
+        adminPage
+    ];
+
+    const container =
+        possibleContainers.find(
+            element => element
+        );
+
+    if (container) {
+        container.prepend(panel);
+    }
+
+    const form =
+        document.getElementById(
+            "firebaseProductForm"
+        );
+
+    if (form) {
+
+        form.addEventListener(
+            "submit",
+            addFirebaseProduct
         );
 
     }
@@ -2459,78 +2026,588 @@ function adminLogin() {
 
 
 /* =========================================================
-   ADMIN SHORTCUT
+   ADMIN ADD PRODUCT
 ========================================================= */
 
-document.addEventListener(
-    "keydown",
-    event => {
+async function addFirebaseProduct(event) {
 
-        if (
-            event.ctrlKey &&
-            event.shiftKey &&
-            event.key.toLowerCase() === "a"
-        ) {
+    event.preventDefault();
 
-            showPage(
-                "adminLoginPage"
-            );
+    const brand =
+        document.getElementById("productBrand")
+            ?.value.trim();
 
-        }
+    const name =
+        document.getElementById("productName")
+            ?.value.trim();
+
+    const price =
+        Number(
+            document.getElementById("productPrice")
+                ?.value
+        );
+
+    const oldPrice =
+        Number(
+            document.getElementById("productOldPrice")
+                ?.value || 0
+        );
+
+    const ram =
+        document.getElementById("productRam")
+            ?.value.trim();
+
+    const storage =
+        document.getElementById("productStorage")
+            ?.value.trim();
+
+    const camera =
+        document.getElementById("productCamera")
+            ?.value.trim();
+
+    const battery =
+        document.getElementById("productBattery")
+            ?.value.trim();
+
+    const processor =
+        document.getElementById("productProcessor")
+            ?.value.trim();
+
+    const image =
+        document.getElementById("productImage")
+            ?.value.trim();
+
+    if (!brand || !name || !price || !image) {
+        alert(
+            "Brand, Product Name, Price and Image URL are required."
+        );
+        return;
+    }
+
+    try {
+
+        await addDoc(
+            collection(
+                adminDb,
+                "products"
+            ),
+            {
+
+                brand: brand,
+                name: name,
+
+                price: price,
+                oldPrice: oldPrice,
+
+                ram: ram,
+                storage: storage,
+                camera: camera,
+                battery: battery,
+                processor: processor,
+
+                image: image,
+
+                createdAt:
+                    serverTimestamp(),
+
+                createdBy:
+                    ADMIN_EMAIL
+
+            }
+        );
+
+        alert(
+            "Product added successfully."
+        );
+
+        document
+            .getElementById(
+                "firebaseProductForm"
+            )
+            ?.reset();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Product could not be added: " +
+            error.message
+        );
 
     }
-);
-
-
-/* =========================================================
-   OPEN ADMIN
-========================================================= */
-
-function openAdmin() {
-
-    showPage(
-        "adminPage"
-    );
-
-
-    renderAdminDashboard();
 
 }
 
 
 /* =========================================================
-   ADMIN LOGOUT
+   ADMIN PRODUCTS LIST
 ========================================================= */
 
-document
-    .getElementById(
-        "adminLogoutBtn"
-    )
-    .addEventListener(
-        "click",
-        () => {
+let unsubscribeAdminProducts = null;
 
-            showPage(
-                "adminLoginPage"
-            );
 
-        }
-    );
+function startAdminProductsListener() {
+
+    if (unsubscribeAdminProducts) {
+        unsubscribeAdminProducts();
+    }
+
+    const list =
+        document.getElementById(
+            "firebaseAdminProductList"
+        );
+
+    if (!list) return;
+
+    unsubscribeAdminProducts =
+        onSnapshot(
+            collection(
+                adminDb,
+                "products"
+            ),
+            snapshot => {
+
+                const adminProducts =
+                    snapshot.docs.map(item => ({
+                        id: item.id,
+                        ...item.data()
+                    }));
+
+                adminProducts.sort(
+                    (a, b) =>
+                        (b.createdAt?.seconds || 0) -
+                        (a.createdAt?.seconds || 0)
+                );
+
+                if (!adminProducts.length) {
+
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No Products Added</h3>
+                            <p>
+                                Add your first product above.
+                            </p>
+                        </div>
+                    `;
+
+                    return;
+                }
+
+                list.innerHTML =
+                    adminProducts.map(product => `
+
+                        <div class="admin-product-row">
+
+                            <img
+                                src="${escapeHTML(product.image || "")}"
+                                alt="${escapeHTML(product.name)}"
+                            >
+
+                            <div>
+
+                                <strong>
+                                    ${escapeHTML(product.name)}
+                                </strong>
+
+                                <span>
+                                    ${escapeHTML(product.brand || "")}
+                                </span>
+
+                                <b>
+                                    ${money(product.price)}
+                                </b>
+
+                            </div>
+
+                            <button
+                                type="button"
+                                onclick="deleteFirebaseProduct('${escapeHTML(product.id)}')"
+                            >
+                                Delete
+                            </button>
+
+                        </div>
+
+                    `).join("");
+
+            },
+            error => {
+
+                console.error(
+                    "Admin products error:",
+                    error
+                );
+
+            }
+        );
+
+}
 
 
 /* =========================================================
-   ADMIN DASHBOARD
+   ADMIN DELETE PRODUCT
 ========================================================= */
 
-function renderAdminDashboard() {
+async function deleteFirebaseProduct(productId) {
 
-    renderAdminStats();
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this product?"
+        );
 
-    renderProductsTable();
+    if (!confirmDelete) return;
 
-    renderUsersTable();
+    try {
 
-    renderOrdersTable();
+        await deleteDoc(
+            doc(
+                adminDb,
+                "products",
+                productId
+            )
+        );
+
+        alert(
+            "Product deleted successfully."
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Product could not be deleted: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+window.deleteFirebaseProduct =
+    deleteFirebaseProduct;
+
+
+/* =========================================================
+   ADMIN LOAD USERS
+========================================================= */
+
+async function loadAdminUsers() {
+
+    if (!usersTableBody) return;
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    adminDb,
+                    "users"
+                )
+            );
+
+        allUsers =
+            snapshot.docs.map(item => ({
+                id: item.id,
+                ...item.data()
+            }));
+
+        renderAdminUsers();
+
+        if (totalUsers) {
+            totalUsers.textContent =
+                allUsers.length;
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        usersTableBody.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    ${escapeHTML(error.message)}
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER ADMIN USERS
+========================================================= */
+
+function renderAdminUsers() {
+
+    if (!usersTableBody) return;
+
+    const search =
+        userSearch?.value
+            .trim()
+            .toLowerCase() || "";
+
+    const filtered =
+        allUsers.filter(user => {
+
+            return (
+                String(user.name || "")
+                    .toLowerCase()
+                    .includes(search) ||
+
+                String(user.email || "")
+                    .toLowerCase()
+                    .includes(search) ||
+
+                String(user.phone || "")
+                    .toLowerCase()
+                    .includes(search)
+            );
+
+        });
+
+    if (!filtered.length) {
+
+        usersTableBody.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    No users found.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    usersTableBody.innerHTML =
+        filtered.map(user => {
+
+            let date = "-";
+
+            if (user.registrationDate?.toDate) {
+                date =
+                    user.registrationDate
+                        .toDate()
+                        .toLocaleString("en-IN");
+            }
+
+            return `
+                <tr>
+
+                    <td>
+                        ${escapeHTML(user.name || "-")}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(user.email || "-")}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(user.phone || "-")}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(date)}
+                    </td>
+
+                </tr>
+            `;
+
+        }).join("");
+
+}
+
+
+if (userSearch) {
+
+    userSearch.addEventListener(
+        "input",
+        renderAdminUsers
+    );
+
+}
+
+
+/* =========================================================
+   ADMIN LOAD ORDERS
+========================================================= */
+
+async function loadAdminOrders() {
+
+    if (!ordersTableBody) return;
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    adminDb,
+                    "orders"
+                )
+            );
+
+        allOrders =
+            snapshot.docs.map(item => ({
+                id: item.id,
+                ...item.data()
+            }));
+
+        allOrders.sort(
+            (a, b) =>
+                (b.date?.seconds || 0) -
+                (a.date?.seconds || 0)
+        );
+
+        renderAdminOrders();
+
+        updateAdminStats();
+
+    } catch (error) {
+
+        console.error(error);
+
+        ordersTableBody.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    ${escapeHTML(error.message)}
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER ADMIN ORDERS
+========================================================= */
+
+function renderAdminOrders() {
+
+    if (!ordersTableBody) return;
+
+    const search =
+        orderSearch?.value
+            .trim()
+            .toLowerCase() || "";
+
+    const filtered =
+        allOrders.filter(order => {
+
+            const customer =
+                order.customer || {};
+
+            return (
+
+                order.id
+                    .toLowerCase()
+                    .includes(search) ||
+
+                String(customer.name || "")
+                    .toLowerCase()
+                    .includes(search) ||
+
+                String(customer.email || "")
+                    .toLowerCase()
+                    .includes(search) ||
+
+                String(customer.phone || "")
+                    .toLowerCase()
+                    .includes(search)
+
+            );
+
+        });
+
+    if (!filtered.length) {
+
+        ordersTableBody.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    No orders found.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    ordersTableBody.innerHTML =
+        filtered.map(order => {
+
+            const customer =
+                order.customer || {};
+
+            const items =
+                order.items || [];
+
+            const itemText =
+                items.map(
+                    item =>
+                        `${escapeHTML(item.name)} × ${item.quantity}`
+                ).join(", ");
+
+            let date = "-";
+
+            if (order.date?.toDate) {
+
+                date =
+                    order.date
+                        .toDate()
+                        .toLocaleString("en-IN");
+
+            }
+
+            return `
+                <tr>
+
+                    <td>
+                        ${escapeHTML(order.id)}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(customer.name || "-")}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(customer.phone || "-")}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(itemText)}
+                    </td>
+
+                    <td>
+                        ${money(order.total)}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(order.status || "Pending")}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(date)}
+                    </td>
+
+                </tr>
+            `;
+
+        }).join("");
+
+}
+
+
+if (orderSearch) {
+
+    orderSearch.addEventListener(
+        "input",
+        renderAdminOrders
+    );
 
 }
 
@@ -2539,1208 +2616,24 @@ function renderAdminDashboard() {
    ADMIN STATS
 ========================================================= */
 
-function renderAdminStats() {
+function updateAdminStats() {
 
-    const users =
-        getData(
-            USERS_KEY,
-            []
-        );
+    if (totalOrders) {
+        totalOrders.textContent =
+            allOrders.length;
+    }
 
-
-    const orders =
-        getData(
-            ORDERS_KEY,
-            []
-        );
-
-
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
-
-
-    const totalSales =
-        orders.reduce(
+    const sales =
+        allOrders.reduce(
             (sum, order) =>
-                sum +
-                Number(
-                    order.total || 0
-                ),
+                sum + Number(order.total || 0),
             0
         );
 
-
-    document.getElementById(
-        "totalUsers"
-    ).textContent =
-        users.length;
-
-
-    document.getElementById(
-        "totalOrders"
-    ).textContent =
-        orders.length;
-
-
-    document.getElementById(
-        "totalSales"
-    ).textContent =
-        money(totalSales);
-
-
-    document.getElementById(
-        "totalProducts"
-    ).textContent =
-        products.length;
-
-}
-
-
-/* =========================================================
-   PRODUCT FORM ELEMENTS
-========================================================= */
-
-const editingProductId =
-    document.getElementById(
-        "editingProductId"
-    );
-
-const productName =
-    document.getElementById(
-        "productName"
-    );
-
-const productBrand =
-    document.getElementById(
-        "productBrand"
-    );
-
-const productPrice =
-    document.getElementById(
-        "productPrice"
-    );
-
-const productOldPrice =
-    document.getElementById(
-        "productOldPrice"
-    );
-
-const productImage =
-    document.getElementById(
-        "productImage"
-    );
-
-const productRam =
-    document.getElementById(
-        "productRam"
-    );
-
-const productStorage =
-    document.getElementById(
-        "productStorage"
-    );
-
-const productCamera =
-    document.getElementById(
-        "productCamera"
-    );
-
-const productBattery =
-    document.getElementById(
-        "productBattery"
-    );
-
-const productProcessor =
-    document.getElementById(
-        "productProcessor"
-    );
-
-const saveProductBtn =
-    document.getElementById(
-        "saveProductBtn"
-    );
-
-const productFormTitle =
-    document.getElementById(
-        "productFormTitle"
-    );
-
-const cancelProductEditBtn =
-    document.getElementById(
-        "cancelProductEditBtn"
-    );
-
-
-/* =========================================================
-   SAVE PRODUCT
-========================================================= */
-
-saveProductBtn.addEventListener(
-    "click",
-    saveProduct
-);
-
-
-function saveProduct() {
-
-    const name =
-        productName.value.trim();
-
-    const brand =
-        productBrand.value.trim();
-
-    const price =
-        Number(productPrice.value);
-
-    const oldPrice =
-        Number(productOldPrice.value) || 0;
-
-    const image =
-        productImage.value.trim();
-
-    const ram =
-        productRam.value.trim();
-
-    const storage =
-        productStorage.value.trim();
-
-    const camera =
-        productCamera.value.trim();
-
-    const battery =
-        productBattery.value.trim();
-
-    const processor =
-        productProcessor.value.trim();
-
-
-    if (!name ||
-        !brand ||
-        !price ||
-        !image) {
-
-        alert(
-            "Product Name, Brand, Price and Image URL are required."
-        );
-
-        return;
+    if (totalSales) {
+        totalSales.textContent =
+            money(sales);
     }
-
-
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
-
-
-    const editId =
-        editingProductId.value.trim();
-
-
-    if (editId) {
-
-        const index =
-            products.findIndex(
-                product =>
-                    String(product.id) ===
-                    String(editId)
-            );
-
-
-        if (index === -1) {
-
-            alert(
-                "Product not found."
-            );
-
-            return;
-        }
-
-
-        products[index] = {
-
-            ...products[index],
-
-            name,
-            brand,
-            price,
-            oldPrice,
-            image,
-            ram,
-            storage,
-            camera,
-            battery,
-            processor
-
-        };
-
-
-        saveData(
-            PRODUCTS_KEY,
-            products
-        );
-
-
-        alert(
-            "Product updated successfully."
-        );
-
-    } else {
-
-        const newProduct = {
-
-            id:
-                createId("PRD"),
-
-            name,
-            brand,
-            price,
-            oldPrice,
-            image,
-            ram,
-            storage,
-            camera,
-            battery,
-            processor,
-
-            createdAt:
-                new Date().toISOString()
-
-        };
-
-
-        products.push(
-            newProduct
-        );
-
-
-        saveData(
-            PRODUCTS_KEY,
-            products
-        );
-
-
-        alert(
-            "Product added successfully."
-        );
-
-    }
-
-
-    clearProductForm();
-
-    renderAdminDashboard();
-
-    renderProducts();
-
-}
-
-
-/* =========================================================
-   EDIT PRODUCT
-========================================================= */
-
-function editProduct(productId) {
-
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
-
-
-    const product =
-        products.find(
-            item =>
-                String(item.id) ===
-                String(productId)
-        );
-
-
-    if (!product) {
-
-        alert(
-            "Product not found."
-        );
-
-        return;
-    }
-
-
-    editingProductId.value =
-        product.id;
-
-
-    productName.value =
-        product.name || "";
-
-
-    productBrand.value =
-        product.brand || "";
-
-
-    productPrice.value =
-        product.price || "";
-
-
-    productOldPrice.value =
-        product.oldPrice || "";
-
-
-    productImage.value =
-        product.image || "";
-
-
-    productRam.value =
-        product.ram || "";
-
-
-    productStorage.value =
-        product.storage || "";
-
-
-    productCamera.value =
-        product.camera || "";
-
-
-    productBattery.value =
-        product.battery || "";
-
-
-    productProcessor.value =
-        product.processor || "";
-
-
-    productFormTitle.textContent =
-        "Edit Product";
-
-
-    saveProductBtn.textContent =
-        "Update Product";
-
-
-    cancelProductEditBtn.classList.remove(
-        "hidden"
-    );
-
-
-    document
-        .getElementById(
-            "productFormTitle"
-        )
-        .scrollIntoView({
-            behavior: "smooth"
-        });
-
-}
-
-
-/* =========================================================
-   DELETE PRODUCT
-========================================================= */
-
-function deleteProduct(productId) {
-
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
-
-
-    const product =
-        products.find(
-            item =>
-                String(item.id) ===
-                String(productId)
-        );
-
-
-    if (!product) {
-        return;
-    }
-
-
-    const confirmDelete =
-        confirm(
-            `Delete "${product.name}"?`
-        );
-
-
-    if (!confirmDelete) {
-        return;
-    }
-
-
-    const updatedProducts =
-        products.filter(
-            item =>
-                String(item.id) !==
-                String(productId)
-        );
-
-
-    saveData(
-        PRODUCTS_KEY,
-        updatedProducts
-    );
-
-
-    /*
-       If product is deleted,
-       remove it from every user's cart.
-    */
-
-    const cart =
-        getCart()
-            .filter(
-                item =>
-                    String(item.productId) !==
-                    String(productId)
-            );
-
-
-    saveCart(cart);
-
-
-    /*
-       If currently editing this product,
-       clear form.
-    */
-
-    if (
-        String(editingProductId.value) ===
-        String(productId)
-    ) {
-
-        clearProductForm();
-
-    }
-
-
-    renderAdminDashboard();
-
-    renderProducts();
-
-
-    alert(
-        "Product deleted successfully."
-    );
-
-}
-
-
-/* =========================================================
-   CLEAR PRODUCT FORM
-========================================================= */
-
-function clearProductForm() {
-
-    editingProductId.value = "";
-
-    productName.value = "";
-    productBrand.value = "";
-    productPrice.value = "";
-    productOldPrice.value = "";
-    productImage.value = "";
-    productRam.value = "";
-    productStorage.value = "";
-    productCamera.value = "";
-    productBattery.value = "";
-    productProcessor.value = "";
-
-
-    productFormTitle.textContent =
-        "Add New Product";
-
-
-    saveProductBtn.textContent =
-        "Add Product";
-
-
-    cancelProductEditBtn.classList.add(
-        "hidden"
-    );
-
-}
-
-
-cancelProductEditBtn.addEventListener(
-    "click",
-    clearProductForm
-);
-
-
-/* =========================================================
-   PRODUCT TABLE
-========================================================= */
-
-function renderProductsTable() {
-
-    const tbody =
-        document.getElementById(
-            "productsTableBody"
-        );
-
-
-    const products =
-        getData(
-            PRODUCTS_KEY,
-            []
-        );
-
-
-    if (products.length === 0) {
-
-        tbody.innerHTML = `
-
-            <tr>
-                <td
-                    colspan="5"
-                    class="empty-table"
-                >
-                    No products added yet.
-                </td>
-            </tr>
-
-        `;
-
-        return;
-    }
-
-
-    tbody.innerHTML =
-        products.map(
-            product => `
-
-                <tr>
-
-                    <td>
-
-                        <img
-                            class="table-product-image"
-                            src="${escapeHTML(product.image)}"
-                            alt="${escapeHTML(product.name)}"
-                            onerror="imageFallback(this)"
-                        >
-
-                    </td>
-
-
-                    <td>
-                        <strong>
-                            ${escapeHTML(product.name)}
-                        </strong>
-                    </td>
-
-
-                    <td>
-                        ${escapeHTML(product.brand)}
-                    </td>
-
-
-                    <td>
-                        ${money(product.price)}
-                    </td>
-
-
-                    <td>
-
-                        <div class="table-actions">
-
-                            <button
-                                class="edit-btn"
-                                data-edit-product="${escapeHTML(product.id)}"
-                            >
-                                Edit
-                            </button>
-
-                            <button
-                                class="delete-btn"
-                                data-delete-product="${escapeHTML(product.id)}"
-                            >
-                                Delete
-                            </button>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-            `
-        ).join("");
-
-
-    tbody
-        .querySelectorAll(
-            "[data-edit-product]"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    editProduct(
-                        button.dataset.editProduct
-                    );
-
-                }
-            );
-
-        });
-
-
-    tbody
-        .querySelectorAll(
-            "[data-delete-product]"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    deleteProduct(
-                        button.dataset.deleteProduct
-                    );
-
-                }
-            );
-
-        });
-
-}
-
-
-/* =========================================================
-   USERS TABLE
-========================================================= */
-
-document
-    .getElementById(
-        "userSearch"
-    )
-    .addEventListener(
-        "input",
-        renderUsersTable
-    );
-
-
-function renderUsersTable() {
-
-    const tbody =
-        document.getElementById(
-            "usersTableBody"
-        );
-
-
-    const users =
-        getData(
-            USERS_KEY,
-            []
-        );
-
-
-    const orders =
-        getData(
-            ORDERS_KEY,
-            []
-        );
-
-
-    const search =
-        document
-            .getElementById(
-                "userSearch"
-            )
-            .value
-            .trim()
-            .toLowerCase();
-
-
-    const filtered =
-        users.filter(
-            user => {
-
-                const id =
-                    String(
-                        user.id || ""
-                    ).toLowerCase();
-
-                const name =
-                    String(
-                        user.name || ""
-                    ).toLowerCase();
-
-                const email =
-                    String(
-                        user.email || ""
-                    ).toLowerCase();
-
-                const phone =
-                    String(
-                        user.phone || ""
-                    ).toLowerCase();
-
-
-                return (
-                    !search ||
-                    id.includes(search) ||
-                    name.includes(search) ||
-                    email.includes(search) ||
-                    phone.includes(search)
-                );
-
-            }
-        );
-
-
-    if (filtered.length === 0) {
-
-        tbody.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="7"
-                    class="empty-table"
-                >
-                    No users found.
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-    }
-
-
-    tbody.innerHTML =
-        filtered.map(
-            user => {
-
-                const userOrders =
-                    orders.filter(
-                        order =>
-                            String(
-                                order.userId || ""
-                            ) ===
-                            String(
-                                user.id || ""
-                            )
-                    );
-
-
-                const spent =
-                    userOrders.reduce(
-                        (sum, order) =>
-                            sum +
-                            Number(
-                                order.total || 0
-                            ),
-                        0
-                    );
-
-
-                return `
-
-                    <tr>
-
-                        <td>
-                            ${escapeHTML(
-                                user.name || "-"
-                            )}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(
-                                user.email || "-"
-                            )}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(
-                                user.phone || "-"
-                            )}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(
-                                user.id || "-"
-                            )}
-                        </td>
-
-                        <td>
-                            ${userOrders.length}
-                        </td>
-
-                        <td>
-                            ${money(spent)}
-                        </td>
-
-                        <td>
-                            ${formatDate(
-                                user.registeredAt
-                            )}
-                        </td>
-
-                    </tr>
-
-                `;
-
-            }
-        ).join("");
-
-}
-
-
-/* =========================================================
-   ORDER SEARCH
-========================================================= */
-
-document
-    .getElementById(
-        "orderSearch"
-    )
-    .addEventListener(
-        "input",
-        renderOrdersTable
-    );
-
-
-/* =========================================================
-   ORDERS TABLE
-========================================================= */
-
-function renderOrdersTable() {
-
-    const tbody =
-        document.getElementById(
-            "ordersTableBody"
-        );
-
-
-    const orders =
-        getData(
-            ORDERS_KEY,
-            []
-        );
-
-
-    const search =
-        document
-            .getElementById(
-                "orderSearch"
-            )
-            .value
-            .trim()
-            .toLowerCase();
-
-
-    const filtered =
-        orders.filter(
-            order => {
-
-                const items =
-                    Array.isArray(
-                        order.items
-                    )
-                        ? order.items
-                        : [];
-
-
-                const productsText =
-                    items
-                        .map(
-                            item =>
-                                String(
-                                    item.productName ||
-                                    ""
-                                )
-                        )
-                        .join(" ")
-                        .toLowerCase();
-
-
-                const orderId =
-                    String(
-                        order.id || ""
-                    ).toLowerCase();
-
-
-                const customer =
-                    String(
-                        order.customerName || ""
-                    ).toLowerCase();
-
-
-                const phone =
-                    String(
-                        order.customerPhone || ""
-                    ).toLowerCase();
-
-
-                const email =
-                    String(
-                        order.customerEmail || ""
-                    ).toLowerCase();
-
-
-                return (
-                    !search ||
-                    orderId.includes(search) ||
-                    customer.includes(search) ||
-                    phone.includes(search) ||
-                    email.includes(search) ||
-                    productsText.includes(search)
-                );
-
-            }
-        );
-
-
-    if (filtered.length === 0) {
-
-        tbody.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="10"
-                    class="empty-table"
-                >
-                    No orders found.
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-    }
-
-
-    tbody.innerHTML =
-        filtered.map(
-            order => {
-
-                const items =
-                    Array.isArray(
-                        order.items
-                    )
-                        ? order.items
-                        : [];
-
-
-                const productText =
-                    items.length
-                        ? items
-                            .map(
-                                item =>
-                                    `${escapeHTML(
-                                        item.productName || "-"
-                                    )}`
-                            )
-                            .join("<br>")
-                        : "-";
-
-
-                const quantityText =
-                    items.length
-                        ? items
-                            .map(
-                                item =>
-                                    Number(
-                                        item.quantity || 0
-                                    )
-                            )
-                            .join("<br>")
-                        : "-";
-
-
-                const currentStatus =
-                    String(
-                        order.status ||
-                        "Pending"
-                    );
-
-
-                return `
-
-                    <tr>
-
-                        <td>
-                            ${escapeHTML(
-                                order.id || "-"
-                            )}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(
-                                order.customerName || "-"
-                            )}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(
-                                order.customerPhone || "-"
-                            )}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(
-                                order.customerEmail || "-"
-                            )}
-                        </td>
-
-                        <td class="address-cell">
-                            ${escapeHTML(
-                                order.address || "-"
-                            )}
-                        </td>
-
-                        <td>
-                            ${productText}
-                        </td>
-
-                        <td>
-                            ${quantityText}
-                        </td>
-
-                        <td>
-                            ${money(
-                                order.total || 0
-                            )}
-                        </td>
-
-                        <td>
-                            ${formatDate(
-                                order.orderDate
-                            )}
-                        </td>
-
-                        <td>
-
-                            <select
-                                class="status-select"
-                                data-order-id="${escapeHTML(order.id)}"
-                            >
-
-                                <option
-                                    value="Pending"
-                                    ${currentStatus === "Pending" ? "selected" : ""}
-                                >
-                                    Pending
-                                </option>
-
-                                <option
-                                    value="Confirmed"
-                                    ${currentStatus === "Confirmed" ? "selected" : ""}
-                                >
-                                    Confirmed
-                                </option>
-
-                                <option
-                                    value="Shipped"
-                                    ${currentStatus === "Shipped" ? "selected" : ""}
-                                >
-                                    Shipped
-                                </option>
-
-                                <option
-                                    value="Delivered"
-                                    ${currentStatus === "Delivered" ? "selected" : ""}
-                                >
-                                    Delivered
-                                </option>
-
-                                <option
-                                    value="Cancelled"
-                                    ${currentStatus === "Cancelled" ? "selected" : ""}
-                                >
-                                    Cancelled
-                                </option>
-
-                            </select>
-
-                        </td>
-
-                    </tr>
-
-                `;
-
-            }
-        ).join("");
-
-
-    tbody
-        .querySelectorAll(
-            ".status-select"
-        )
-        .forEach(select => {
-
-            select.addEventListener(
-                "change",
-                () => {
-
-                    updateOrderStatus(
-                        select.dataset.orderId,
-                        select.value
-                    );
-
-                }
-            );
-
-        });
-
-}
-/* =========================================================
-   UPDATE ORDER STATUS
-========================================================= */
-
-function updateOrderStatus(
-    orderId,
-    status
-) {
-
-    const orders =
-        getData(
-            ORDERS_KEY,
-            []
-        );
-
-
-    const order =
-        orders.find(
-            item =>
-                String(item.id) ===
-                String(orderId)
-        );
-
-
-    if (!order) {
-        return;
-    }
-
-
-    order.status =
-        status;
-
-
-    saveData(
-        ORDERS_KEY,
-        orders
-    );
-
-
-    renderAdminStats();
 
 }
 
@@ -3749,136 +2642,77 @@ function updateOrderStatus(
    PROFILE BUTTON
 ========================================================= */
 
-document
-    .getElementById(
-        "profileBtn"
-    )
-    .addEventListener(
+if (profileBtn) {
+
+    profileBtn.addEventListener(
         "click",
         () => {
 
             const user =
-                getData(
-                    CURRENT_USER_KEY,
-                    null
-                );
+                getCurrentUserData();
 
-
-            if (!user) {
-                return;
-            }
-
+            if (!user) return;
 
             alert(
                 `Name: ${user.name}\n` +
                 `Email: ${user.email}\n` +
-                `Phone: ${user.phone}\n` +
-                `User ID: ${user.id}`
+                `Phone: ${user.phone || "-"}`
             );
 
         }
     );
 
+}
+
 
 /* =========================================================
-   MOBILE MENU
+   INITIAL UI
 ========================================================= */
 
-document
-    .getElementById(
-        "mobileMenuBtn"
-    )
-    .addEventListener(
-        "click",
-        () => {
+updateCartCount();
 
-            document
-                .querySelector(".sidebar")
-                .classList.toggle(
-                    "sidebar-open"
-                );
-
-        }
+const lastRegisteredEmail =
+    localStorage.getItem(
+        LAST_EMAIL_KEY
     );
 
-
-/* =========================================================
-   BACK TO STORE
-========================================================= */
-
-document
-    .getElementById(
-        "backToStoreBtn"
-    )
-    .addEventListener(
-        "click",
-        openStore
-    );
+if (loginEmail && lastRegisteredEmail) {
+    loginEmail.value =
+        lastRegisteredEmail;
+}
 
 
 /* =========================================================
-   INITIAL STARTUP
+   BACK BUTTON HELPERS
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        /*
-           First:
-           Remove old website data once.
-        */
-
-        resetOldDataOnce();
+window.goToStore = function () {
+    openStore();
+};
 
 
-        /*
-           Create empty storage arrays.
-        */
-
-        initializeData();
+window.goToCart = function () {
+    openCart();
+};
 
 
-        /*
-           Check whether user was already logged in.
-
-           Because CURRENT_USER_KEY is stored in
-           localStorage, refresh/browser close will
-           NOT logout the user.
-        */
-
-        const currentUser =
-            getData(
-                CURRENT_USER_KEY,
-                null
-            );
+window.goToLogin = function () {
+    showAuth();
+};
 
 
-        if (currentUser) {
+/* =========================================================
+   CONSOLE
+========================================================= */
 
-            openStore();
-
-        } else {
-
-            const lastEmail =
-                localStorage.getItem(
-                    LAST_EMAIL_KEY
-                );
-
-
-            if (lastEmail) {
-
-                loginEmail.value =
-                    lastEmail;
-
-            }
-
-
-            showPage(
-                "authPage"
-            );
-
-        }
-
-    }
+console.log(
+    "MobileStore Firebase system loaded successfully."
+);
+console.log(
+    "Project:",
+    firebaseConfig.projectId
+);
+console.log(
+    "Admin:",
+    ADMIN_EMAIL
 );
